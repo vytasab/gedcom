@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+        http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+    <package>lt.node.gedcom.model</package>
+
+    <entity class="User">
+        <named-query name="findUserByEmailAddress">
+            <query><![CDATA[from User u where u.emailAddress = :emailAddress]]></query>
+        </named-query>
+        <named-query name="findUserByValidationCode">
+            <query><![CDATA[from User u where u.validationCode = :code]]></query>
+        </named-query>
+        <named-query name="findAllUsers">
+            <query><![CDATA[from User x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <entity class="Person">
+        <named-query name="findPerson">
+            <query><![CDATA[from Person p where p.id = :id]]></query>
+        </named-query>
+        <named-query name="findPersonById">
+            <query><![CDATA[from Person p where p.id = :id]]></query>
+        </named-query>
+        <named-query name="findPersonByGnSnGender">
+            <query><![CDATA[from Person p where p.nameGivn = :nameGivn and p.nameSurn = :nameSurn and p.gender = :gender order by p.id]]></query>
+        </named-query>
+        <named-query name="findPersonByFamily">
+            <query><![CDATA[from Person p where p.family = :family order by p.id]]></query>
+        </named-query>
+        <named-query name="findAllPersons">
+            <query><![CDATA[from Person x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <entity class="PersonEvent">
+        <named-query name="findPersonEventByPerson">
+            <query><![CDATA[from PersonEvent x where x.personevent = :person order by x.id]]></query>
+        </named-query>
+        <named-query name="findAllPersonEvents">
+            <query><![CDATA[from PersonEvent x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <entity class="PersonAttrib">
+        <named-query name="findPersonAttribByPerson">
+            <query><![CDATA[from PersonAttrib x where x.personattrib = :person order by x.id]]></query>
+        </named-query>
+        <named-query name="findAllPersonAttribs">
+            <query><![CDATA[from PersonAttrib x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <entity class="Family">
+        <named-query name="findFamily">
+            <query><![CDATA[from Family f where f.id = :id]]></query>
+        </named-query>
+        <named-query name="findFamilyById">
+            <query><![CDATA[from Family f where f.id = :id]]></query>
+        </named-query>
+        <named-query name="findFamilyByHusbandId">
+            <query><![CDATA[from Family f where f.husbandId = :husbandId]]></query>
+        </named-query>
+        <named-query name="findFamilyByWifeId">
+            <query><![CDATA[from Family f where f.wifeId = :wifeId]]></query>
+        </named-query>
+        <named-query name="findAllFamilies">
+            <query><![CDATA[from Family x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <entity class="FamilyEvent">
+        <named-query name="findFamilyEventByFamily">
+            <query><![CDATA[from FamilyEvent x where x.familyevent = :family order by x.id]]></query>
+        </named-query>
+        <named-query name="findAllFamilyEvents">
+            <query><![CDATA[from FamilyEvent x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <entity class="EventDetail">
+        <named-query name="findEventDetailByPersonEvent">
+            <query><![CDATA[from EventDetail x where x.personevent = :personevent order by x.id]]></query>
+        </named-query>
+        <named-query name="findEventDetailByPersonAttrib">
+            <query><![CDATA[from EventDetail x where x.personattrib = :personattrib order by x.id]]></query>
+        </named-query>
+        <named-query name="findEventDetailByFamilyEvent">
+            <query><![CDATA[from EventDetail x where x.familyevent = :familyevent order by x.id]]></query>
+        </named-query>
+        <named-query name="findAllEventDetail">
+            <query><![CDATA[from EventDetail x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <entity class="Audit">
+        <!--<named-query name="findPersonEventByPerson">-->
+            <!--<query><![CDATA[from PersonEvent x where x.personevent = :personevent order by x.id]]></query>-->
+        <!--</named-query>-->
+        <named-query name="findAllAudits">
+            <query><![CDATA[from Audit x order by x.id]]></query>
+        </named-query>
+    </entity>
+
+    <!--<entity class="Book">-->
+        <!--<named-query name="findBooksByAuthor">-->
+            <!--<query><![CDATA[from Book b where b.author.id = :id order by b.title]]></query>-->
+        <!--</named-query>-->
+        <!--<named-query name="findBooksByDate">-->
+            <!--<query><![CDATA[from Book b where b.published between :startDate and :endDate]]></query>-->
+        <!--</named-query>-->
+        <!--<named-query name="findBooksByTitle">-->
+            <!--<query><![CDATA[from Book b where lower(b.title) like :title order by b.title]]></query>-->
+        <!--</named-query>-->
+        <!--<named-query name="findAllBooks">-->
+            <!--<query><![CDATA[from Book b order by b.title]]></query>-->
+        <!--</named-query>-->
+    <!--</entity>-->
+
+    <!--<entity class="Author">-->
+        <!--<named-query name="findAllAuthors">-->
+            <!--<query><![CDATA[from Author a order by a.name]]></query>-->
+        <!--</named-query>-->
+    <!--</entity>-->
+
+    <!--<entity class="TstPerson">-->
+        <!--<named-query name="findAllTstPersons">-->
+            <!--<query><![CDATA[from TstPerson b order by b.id]]></query>-->
+        <!--</named-query>-->
+    <!--</entity>-->
+
+    <!--<entity class="TstAddress">-->
+        <!--<named-query name="findAllTstAddresses">-->
+            <!--<query><![CDATA[from TstAddress b order by b.id]]></query>-->
+        <!--</named-query>-->
+    <!--</entity>-->
+
+</entity-mappings>

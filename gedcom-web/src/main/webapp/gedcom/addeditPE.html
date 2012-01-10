@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Home</title>
+    <style>
+        #lift__noticesContainer___notice {background-color: green;}
+        #lift__noticesContainer___warning {background-color: yellow;}
+        #lift__noticesContainer___error {background-color: red;}
+    </style>
+
+</head>
+<body class="lift:content_id=real_content">
+<div class="lift:surround?with=default;at=content" id="real_content">
+    <head>
+        <script type="text/javascript" src="/scripts/jquery.blockUI.js"></script>
+        <title>
+            <lift:loc>add.person.event</lift:loc>
+        </title>
+        <script type="text/javascript">
+            function selectWhenSelected(/*someElem*/) {
+                //alert("selectWhenSelected ");
+                document.getElementById("dateValue").click();
+            }
+        </script>
+    </head>
+    <h4>
+        <lift:loc>add.person.event</lift:loc>
+    </h4>
+
+    <form id="form" class="lift:PersonUpdate.addEvent" action="POST">
+        <table class="editor" border="1">
+            <tr>
+                <td style="width:15%">
+                    <lift:loc>pe.tag</lift:loc>
+                </td>
+                <td>
+                    <div id="petag"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <!--<lift:loc>adoptedBy</lift:loc>-->
+                    <div id="adoptedBy_"/>
+                </td>
+                <td>
+                    <div id="adoptedBy"/>
+                    <div style="color:red">  <lift:msg id="adoptedBy_error"/> </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <!--<lift:loc>descriptor</lift:loc>-->
+                    <div id="descriptor_"/>
+                </td>
+                <td>
+                    <div id="descriptor"></div>
+                    <div style="color:red"> <lift:msg id="descriptor_error"/> </div>
+                </td>
+            </tr>
+            <!--<tr>-->
+                <!--<td> <lift:loc>dateValue</lift:loc> </td>-->
+                <!--<td>-->
+                    <!--&lt;!&ndash;<div id="dateValueId">&ndash;&gt;-->
+                        <!--<div id="dateValue" style="display:none"></div>-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--<div style="color:red"> <lift:msg id="dateValue_error"/> </div>-->
+                <!--</td>-->
+            <!--</tr>-->
+
+            <tr>
+                <td>
+                    <lift:loc>pe.dateValue</lift:loc>
+                </td>
+                <td>
+                <table border="1">
+                    <tr>
+                        <!--<td width="15%">-->
+                            <!--<lift:loc>dateValue</lift:loc>-->
+                        <!--</td>-->
+                        <td width="40%">
+                            <div id="dateoptions"></div>
+                        </td>
+                        <td> ==>
+                            <span id="dateValue" style="display:yes"/>
+                            <!--<div style="color:red"> <lift:msg id="dateValue_error"/> </div>-->
+                        </td>
+                    </tr>
+                </table>
+                </td>
+            </tr>
+            <!--<tr>-->
+                <!--<td> <lift:loc>dateValue</lift:loc> </td>-->
+                <!--<td>-->
+                    <!--<div id="dateoptions"></div>-->
+                    <!--&lt;!&ndash;<div id="dateValue" style="display:none"></div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div style="color:red"> <lift:msg id="dateValue_error"/> </div>&ndash;&gt;-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td> <lift:loc>dateValue</lift:loc> </td>-->
+                <!--<td>-->
+                    <!--&lt;!&ndash;<div id="dateoptions"></div>&ndash;&gt;-->
+                    <!--<div id="dateValue" style="display:yes"></div>-->
+                    <!--<div style="color:red"> <lift:msg id="dateValue_error"/> </div>-->
+                <!--</td>-->
+            <!--</tr>-->
+
+            <tr>
+                <td> <lift:loc>pe.place</lift:loc> </td>
+                <td>
+                    <div id="place"></div>
+                    <div style="color:red"> <lift:msg id="place_error"/> </div>
+                </td>
+            </tr>
+            <tr>
+                <td> <lift:loc>pe.ageAtEvent</lift:loc> </td>
+                <td>
+                    <div id="ageAtEvent"></div>
+                    <div style="color:red"> <lift:msg id="ageAtEvent_error"/> </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <!--<lift:loc>cause</lift:loc> -->
+                    <div id="cause_"/>
+
+                </td>
+                <td>
+                    <div id="cause"></div>
+                    <div style="color:red"> <lift:msg id="cause_error"/> </div>
+                </td>
+            </tr>
+            <tr>
+                <td> <lift:loc>pe.source</lift:loc> </td>
+                <td>
+                    <div id="source"></div>
+                    <div style="color:red"> <lift:msg id="source_error"/> </div>
+                </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td colspan="2" style="">
+                    <div id="submit"></div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div id="cancel"></div>
+                </td>
+            </tr>
+        </table>
+        <!--<div id="nameGivn"></div>-->
+        <!--<div id="nameSurn"></div>-->
+        <!--<div id="gender"></div>-->
+        <!--<div id="submit"></div>-->
+        <!--<div id="cancel"></div>-->
+    </form>
+</div>
+</body>
+</html>
+

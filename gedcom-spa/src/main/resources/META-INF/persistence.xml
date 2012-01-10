@@ -1,0 +1,32 @@
+<persistence>
+	<persistence-unit name="jpaweb" transaction-type="RESOURCE_LOCAL">
+		<properties>
+			<property name="hibernate.dialect" value="${hibernate.dialect}" />
+			<property name="hibernate.connection.driver_class" value="${hibernate.connection.driver_class}" />
+			<property name="hibernate.connection.url" value="${hibernate.connection.url}" />
+			<property name="hibernate.connection.username" value="${hibernate.connection.username}" />
+			<property name="hibernate.connection.password" value="${hibernate.connection.password}" />
+			<property name="hibernate.max_fetch_depth" value="${hibernate.max_fetch_depth}" />
+			<property name="hibernate.show_sql" value="${hibernate.show_sql}" />
+			<!--<property name="hibernate.show_sql" value="true" />-->
+			<property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+		</properties>
+	</persistence-unit>
+</persistence>
+
+<!--
+<persistence>
+    <persistence-unit name="jpaweb" transaction-type="RESOURCE_LOCAL">
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/datasource-gedcom"/>
+            <property name="hibernate.connection.username" value="shaknisgedcom"/>
+            <property name="hibernate.connection.password" value="123123"/>
+            <property name="hibernate.max_fetch_depth" value="3"/>
+            <property name="hibernate.show_sql" value="false"/>  &lt;!&ndash;  value= true false  &ndash;&gt;
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties>
+    </persistence-unit>
+</persistence>
+-->

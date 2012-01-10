@@ -1,0 +1,374 @@
+mvn clean install -Dmaven.test.skip=true
+9A15-4/vsh ==============================================================================
+http://www.utf8-chartable.de/unicode-utf8-table.pl
+UTF-8 encoding table and Unicode characters
+\u0104	Ą	c4 84	LATIN CAPITAL LETTER A WITH OGONEK
+\u0105	ą	c4 85	LATIN SMALL LETTER A WITH OGONEK
+\u010C	Č	c4 8c	LATIN CAPITAL LETTER C WITH CARON
+\u010D	č	c4 8d	LATIN SMALL LETTER C WITH CARON
+\u0118	Ę	c4 98	LATIN CAPITAL LETTER E WITH OGONEK
+\u0119	ę	c4 99	LATIN SMALL LETTER E WITH OGONEK
+\u0116	Ė	c4 96	LATIN CAPITAL LETTER E WITH DOT ABOVE
+\u0117	ė	c4 97	LATIN SMALL LETTER E WITH DOT ABOVE
+\u012E	Į	c4 ae	LATIN CAPITAL LETTER I WITH OGONEK
+\u012F	į	c4 af	LATIN SMALL LETTER I WITH OGONEK
+\u0160	Š	c5 a0	LATIN CAPITAL LETTER S WITH CARON
+\u0161	š	c5 a1	LATIN SMALL LETTER S WITH CARON
+\u0172	Ų	c5 b2	LATIN CAPITAL LETTER U WITH OGONEK
+\u0173	ų	c5 b3	LATIN SMALL LETTER U WITH OGONEK
+\u016A	Ū	c5 aa	LATIN CAPITAL LETTER U WITH MACRON
+\u016B	ū	c5 ab	LATIN SMALL LETTER U WITH MACRON
+\u017D	Ž	c5 bd	LATIN CAPITAL LETTER Z WITH CARON
+\u017E	ž	c5 be	LATIN SMALL LETTER Z WITH CARON
+
+\u25B2  ▲
+\u25BA  ►
+\u25BC  ▼
+\u25C4  ◄
+
+\u2640  ♀ Venus             http://en.wikipedia.org/wiki/Gender_symbol
+\u2642  ♂ Mars
+\u26AD    Marriage symbol   http://www.decodeunicode.org/en/u+26ad/properties
+
+Lithuanian HTML Entity Codes
+ 	Lithuanian Vowels
+Ą	&#260; capital A ogonek ("cedille")
+ą	&#261; lower A ogonek ("cedille")
+Ę	&#280; capital E ogonek ("cedille")
+ę	&#281; lower E ogonek ("cedille")
+Ė	&#278; capital E dot
+ė	&#279; lower E dot
+Į	&#302; capital I ogonek ("cedille")
+į	&#303; lower I ogonek ("cedille")
+Ų	&#370; capital U ogonek ("cedille")
+ų	&#371; lower U ogonek ("cedille")
+Ū	&#362; capital U macron
+ū	&#363; lower U macron
+ 	Lithuanian Consonants
+Č	&#268; capital C hacheck
+č	&#269; lower C hacheck
+Š	&#352; capital S hacheck
+š	&#353; lower S hacheck
+Ž	&#381; capital Z hacheck
+ž	&#382; capital Z hachek
+
+
+9C19-6/vsh ==============================================================================
+http://blogs.jetbrains.com/idea/2008/03/opening-maven-projects-is-easy-as-pie/
+    the comments contain useful info about Maven project single source (Java, Scala) file
+    compilation process
+
+
+AB29-1/vsh ==============================================================================
+
+ // Mapper case
+ CREATE TABLE `users` (
+   ==             `id` bigint(20) unsigned NOT NULL auto_increment,
+   firstName      `firstname` varchar(32) default NULL,
+   lastName       `lastname` varchar(32) default NULL,
+   EMAIL_ADDRESS  `email` varchar(48) default NULL,
+   ==             `locale` varchar(16) default NULL,
+   ==             `timezone` varchar(32) default NULL,
+   PASSWORD_HASH  `password_pw` varchar(48) default NULL,
+   PASSWORD_SALT  `password_slt` varchar(20) default NULL,
+                  `textarea` text,
+   ==             `superuser` tinyint(1) default NULL,
+   ==             `uniqueid` varchar(32) default NULL,
+   ==             `validated` tinyint(1) default NULL,
+   PRIMARY KEY  (`id`),
+   UNIQUE KEY `id` (`id`),
+   KEY `users_email` (`email`),
+   KEY `users_uniqueid` (`uniqueid`)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+// JPA case
+CREATE TABLE `users` (
+  id              `id` bigint(20) NOT NULL auto_increment,
+  email           `EMAIL_ADDRESS` varchar(255) collate utf8_lithuanian_ci NOT NULL default '',
+   ? not_in_use   `IS_ACTIVE` tinyint(1) default NULL,
+               ---`IS_ADMINISTRATOR` tinyint(1) default NULL,--------- deleted
+  password_pw     `PASSWORD_HASH` varchar(255) collate utf8_lithuanian_ci default NULL,
+  password_slt    `PASSWORD_SALT` varchar(255) collate utf8_lithuanian_ci default NULL,
+                  `VALIDATION_CODE` varchar(255) collate utf8_lithuanian_ci default NULL,
+                  `VALIDATION_EXPIRY` bigint(20) default NULL,
+  firstname       `firstName` varchar(255) collate utf8_lithuanian_ci default NULL,
+  lastname        `lastName` varchar(255) collate utf8_lithuanian_ci default NULL,
+  ==              `locale` varchar(255) collate utf8_lithuanian_ci default NULL,
+  ==              `timezone` varchar(255) collate utf8_lithuanian_ci default NULL,
+  ==              `superuser` tinyint(1) default NULL,
+  ==              `uniqueid` varchar(32) default NULL,
+  ==              `validated` tinyint(1) default NULL,
+     +            `birthDate` date default NULL,
+     +            `createdOn` date default NULL,
+     +            `updatedOn` date default NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `EMAIL_ADDRESS` (`EMAIL_ADDRESS`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_lithuanian_ci
+
+
+AC02-4/vsh ==============================================================================
+    Bandau padaryti Person{INDI] Family[FAM] Ralational DB table'us per JPA anotacijas.
+    Deja tai gali būti per sudėtinga realizuoti dėl komplikuoto m:m ryšio tarp Person ir Family, nes
+    Scala dar nepalaiko nested annotations
+
+    Lift google group: "More JPA in Lift: many-to-many?"
+    http://tadtech.blogspot.com/2007/09/hibernate-association-mappings-in.html
+    http://boris.kirzner.info/blog/archives/2008/07/19/hibernate-annotations-the-many-to-many-association-with-composite-key/
+        look at Yves comments
+
+
+B118-2/vsh ==============================================================================
+   Pakeista DB schema, todėl reikėjo vykdyti:
+update family set countOfChildren=0;
+update personevent set adoptedBy="", familyIdId=0;
+
+
+B201-2/vsh ==============================================================================
+    http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance
+
+B206-7/vsh ==============================================================================
+    DB backup via SQLyog:
+        - Tools --> Backup DB as SQL Dump -->
+            - Export as SQL: Structure and data
+            - DB name: datasource-gedcom
+            - Export to file: C:\Scala\DB_backups\{YMdd}_datasource-gedcom.sql
+            - Objects: [v] Tables
+            - Options having effect on source:  [ ], [ ], [*]
+            - Options written to file: [v], [v], ..., [v]
+        - Export ==> Exported successfully ==> Done
+
+B209-3/vsh ==============================================================================
+v invalid.user.authent                   S.warning("User authentication is invalid")
+v invalid.user.email                     S.warning("No user for such email is DB")
+v success.user.create                    S.notice("You have successfully finished your user account creation.")
+v -----------                            S.warning("That validation code has expired.")
+v -----------         case x: NoResultException => S.error("Unable to find your email address.")
+v -----------         case _ => S.error("A problem was encountered.")
+v -----------         S.error("The password you entered is invalid.")
+v -----------         S.error("That validation code has expired.")
+
+
+
+
+
+B218-5/vsh ==============================================================================
+    Užsiožiavo Tomcat paleidimas per Apache Tomcat panelę, nežinau kodėl,
+todel jį atnaujinau 6.0.20 --> 7.0.8.
+    Nepavyksta JRebel configuruoti:
+
+Tomcat-6.0.20 config:
+
+-Xverify:none
+-javaagent:C:\Java\JRebel\jrebel.jar
+-Drebel.log4j-plugin=true
+-Dcatalina.base=c:\Tomcat
+-Dcatalina.home=c:\Tomcat
+-Djava.endorsed.dirs=c:\Tomcat\endorsed
+-Djava.io.tmpdir=c:\Tomcat\temp
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+-Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+
+Tomcat-7.0.8 orig config:
+
+-Dcatalina.home=C:\Tomcat
+-Dcatalina.base=C:\Tomcat
+-Djava.endorsed.dirs=C:\Tomcat\endorsed
+-Djava.io.tmpdir=C:\Tomcat\temp
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+-Djava.util.logging.config.file=C:\Tomcat\conf\logging.properties
+
+
+B227-7/vsh ==============================================================================
+
+TODO Cannot store credentials: forbidden by "store-auth-creds=no"
+
+
+B309-3/vsh ==============================================================================
+
+http://www.decodeunicode.org/en/u+26ad/U+221E    // family relatad signs
+    U+26AD MARRIAGE SYMBOL
+
+
+B320-7/vsh ==============================================================================
+    Padariau DB laukų pakeitimus:
+    - SQLYog'u padariau "Backup DB as SQL Dump"
+    - modifikavau db table scala source'e laukų ilgius
+    - sukompiliavau pakeitimus
+    - SQLYog'u "Empty Database"
+    - stop Tomcat
+    - start Tomcat
+    - sukūriau vieną User, jį validavau, sukūriau viena Person,
+    - SQLYog'u padariau "Backup DB as SQL Dump" kaip "naujas-templatre"
+    - padariau "B206_datasource-gedcom.sql" ReadOnly kopiją "B206_datasource-gedcom_orig_readonly.sql"
+    - Naudodamasis "Beyond Compare 2" padariau pakeitimus "naujas-templatre" -> "B206_datasource-gedcom.sql"
+    - SQLYog'u užkroviau "B206_datasource-gedcom.sql"
+    Panašu, kad gerai
+
+
+B414-4/vsh ==============================================================================
+    Aplikacijos 'gedcom-web' kėlimas į StaxNetworks.
+    	Perskaityti ir padaryti:  https://www.stax.net --> Docs  --> Lift Web Framework --> Maven Guide
+    	                          http://wiki.stax.net ------------>
+    	Sukurti naują db Stax'e pagal
+    	    c:\Scala\intellij_scala_workspace\gedcom\gedcom-spa\src\main\resources\filters\stax.properties.
+        Užregistruoti sukurtą db kaip resursą projekto 'gedcom-web' failuose:
+        	    WEB-INF/stax-web.xml (or META-INF/stax-application.xml)
+        	    WEB-INF/web.xml
+        Padaryti gedcom-spa kontekste:
+                mvn clean install -Pspa_stax -Dmaven.test.skip=true
+        Padaryti gedcom-web kontekste:
+                mvn clean stax:run -Dmaven.test.skip=true  ==> turi startuoti lokaliai
+        Padaryti gedcom-web kontekste:
+                mvn clean stax:deploy -Dmaven.test.skip=true  ==> turi startuoti Stax'e
+        --------------------
+... ... ...
+[INFO] [stax:deploy {execution: default-cli}]
+Enter your Stax Username: vytastax
+Enter your Stax Password: ipvvmku
+Deploying application vytastax/gedcom-web (environment: )
+API call: http://api.stax.net/api/application.deployArchive
+........................uploaded 25%
+........................uploaded 50%
+........................uploaded 75%
+........................upload completed
+deploying application to server(s)...
+Apr 15, 2011 12:41:22 AM org.apache.commons.httpclient.HttpMethodBase getResponseBody
+WARNING: Going to buffer response body of large or unknown size. Using getResponseBodyAsStream instead is recommended.
+Apr 15, 2011 12:41:22 AM net.stax.api.StaxClientBase executeUpload
+INFO: upload complete, response=<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationDeployArchiveResponse>
+  <id>vytastax/gedcom-web</id>
+  <url>http://gedcom-web.vytastax.staxapps.net</url>
+</ApplicationDeployArchiveResponse>
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14 minutes 19 seconds
+[INFO] Finished at: Fri Apr 15 00:41:22 EEST 2011
+[INFO] Final Memory: 41M/79M
+[INFO] ------------------------------------------------------------------------
+    --------------------
+
+    Sukurti SqlYog'e stax_datasource-gedcom
+
+    Sukurti SqlYog'e shaknisgedcom@ec2-75-101-156-134.compute-1.amazonaws.com.
+        suteikti global privileges - visas be CreateTemporaryTables, Execute LockTables
+            ReplicationClient ReplicationSlave ShowDatabases Super
+        suteikti datasource-gedcom privileges - visas be CreateTemporaryTables, LockTables
+
+B417-7/vsh ==============================================================================
+C:\Scala\intellij_scala_workspace\gedcom\gedcom-web>mvn -Pspa_padargas,padargas -Dmaven.test.skip=true clean process-resources
+[INFO] Scanning for projects...
+[WARNING]
+        Profile with id: 'spa_padargas' has not been activated.
+
+[INFO] ------------------------------------------------------------------------
+[INFO] Building gedcom Web
+[INFO]    task-segment: [clean, process-resources]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean {execution: default-clean}]
+[INFO] Deleting directory C:\Scala\intellij_scala_workspace\gedcom\gedcom-web\target
+[INFO] [native2ascii:native2ascii {execution: default}]
+[INFO] [resources:resources {execution: default-resources}]
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources to props
+[INFO] Copying 18 resources
+[INFO] Copying 23 resources
+[INFO] [resources:copy-resources {execution: default-copy-resources}]
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource
+[INFO] [javarebel:generate {execution: generate-rebel-xml}]
+[INFO] Processing lt.node.gedcom:gedcom-web with packaging war
+[INFO] [yuicompressor:compress {execution: default}]
+[INFO] default.props (0b) -> default.props (0b)[100%]
+[INFO] padargas.props (0b) -> padargas.props (0b)[100%]
+[INFO] lift_chef.properties (0b) -> lift_chef.properties (0b)[100%]
+[INFO] lift_lt.properties (0b) -> lift_lt.properties (0b)[100%]
+[INFO] text.properties (0b) -> text.properties (0b)[100%]
+[INFO] text_lt.properties (0b) -> text_lt.properties (0b)[100%]
+[INFO] arrows-ffffff.png (0b) -> arrows-ffffff.png (0b)[100%]
+[INFO] shadow.png (0b) -> shadow.png (0b)[100%]
+[INFO] jquery.bgiframe.js (1028b) -> jquery.bgiframe.js (1028b)[100%]
+[WARNING] ...\target\classes\toserve\menu\jquery.hoverIntent.js:line -1:column -1:Try to use a single 'var' statement per scope.
+... ... ...
+------------------------------------------------------
+C:\Scala\intellij_scala_workspace\gedcom\gedcom-web>mvn -Pspa_padargas,padargas -Dmaven.test.skip=true clean resources:resources
+[INFO] Scanning for projects...
+[WARNING]
+        Profile with id: 'spa_padargas' has not been activated.
+
+[INFO] ------------------------------------------------------------------------
+[INFO] Building gedcom Web
+[INFO]    task-segment: [clean, resources:resources]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean {execution: default-clean}]
+[INFO] Deleting directory C:\Scala\intellij_scala_workspace\gedcom\gedcom-web\target
+[INFO] [resources:resources {execution: default-cli}]
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources to props
+[INFO] Copying 18 resources
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 10 seconds
+[INFO] Finished at: Sun Apr 17 17:04:19 EEST 2011
+[INFO] Final Memory: 14M/27M
+[INFO] ------------------------------------------------------------------------
+C:\Scala\intellij_scala_workspace\gedcom\gedcom-web>
+
+
+B421-4/vsh ==============================================================================
+      System path piece:
+      C:\Program Files\liftweb-1.0.1\bin;
+      C:\Program Files\liftweb-1.0.1/apache-maven/bin;
+
+B509-1/vsh ==============================================================================
+    Common rule: skip empty fields everywhere always
+
+    The Audit table record formats:
+      action - add
+        PersonAttrib:
+            <_><f n="tag">NATI</f><f n="tagValue"><lt>marsietis</lt></f><f n="personattrib_id">32</f></_>
+        Eventdetail:
+            <_><f n="descriptor"><lt></lt></f><f n="dateValue">ABT 2011 03 31</f><f n="place"><lt></lt></f>
+                <f n="ageAtEvent"><lt></lt></f><f n="source"><lt>taip sugalvojau</lt></f><f n="personevent_id">0</f>
+                <f n="personattrib_id">2</f><f n="familyevent_id">0</f></_>
+
+      action - upd
+        Eventdetail:
+        // update existing fields
+            <_><f n="descriptor"><new><lt>Neteko darbo</lt></new><old><lt>Neteko darbo per krizę</lt></old></f>
+            <f n="dateValue"><new>BET 2000 AND 2011</new><old>BET 1999 AND 2011</old></f></_>
+        // extend existing MLT field
+            <_><f n="descriptor"><new><en>He has become jobless</en></new></f></_>
+
+      action - del
+        Eventdetail:
+            <_><f n="descriptor"><lt>Neteko darbo</lt><en>He has become jobless</en></f>
+                <f n="dateValue">ABT 2011 03 31</f><f n="place"><lt></lt></f>
+                <f n="ageAtEvent"><lt></lt></f><f n="source"><lt>taip sugalvojau</lt></f><f n="personevent_id">0</f>
+                <f n="personattrib_id">2</f><f n="familyevent_id">0</f></_>
+
+
+
+BA21-5/vsh ==============================================================================
+    New forest drawing logic
+
+BB14-1/vsh ==============================================================================
+    www.stax.net --> www.cloudbees.com
+        vsh@node.lt / alexotas
+
+bc05-1/vsh ==============================================================================
+    How to build application:
+    C:\Scala\intellij_scala_workspace\gedcom\
+        gedcom-spa>mvn -Pspa_padargas,padargas -Dmaven.test.skip=true clean install
+        gedcom-web>mvn -Pspa_padargas,padargas -Dmaven.test.skip=true clean resources:resources install
+
+
+bc14-3/vsh ==============================================================================
+    XSLT document function use samples:
+        http://www.ibm.com/developerworks/xml/library/x-tipcombxslt/
+        http://www.learn-xslt-tutorial.com/Multiple-Documents.cfm
+
+ymdd-x/vsh ==============================================================================
+

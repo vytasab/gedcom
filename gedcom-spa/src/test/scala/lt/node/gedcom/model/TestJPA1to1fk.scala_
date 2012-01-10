@@ -1,0 +1,124 @@
+package lt.node.gedcom.model
+
+/*
+ * Copyright 2008 WorldWide Conferencing, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
+import scala.collection.JavaConversions._
+
+import org.junit.Test
+import org.junit.Before
+import org.junit.After
+import org.junit.Assert._
+
+import javax.persistence._
+
+class TestJPA1to1fk {
+  var emf: EntityManagerFactory = _
+
+  @Before
+  def initEMF() = {
+    println("---- @Before")
+    try
+    {
+      emf = Persistence.createEntityManagerFactory("jpawebTest")
+      var emb = emf.createEntityManager()
+      emb.getTransaction().begin()
+      val toBeDeletedAddresses = emb.createNamedQuery("findAllTstAddresses").getResultList().asInstanceOf[java.util.List[TstAddress]]
+      for (r <- toBeDeletedAddresses) emb.remove(emb.getReference(classOf[TstAddress], r.asInstanceOf[TstAddress].id))
+      val toBeDeletedPersons = emb.createNamedQuery("findAllTstPersons").getResultList().asInstanceOf[java.util.List[TstPerson]]
+      for (r <- toBeDeletedPersons) emb.remove(emb.getReference(classOf[TstPerson], r.asInstanceOf[TstPerson].id))
+      emb.getTransaction().commit()
+      emb.close()
+    } catch {
+      case e: Exception => {
+        def printAndDescend(ex: Throwable): Unit = {
+          println(e.getMessage())
+          if (ex.getCause() != null) {
+            printAndDescend(ex.getCause())
+          }
+        }
+        printAndDescend(e)
+      }
+    }
+  }
+
+  @After
+  def closeEMF() = {
+    println("---- @After")
+    if (emf != null) emf.close()
+  }
+
+  @Test
+  def save_stuff() = {
+    println("---- @Test")
+    var em = emf.createEntityManager()
+    val tx = em.getTransaction()
+    tx.begin()
+
+    val address = new TstAddress
+    address.fullAddress = "Palanga"
+    em.persist(address)
+
+    val person = new TstPerson
+    person.nameGivn = "Vakaris"
+    person.nameSurn = "Lopas"
+    person.address = address
+    em.persist(person)
+
+//    val person2 = new TstPerson
+//    person2.nameGivn = "Eustachius"
+//    person2.nameSurn = "Ausys"
+//    person2.address = address
+//    em.persist(person2)
+
+    tx.commit()
+    em.close()
+
+    // Re-open and query
+    em = emf.createEntityManager()
+
+    val retrievedAddresses = em.createNamedQuery("findAllTstAddresses").getResultList().asInstanceOf[java.util.List[TstAddress]]
+    //retrieved.foreach((r:[TstPerson]) => <- retrieved; )
+    println("TstAddress:")
+    //    for (r <- retrievedAddresses) println(r.toString())
+    retrievedAddresses foreach (r => println(r.toString()))
+    //println(retrievedAddresses.toString())
+
+    val retrievedPersons = em.createNamedQuery("findAllTstPersons").getResultList().asInstanceOf[java.util.List[TstPerson]]
+    //retrieved.foreach((r:[TstPerson]) => <- retrieved; )
+    println("TstPerson:")
+    for (r <- retrievedPersons) println(r.toString())
+    //println("---")
+    //retrievedPersons foreach (r => println(r.toString()))
+
+    //val retrieved = em.createNamedQuery("findAllBooks").getResultList().asInstanceOf[java.util.List[TstPerson]]
+    assert(retrievedPersons.size()>0)
+    //assertEquals(1, retrievedPersons.size())
+    assertEquals("Lopas", retrievedPersons.get(0).nameSurn)
+
+    println("Found " + retrievedPersons.get(0).nameGivn)
+
+    // clean up
+    em.getTransaction().begin()
+    println("TstPerson====>"+ em.getReference(classOf[TstPerson], person.id).toString )
+    em.remove(em.getReference(classOf[TstPerson], person.id))
+    println("TstAddress====>"+ em.getReference(classOf[TstAddress], address.id).toString )
+    em.remove(em.getReference(classOf[TstAddress], address.id))
+    em.getTransaction().commit()
+    em.close()
+  }
+
+}

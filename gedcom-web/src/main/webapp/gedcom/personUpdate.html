@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Home</title>
+</head>
+<body class="lift:content_id=real_content">
+<div class="lift:surround?with=template-personupdate;at=content" id="real_content">
+    <head>
+        <title>Persons (gedcom)</title>
+        <script type="text/javascript">
+            function selectWhenChanged(someElem) {
+                //alert("selectWhenChanged="+someElem.value);
+                document.getElementById("submitPe").click();
+            }
+        </script>
+    </head>
+
+    <form action="POST">
+        <div class="lift:PersonUpdate.listPePa">
+            <table>
+                <tr>
+                    <td width="15%">
+                        <lift:loc>add.event</lift:loc>
+                    </td>
+                    <td>
+                        <div id="pelist"></div><span id="submitPe" style="display:none">submit</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <lift:loc>add.attrib</lift:loc>
+                    </td>
+                    <td>
+                        <div id="palist"></div><span id="submitPa" style="display:none">submit</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&#160;</td>
+                    <td>
+                       <div id="cancel"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+
+
+
+<!--
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Home</title>
+</head>
+<body class="lift:content_id=real_content">
+<div class="lift:surround?with=template-default;at=content" id="real_content">
+    <span class="lift:PersonUpdate">
+        <span id="fullinfo" style=""/>
+    </span>
+</div>
+</body>
+</html>
+-->
+
+
+
+
+
+<!--
+"#pelist" #> FocusOnLoad(SHtml.select(PeTags.tags, Empty, { selectedPersonURL = _ }, "size" -> "1")) &
+"#submitPe" #> SHtml.submit("SavePeInvisible", addPe) &
+"#palist" #> FocusOnLoad(SHtml.select(PaTags.tags, Empty, { selectedPersonURL = _ }, "size" -> "1")) &
+"#submitPa" #> SHtml.submit("SavePaInvisible", addPa)
+-->

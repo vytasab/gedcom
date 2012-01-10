@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+PADARGAS:
+mvn -Pspa_padargas -Dmaven.test.skip=true clean install
+
+mvn -Ppadargas -Dmaven.test.skip=true clean
+mvn jrebel:generate
+mvn -Pspa_padargas,padargas -Dmaven.test.skip=true install
+
+mvn -Pspa_padargas,padargas -Dmaven.test.skip=true clean process-resources install
+mvn -Pspa_padargas,padargas -Dmaven.test.skip=true       process-resources install <== !!! this one !!!
+
+
+mvn -Pspa_padargas,padargas -Dmaven.test.skip=true clean install resources:resources
+mvn -Pspa_padargas,padargas -Dmaven.test.skip=true install resources:resources
+
+
+STAX:
+mvn -Pspa_stax,stax -Dmaven.test.skip=true clean install   <== for /gedcom-spa
+// mvn -Pstax -Dmaven.test.skip=true clean stax:run        <== for /gedcom-web
+// mvn -Pstax -Dmaven.test.skip=true clean stax:deploy     <== for /gedcom-web
+mvn -Pstax -Dmaven.test.skip=true stax:deploy     <== for /gedcom-web
+
+old deprecated:
+mvn clean install -Dmaven.test.skip=true
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>lt.node.gedcom</groupId>
+    <artifactId>gedcom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>gedcom Master</name>
+    <packaging>pom</packaging>
+    <inceptionYear>2010</inceptionYear>
+
+    <modules>
+        <module>gedcom-spa</module>
+        <module>gedcom-web</module>
+    </modules>
+
+    <properties>
+        <!-- Common plugin settings -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
+        <scala.version>2.9.1</scala.version>
+        <!-- 2.8.1  2.8.0  -->
+        <lift.version>2.4-RC1</lift.version>
+        <!--  2.3 -->
+        <!--  error: 2.8.1-2.2  buvo: 2.3-RC3 2.3-M1 2.2-M1 2.2-RC5 2.1 2.0 2.0-M5 2.0-M2 1.1-M8 1.1-SNAPSHOT 1.1-M5 buvo:1.1-M7 1.0 -->
+        <!--  buvo: [2.8.0 2.2-RC5] -->
+        <!--  klaida: [2.8.1 2.3-M1] Forest.render JsRaw perdavime browseriui  -->
+        <lift.jar.scala.version>${scala.version}</lift.jar.scala.version>
+        <!-- error: 2.8.1-2.2  buvo: 2.8.0 -->
+
+        <lift.jpa.version>${lift.version}</lift.jpa.version>
+        <!-- buvo:  2.2  2.2-M1  2.1-SNAPSHOT 2.0  2.0-SNAPSHOT 1.1-M8  -->
+        <lift.jpa.scala.version>${scala.version}</lift.jpa.scala.version>
+        <!-- buvo:  2.2-M1  2.1-SNAPSHOT 2.0  2.0-SNAPSHOT 1.1-M8  -->
+
+        <lift.wizard.version>${lift.version}</lift.wizard.version>
+        <!-- buvo-bet-netinka:  2.2   -->
+
+        <repository.updatePolicy>daily</repository.updatePolicy>
+        <!-- daily never  -->
+        <!--updatePolicy: The frequency for downloading updates - can be-->
+        <!--"always", "daily" (default), "interval:XXX" (in minutes) or "never"-->
+        <!--(only if it doesn't exist locally).-->
+        <scm.svn>svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</scm.svn>
+        <!--<scm.svn>svn+ssh://vsh@sodas.node.lt/srv/svn/scala/trunk/vshmix</scm.svn>-->
+        <localRepository>c:/Documents and Settings/padargas/.m2/repository/</localRepository>
+        <maven.scaladoc.vscaladocVersion>1.2-m1</maven.scaladoc.vscaladocVersion>
+        <vscaladoc.links.liftweb.pathsufix>scaladocs/</vscaladoc.links.liftweb.pathsufix>
+        <vscaladoc.links.liftweb.baseurl>http://scala-tools.org/mvnsites/liftweb</vscaladoc.links.liftweb.baseurl>
+    </properties>
+
+    <distributionManagement>
+        <!-- use the following if you're not using a snapshot version. -->
+        <repository>
+            <id>vsh-repo</id>
+            <name>VSH repository</name>
+            <url>file://${localRepository}</url>
+            <!--<url>scp://host/path/to/repo</url>-->
+        </repository>
+        <!-- use the following if you ARE using a snapshot version. -->
+        <snapshotRepository>
+            <id>vsh-repo</id>
+            <name>VSH snapshot repository</name>
+            <url>file://${localRepository}</url>
+            <!--<url>scp://host/path/to/repo</url>-->
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>scala-tools.org_releases</id>
+            <name>Scala-Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>${repository.updatePolicy}</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>scala-tools.org_snapshots</id>
+            <name>Scala-Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>${repository.updatePolicy}</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>jboss.com</id>
+            <name>JBoss Maven2 Repository</name>
+            <url>http://repository.jboss.com/maven2
+            </url>
+            <releases>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>stax-releases</id>
+            <url>http://mvn.stax.net/content/repositories/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>stax-snapshots</id>
+            <url>http://mvn.stax.net/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>zt-releases</id>
+            <name>ZeroTurnaround Releases</name>
+            <url>
+                dav:http://repos.zeroturnaround.com/nexus/content/repositories/zt-releases
+            </url>
+            <layout>default</layout>
+        </repository>
+        <!-- <repository>
+            <id>central</id>
+            <url>http://repo2.maven.org/maven2</url>
+            &lt;!&ndash;<url>http://oss.sonatype.org/service/local/repositories/ukcomrobust-it-049/content</url>&ndash;&gt;
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository> -->
+
+    </repositories>
+    <!-- Set up repo for ScalaJPA -->
+    <!--
+        <repositories>
+        <repository>
+        <id>scala-tools.releases</id>
+        <name>Scala-Tools Dependencies Repository for Releases</name>
+        <url>http://scala-tools.org/repo-releases</url>
+        </repository>
+        </repositories>
+    -->
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>scala-tools.org</id>
+            <name>Scala-Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>${repository.updatePolicy}</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>${repository.updatePolicy}</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>codehaus</id>
+            <name>Codeaus Maven2 Repository</name>
+            <url>http://repository.codehaus.org</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>${repository.updatePolicy}</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>${repository.updatePolicy}</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>zt</id>
+            <name>Zeroturnaround Maven Repository</name>
+            <url>http://repos.zeroturnaround.com//maven2</url>
+            <!--<url>dav:http://repos.zeroturnaround.com/maven2</url>-->
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <!-- always never daily interval:xx (in minutes) -->
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>bees-plugins-snapshots</id>
+            <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+       <!--<pluginRepository>
+            <id>stax-plugins-releases</id>
+            <url>http://mvn.stax.net/content/repositories/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>stax-plugins-snapshots</id>
+            <url>http://mvn.stax.net/content/repositories/snapshots</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>-->
+    </pluginRepositories>
+
+    <scm>
+        <connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</connection>
+        <developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</developerConnection>
+    </scm>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--  T_h_e  p_r_o_j_e_c_t  j_a_r_s  -->
+            <dependency>
+                <groupId>${pom.groupId}</groupId>
+                <artifactId>gedcom-spa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${pom.groupId}</groupId>
+                <artifactId>gedcom-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!--  S_c_a_l_a  -->
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-compiler</artifactId>
+                <version>${scala.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest</artifactId>
+                <version>[1.3,)</version>
+                <!--<version>${scala.version}</version>-->
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-tools.testing</groupId>
+                <artifactId>specs_2.8.1</artifactId>
+                <!-- specs_2.8.0 -->
+                <version>1.6.7</version>
+                <!-- 1.6.5 -->
+                <scope>test</scope>
+            </dependency>
+
+            <!--  L_i_f_t  -->
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-webkit_${lift.jar.scala.version}</artifactId>
+                <!--<artifactId>lift-webkit_${lift.jar.scala.version}</artifactId>-->
+                <version>${lift.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- https://www.assembla.com/wiki/show/liftweb/Logging for 2.0-M3+ -->
+                        <!-- google-gr-Lift: [logger configuration] -->
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-util_${lift.jar.scala.version}</artifactId>
+                <version>${lift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-common_${lift.jar.scala.version}</artifactId>
+                <version>${lift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-mapper_${lift.jar.scala.version}</artifactId>
+                <version>${lift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-widgets_${lift.jar.scala.version}</artifactId>
+                <version>${lift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-jpa_${lift.jpa.scala.version}</artifactId>
+                <version>${lift.jpa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-textile_${lift.jar.scala.version}</artifactId>
+                <version>${lift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-json_${lift.jar.scala.version}</artifactId>
+                <version>${lift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.liftweb</groupId>
+                <artifactId>lift-wizard_${lift.jar.scala.version}</artifactId>
+                <version>${lift.wizard.version}</version>
+                <!--<version>${lift.version}</version>-->
+            </dependency>
+            <!--  J_U_n_i_t  -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.7</version>
+                <!-- 3.8.1 -->
+                <scope>test</scope>
+            </dependency>
+            <!--  D_B  d_r_i_v_e_r_s  -->
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>10.4.2.0</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.2.138</version>
+                <optional>false</optional>
+            </dependency>
+            <!-- s_e_r_v_e_r -->
+            <dependency>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty</artifactId>
+                <version>6.1.25</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- L_o_g_g_i_n_g -->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>[1.2.13,)</version>
+                <!--	[1.2.13, -->
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.5.10</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>0.9.26</version>
+            </dependency>
+            <!-- M_a_i_l -->
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.1</version>
+                <!--	[1.4,1.4.3) -->
+            </dependency>
+            <!-- Hibernate Geronimo -->
+            <dependency>
+                <groupId>geronimo-spec</groupId>
+                <artifactId>geronimo-spec-ejb</artifactId>
+                <version>2.1-rc4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>3.4.0.GA</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.transaction</groupId>
+                        <artifactId>jta</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>geronimo-spec</groupId>
+                <artifactId>geronimo-spec-jta</artifactId>
+                <version>1.0.1B-rc4</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- B318-5/vsh Cloner (java)
+            <dependency>
+                <groupId>uk.com.robust-it</groupId>
+                <artifactId>cloning</artifactId>
+                <version>1.7.4</version>
+            </dependency>-->
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Master properties (inherited by modules) -->
+    <dependencies>
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <!--<version>3.3.2.GA</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--<dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>3.3.2.GA</version>
+        <exclusions>
+        <exclusion>
+        <groupId>javax.transaction</groupId>
+        <artifactId>jta</artifactId>
+        </exclusion>
+        </exclusions>
+        </dependency>-->
+    </dependencies>
+    <!--<dependencies>-->
+    <!--<dependency>-->
+    <!--<groupId>org.scala-lang</groupId>-->
+    <!--<artifactId>scala-library</artifactId>-->
+    <!--<version>${scala.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.scala-lang</groupId>-->
+    <!--<artifactId>scala-compiler</artifactId>-->
+    <!--<version>${scala.version}</version>-->
+    <!--<scope>test</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>ch.qos.logback</groupId>-->
+    <!--<artifactId>logback-classic</artifactId>-->
+    <!--<version>0.9.26</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.apache.derby</groupId>-->
+    <!--<artifactId>derby</artifactId>-->
+    <!--<version>10.4.2.0</version>-->
+    <!--<optional>true</optional>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>junit</groupId>-->
+    <!--<artifactId>junit</artifactId>-->
+    <!--<version>4.7</version>-->
+    <!--<scope>test</scope>-->
+    <!--</dependency>-->
+    <!--</dependencies>-->
+
+    <build>
+        <defaultGoal>
+            clean install -Pspa_padargas -Dmaven.test.skip=true
+        </defaultGoal>
+        <!--<sourceDirectory>src/main/scala</sourceDirectory>-->
+        <!--<testSourceDirectory>src/test/scala</testSourceDirectory>-->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-idea-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sql-maven-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <!-- http://maven.apache.org/plugins/maven-release-plugin/ -->
+                    <!-- http://maven.apache.org/guides/mini/guide-releasing.html -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.1</version>
+                    <!--  2.0-beta-7 -->
+                </plugin>
+                <plugin>
+                    <groupId>org.scala-tools</groupId>
+                    <artifactId>maven-scala-plugin</artifactId>
+                    <version>2.14.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
+                        <groupId>org.zeroturnaround</groupId>
+                        <artifactId>jrebel-maven-plugin</artifactId>
+                        <version>1.0.7</version>
+                </plugin>
+                <!--<plugin>
+                </plugin>-->
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <configuration>
+                    <charset>${project.build.sourceEncoding}</charset>
+                    <jvmArgs>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                        <jvmArg>-DpackageLinkDefs=file://${project.build.directory}/packageLinkDefs.properties</jvmArg>
+                    </jvmArgs>
+                    <args>
+                        <!-- arg>-unchecked</arg -->
+                        <arg>-deprecation</arg>
+                    </args>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <overwrite>true</overwrite>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src</directory>
+                                    <includes>
+                                        <include>packageLinkDefs.properties</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-idea-plugin</artifactId>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- http://maven.apache.org/guides/mini/guide-releasing.html -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>
+                        svn+ssh://sodas.node.lt/srv/svn/scala/tags
+                    </tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>jrebel-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.zeroturnaround</groupId>-->
+                <!--<artifactId>jrebel-maven-plugin</artifactId>-->
+                <!--&lt;!&ndash;<executions>-->
+                    <!--<execution>-->
+                        <!--<id>generate-rebel-xml</id>-->
+                        <!--<phase>process-resources</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>generate</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>&ndash;&gt;-->
+            <!--</plugin>-->
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <!--<version>2.14.3</version>-->
+                <configuration>
+                    <charset>${project.build.sourceEncoding}</charset>
+                    <jvmArgs>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                        <jvmArg>-DpackageLinkDefs=file://${project.build.directory}/packageLinkDefs.properties</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>

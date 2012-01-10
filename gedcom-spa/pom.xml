@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>lt.node.gedcom</groupId>
+        <artifactId>gedcom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>gedcom-spa</artifactId>
+    <packaging>jar</packaging>
+    <name>gedcom Spa</name>
+
+    <scm>
+        <connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</connection>
+        <developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</developerConnection>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <!--<version>${scala.version}</version>-->
+            <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.scala-libs</groupId>
+            <artifactId>scalajpa</artifactId>
+            <!--<version>1.2-SNAPSHOT</version>-->
+            <version>[1.2-SNAPSHOT,)</version>
+            <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.scala-tools.testing</groupId>
+            <artifactId>specs_2.8.1</artifactId>  <!-- specs_2.8.0 -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.liftweb</groupId>
+            <artifactId>lift-jpa_${lift.jpa.scala.version}</artifactId>
+            <!--<artifactId>lift-jpa_${lift.jar.scala.version}</artifactId>-->
+        </dependency>
+        <!--  D_B  d_r_i_v_e_r_s  -->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <!--  g_e_r_o_n_i_m_o  -->
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-ejb</artifactId>
+            <!--<version>2.1-rc4</version>-->
+        </dependency>
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-jta</artifactId>
+            <!--<version>1.0.1B-rc4</version>-->
+            <scope>provided</scope>
+        </dependency>
+        <!--  -->
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>1.7</version>
+        </dependency>
+        <!-- Cloner (java) -->
+        <!--<dependency>-->
+            <!--<groupId>uk.com.robust-it</groupId>-->
+            <!--<artifactId>cloning</artifactId>-->
+        <!--</dependency>-->
+
+        <!-- s_a_v_i -->
+        <!--<dependency>-->
+        <!--[INFO] The projects in the reactor contain a cyclic reference: Edge between-->
+        <!--'Vertex{label='lt.node.gedcom:gedcom-web'}'-->
+            <!--and 'Vertex{label='lt.node.gedcom:gedcom-spa'}'-->
+        <!--introduces to cycle in the graph lt.node.gedcom:gedcom-spa &ndash;&gt;-->
+        <!--lt.node.gedcom:gedcom-web &ndash;&gt; lt.node.gedcom:gedcom-spa-->
+            <!--<groupId>${pom.groupId}</groupId>-->
+            <!--<artifactId>gedcom-web</artifactId>-->
+        <!--</dependency>-->
+    </dependencies>
+
+    <!--<build>-->
+        <!--&lt;!&ndash;<plugins/>&ndash;&gt;-->
+    <!--</build>-->
+    <build>
+        <defaultGoal>
+            clean process-resources -Pspa_padargas -Dmaven.test.skip=true
+            <!--clean install -Pspa_padargas -Dmaven.test.skip=true-->
+        </defaultGoal>
+    </build>
+    <profiles>
+        <!--  mvn clean install -Pspa_padargas  -Dmaven.test.skip=true  -->
+        <profile>
+            <id>spa_padargas</id>
+            <activation>
+                <property>
+                    <name>spa_padargas-on</name>
+                </property>
+            </activation>
+            <build>
+                <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
+                <filters>
+                    <filter>src/main/resources/filters/padargas.properties</filter>
+                </filters>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/META-INF</directory>
+                        <targetPath>META-INF</targetPath>
+                        <filtering>true</filtering>
+                        <includes>
+                            <include>persistence.xml</include>
+                        </includes>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources/META-INF</directory>
+                        <targetPath>META-INF</targetPath>
+                        <filtering>false</filtering>
+                        <includes>
+                            <include>orm.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--  mvn clean install -Pspa_stax  -Dmaven.test.skip=true  -->
+        <profile>
+            <id>spa_stax</id>
+            <activation>
+                <property>
+                    <name>spa_stax-on</name>
+                </property>
+            </activation>
+            <build>
+                <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
+                <filters>
+                    <filter>src/main/resources/filters/stax.properties</filter>
+                </filters>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/META-INF</directory>
+                        <targetPath>META-INF</targetPath>
+                        <filtering>true</filtering>
+                        <includes>
+                            <include>persistence.xml</include>
+                        </includes>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources/META-INF</directory>
+                        <targetPath>META-INF</targetPath>
+                        <filtering>false</filtering>
+                        <includes>
+                            <include>orm.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>
