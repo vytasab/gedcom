@@ -26,8 +26,10 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-web</connection>
-        <developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-web</developerConnection>
+        <!--<connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-web</connection>-->
+        <!--<developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-web</developerConnection>-->
+        <connection>scm:git:file//c:/Scala/gedcom/gedcom-web</connection>
+        <developerConnection>scm:git:file//c:/Scala/gedcom/gedcom-web</developerConnection>
     </scm>
 
     <pluginRepositories>
@@ -711,9 +713,9 @@
                                 <!-- specific configurations -->
                                 <configuration>
                                     <encoding>UTF8</encoding>
-                                    <src>${basedir}/src/main/resources</src>
+                                    <!--<src>${basedir}/src/main/resources</src>
                                     <dest>target/classes</dest>
-                                    <includes>**/*.properties</includes>
+                                    <includes>**/*.properties</includes>-->
                                 </configuration>
                             </execution>
                         </executions>
@@ -935,9 +937,9 @@
                                 <!-- specific configurations -->
                                 <configuration>
                                     <encoding>UTF8</encoding>
-                                    <src>${basedir}/src/main/resources</src>
+                                    <!--<src>${basedir}/src/main/resources</src>
                                     <dest>target/classes</dest>
-                                    <includes>**/*.properties</includes>
+                                    <includes>**/*.properties</includes>-->
                                 </configuration>
                             </execution>
                         </executions>

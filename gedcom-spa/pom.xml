@@ -15,8 +15,10 @@
     <name>gedcom Spa</name>
 
     <scm>
-        <connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</connection>
-        <developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</developerConnection>
+        <!--<connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</connection>-->
+        <!--<developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</developerConnection>-->
+        <connection>scm:git:file//c:/Scala/gedcom/gedcom-spa</connection>
+        <developerConnection>scm:git:file//c:/Scala/gedcom/gedcom-spa</developerConnection>
     </scm>
 
     <dependencies>

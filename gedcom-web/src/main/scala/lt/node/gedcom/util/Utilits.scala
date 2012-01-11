@@ -130,4 +130,45 @@ object Utilits {
     d(lenStr1)(lenStr2).toInt
   }
 
+  def gedcomHEAD(rootId: Long, ance: Int, desc: Int): String = {
+    this.gedcomHEAD(<_>gedcom_p{rootId}_a{ance}_d{desc}.ged</_>.toString)
+  }
+
+  def gedcomHEAD(fileName: String): String = {
+    val lvlNum = 0
+    val txt: StringBuffer = new StringBuffer(<_>{lvlNum} HEAD\n</_>.toString)
+    def txtapp(lvl: Int, tag: String, value: String): Unit =
+      txt.append(<_>{lvl} {tag} {value}\n</_>.toString)
+    txtapp(lvlNum+1, "SOUR", "gedcom-web")
+    txtapp(lvlNum+2, "VERS", "1.0")
+    txtapp(lvlNum+2, "NAME", "gedcom-web")
+    txtapp(lvlNum+1, "DEST", "ANY")
+    txtapp(lvlNum+1, "DATE", getTimeStr("d MMM yyyy"))
+    txtapp(lvlNum+2, "TINE", getTimeStr("HH:mm:ss"))
+    txt.append("1 SUBM @B1@\n")
+    txtapp(lvlNum+1, "FILE", {fileName})
+    txt.append("1 GEDC \n2 VERS 5.5 \n2 FORM Lineage-Linked \n1 CHAR UTF-8\n")
+    txt.append("0 @B1@ SUBM \n1 NAME padargas\n")
+    //txt.append(<_>{levelNumber+1} SOUR gedcom-web\n</_>.toString)
+    //txt.append(<_>{levelNumber+2} VERS 1.0-SNAPSHOT\n</_>.toString)
+    //txt.append(<_>{levelNumber+2} NAME gedcom-web\n</_>.toString)
+    //txt.append(<_>{levelNumber+1} DEST ANY\n</_>.toString)
+    //txt.append(<_>{levelNumber+1} DATE {getTimeStr("d MMM yyyy")}\n</_>.toString)
+    //txt.append(<_>{levelNumber+2} TINE {getTimeStr("HH:mm:ss")}\n</_>.toString)
+    txt.toString
+  }
+
+  def gedcomTRLR(): String = "0 TRLR\n"
+
+  def getTimeStr(dateFormat: String): String = {
+    import java.util.Date
+    import java.text.FieldPosition
+    val sdf = new java.text.SimpleDateFormat(dateFormat)
+    sdf.format(new Date, new StringBuffer(), new FieldPosition(0)).toString
+  }
+
+  def getTimeStr: String = {
+    this.getTimeStr("yyyy-MM-dd'T'HH:mm:ss.SSS")
+  }
+
 };

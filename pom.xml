@@ -67,7 +67,7 @@ mvn clean install -Dmaven.test.skip=true
         <!--updatePolicy: The frequency for downloading updates - can be-->
         <!--"always", "daily" (default), "interval:XXX" (in minutes) or "never"-->
         <!--(only if it doesn't exist locally).-->
-        <scm.svn>svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</scm.svn>
+        <!--<scm.svn>svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</scm.svn>-->
         <!--<scm.svn>svn+ssh://vsh@sodas.node.lt/srv/svn/scala/trunk/vshmix</scm.svn>-->
         <localRepository>c:/Documents and Settings/padargas/.m2/repository/</localRepository>
         <maven.scaladoc.vscaladocVersion>1.2-m1</maven.scaladoc.vscaladocVersion>
@@ -247,8 +247,10 @@ mvn clean install -Dmaven.test.skip=true
     </pluginRepositories>
 
     <scm>
-        <connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</connection>
-        <developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</developerConnection>
+        <!--<connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</connection>-->
+        <!--<developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</developerConnection>-->
+        <connection>scm:git:file//c:/Scala/gedcom</connection>
+        <developerConnection>scm:git:file//c:/Scala/gedcom</developerConnection>
     </scm>
 
     <dependencyManagement>

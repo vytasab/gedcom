@@ -370,5 +370,14 @@ bc14-3/vsh =====================================================================
         http://www.ibm.com/developerworks/xml/library/x-tipcombxslt/
         http://www.learn-xslt-tutorial.com/Multiple-Documents.cfm
 
+c111-2/vsh ==============================================================================
+    SCM migration: SVN --> Git
+
+
+c112-3/vsh ==============================================================================
+    Project build actions:
+    mvn clean install -Pspa_padargas  -Dmaven.test.skip=true
+
+
 ymdd-x/vsh ==============================================================================
 
