@@ -370,14 +370,45 @@ bc14-3/vsh =====================================================================
         http://www.ibm.com/developerworks/xml/library/x-tipcombxslt/
         http://www.learn-xslt-tutorial.com/Multiple-Documents.cfm
 
-c111-2/vsh ==============================================================================
+c111-3/vsh ==============================================================================
     SCM migration: SVN --> Git
+    gedcom project: SVN --> Git move
+    
+export HEAD version from svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom 
+    to c:/Scala/gedcom
 
+cd c:/Scala/gedcom
+
+C:\Scala\gedcom>git init
+    --> Initialized empty Git repository in C:/Scala/gedcom/.git/
+    
+C:\Scala\gedcom>git add .
+    --> ... lots of messages
+
+C:\Scala\gedcom>git commit -m "my first commit"
+[master (root-commit) 6a6f393] my first commit
+ Committer: unknown <padargas@.node.lt>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+After doing this, you may fix the identity used for this commit with:
+    git commit --amend --reset-author
+    
+C:\Scala\gedcom>git config --global user.name "vsh"
+
+C:\Scala\gedcom>git config --global user.email vytasab@gmail.com
+
+C:\Scala\gedcom>git commit --amend --reset-author -m "amend reset author"
+ 
 
 c112-3/vsh ==============================================================================
     Project build actions:
-    mvn clean install -Pspa_padargas  -Dmaven.test.skip=true
+
+    .../gedcom> mvn clean install -Pspa_padargas  -Dmaven.test.skip=true
 
 
 ymdd-x/vsh ==============================================================================
 
+   http://pesn.com/2012/01/14/9602012_Momentous_Breakthroughs_Announced_During_Anniversary_E-Cat_Interview/

@@ -107,6 +107,19 @@ object GedcomRest extends XMLApiHelper with Loggable {
       S.redirectTo("/gedcom/deleteFe")
     }
 
+    case Req(List("export", "exportAll", id), _, GetRequest) => {
+      S.setSessionAttribute("personId", id)
+      S.unsetSessionAttribute("role")
+      S.redirectTo("/gedcom/personView")
+      //S.redirectTo("/gedcom/forest")
+    }
+    case Req(List("export", "exportPart", id), _, GetRequest) => {
+      S.setSessionAttribute("personId", id)
+      S.unsetSessionAttribute("role")
+      S.redirectTo("/gedcom/personView")
+      //S.redirectTo("/gedcom/forest")
+    }
+
 
 
     case Req(List("rest", "personUpdate", epId), _, GetRequest) => {
@@ -356,18 +369,18 @@ object GedcomRest extends XMLApiHelper with Loggable {
               <_>p.bd='{birtDatePlace._1}';p.bp='{birtDatePlace._2.replaceAll("'", "")}';</_>.text +
               <_>p.dd='{deatDatePlace._1}';p.dp='{deatDatePlace._2.replaceAll("'", "")}';</_>.text +
               familyIdPart + fdIds + sbFams + familyPart);
-          //}
+            //}
           }
           case _ =>
             log.debug("getPersonJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+z.toString(Model.getUnderlying));
-/*
-          case (false, false) =>
-            log.debug("getPersonJS case false false " + z.toString(Model.getUnderlying));
-          case (false, true) =>
-            log.debug("getPersonJS case false true " + z.toString(Model.getUnderlying));
-          case (true, false) =>
-            log.debug("getPersonJS case true false " + z.toString(Model.getUnderlying));
-*/
+          /*
+                    case (false, false) =>
+                      log.debug("getPersonJS case false false " + z.toString(Model.getUnderlying));
+                    case (false, true) =>
+                      log.debug("getPersonJS case false true " + z.toString(Model.getUnderlying));
+                    case (true, false) =>
+                      log.debug("getPersonJS case true false " + z.toString(Model.getUnderlying));
+          */
         }
       }
       case None => {
@@ -456,16 +469,184 @@ object GedcomRest extends XMLApiHelper with Loggable {
         }
         case _ =>
           log.debug("getFamilyJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+family.toString(Model.getUnderlying));
-/*
-        case (false, false) =>
-          log.debug("getFamilyJS case false false " + family.toString(Model.getUnderlying));
-        case (false, true) =>
-          log.debug("getFamilyJS case false true " + family.toString(Model.getUnderlying));
-        case (true, false) =>
-          log.debug("getFamilyJS case true false " + family.toString(Model.getUnderlying));
-          //if (family.husbandId > 0)this.getPersonJS((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
-          //if (family.wifeId > 0)this.getPersonJS((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
-*/
+        /*
+                case (false, false) =>
+                  log.debug("getFamilyJS case false false " + family.toString(Model.getUnderlying));
+                case (false, true) =>
+                  log.debug("getFamilyJS case false true " + family.toString(Model.getUnderlying));
+                case (true, false) =>
+                  log.debug("getFamilyJS case true false " + family.toString(Model.getUnderlying));
+                  //if (family.husbandId > 0)this.getPersonJS((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
+                  //if (family.wifeId > 0)this.getPersonJS((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
+        */
+      }
+    }
+
+
+
+  /**
+   * area: _1: the number of generations of ancestors;
+   * _2: the number of generations of descendants;
+   * _3: true -> show siblings, false - no
+   */
+  def exportPerson(area: Tuple3[Int, Int, Boolean], id: Long, generation: Int, jsText: StringBuffer, sbIdGen: StringBuffer): Unit = {
+    log.debug("getPersonJS []... id=" + id.toString);
+    Model.find(classOf[Person], id) match {
+      case Some(z) if this.pIsNotYetInJS(z.id) => {
+        (-area._1 <= generation, area._2 >= generation) match {
+          case (true, true) /*if rootId == id*/ => {
+            //if (!(id != rootId && generation == 0)) {
+            log.debug("getPersonJS case true true " + z.toString(Model.getUnderlying));
+            // show
+            val familyIdPart = z.family match {
+              case null => ""
+              case _ => <_>p.familyId={z.family.id};</_>.text
+            };
+            val familyPart = z.family match {
+              case null => ""
+              case _ => {
+                val sbf: StringBuffer = new StringBuffer("");
+                getFamilyJS((area._1, area._2, area._3, id), z.family, generation - 1, sbf, sbIdGen)
+                sbf.toString
+              }
+            };
+            val fams = z.families(Model.getUnderlying);
+            val fdIds = new StringBuffer("");
+            val sbFams = new StringBuffer("");
+            fams match {
+              case x :: xs => {
+                log.debug("getPersonJS families =" + x.toString(Model.getUnderlying));
+                val sbFam = new StringBuffer("");
+                fdIds.append("p.fd='")
+                var s = "";
+                fams.foreach(fam => {
+                  fdIds.append(s + fam.id)
+                  getFamilyJS((area._1, area._2, area._3, 0L), fam, generation, sbFams, sbIdGen)
+                  sbFams.append(sbFam)
+                  s = ","
+                })
+                fdIds.append("';")
+              }
+              case Nil =>
+            }
+            val birtDatePlace: Tuple2[String, String] = this.getPeEvent(z /*Person*/, "BIRT")
+            val deatDatePlace: Tuple2[String, String] = this.getPeEvent(z /*Person*/, "DEAT")
+            sbIdGen.append(z.id + "," + generation + " ");
+            jsText.append("\nvar p={};var r=[];p.r=r;" +
+              <_>p.id={z.id};g['p'+p.id]=p;p.generation={generation};p.nameGivn='{z.nameGivn}';p.nameSurn='{z.nameSurn}';p.gender='{z.gender}';</_>.text +
+              <_>p.bd='{birtDatePlace._1}';p.bp='{birtDatePlace._2.replaceAll("'", "")}';</_>.text +
+              <_>p.dd='{deatDatePlace._1}';p.dp='{deatDatePlace._2.replaceAll("'", "")}';</_>.text +
+              familyIdPart + fdIds + sbFams + familyPart);
+            //}
+          }
+          case _ =>
+            log.debug("getPersonJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+z.toString(Model.getUnderlying));
+          /*
+                    case (false, false) =>
+                      log.debug("getPersonJS case false false " + z.toString(Model.getUnderlying));
+                    case (false, true) =>
+                      log.debug("getPersonJS case false true " + z.toString(Model.getUnderlying));
+                    case (true, false) =>
+                      log.debug("getPersonJS case true false " + z.toString(Model.getUnderlying));
+          */
+        }
+      }
+      case None => {
+        jsText.append("\nvar p={};var r=[];p.r=r;" + <_>p.id={id};g['p'+p.id]=p;p.errmsg='{S.?("no.person.for.this.id")}';</_>.text)
+      }
+      case _ => {
+        log.warn("getPersonJS Model.find(classOf[Person], id) match case _");
+      }
+    }
+  }
+
+  def exportPeEvent(pe: Person, evenTag: String): Tuple2 [String/*date*/, String/*place*/] = {
+    log.debug("getPeEvent []... ");
+    val aList: List[PersonEvent] = pe.personevents.toArray.toList.asInstanceOf[List[PersonEvent]]
+    aList.find(pe => pe.tag == evenTag) match {
+      case Some(x) =>
+        val ed: EventDetail = x.eventdetails.iterator.next
+        (ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
+      case _ =>
+        ("", "")
+    }
+  }
+
+  def exportFaEvent(fa: Family, evenTag: String): Tuple2 [String/*date*/, String/*place*/] = {
+    log.debug("getFaEvent []... ");
+    val aList: List[FamilyEvent] = fa.familyevents.toArray.toList.asInstanceOf[List[FamilyEvent]]
+    aList.find(fe => fe.tag == evenTag) match {
+      case Some(x) =>
+        val ed: EventDetail = x.familydetails.iterator.next
+        (ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
+      case _ =>
+        ("", "")
+    }
+  }
+
+  /**
+   * area: _1: the number of generations of ancestors;
+   * _2: the number of generations of descendants;
+   * _3: true -> show siblings, false - no
+   * _4: the calling Person id or 0L
+   */
+  def exportFamilyJS(area: Tuple4[Int, Int, Boolean, Long], family: Family, generation: Int, jsText: StringBuffer, sbIdGen: StringBuffer): Unit =
+    if (this.fIsNotYetInJS(family.id)) {
+      //bc02-4 if (family.children.size > 0) {
+      (generation >= 0) match {
+        case true =>
+          val iter = family.children.iterator
+          while (iter.hasNext) {
+            val c: Person = iter.next()
+            this.getPersonJS((area._1, area._2, area._3), c.id, generation + 1, jsText, sbIdGen)
+          }
+        case false =>
+      }
+      ///bc02-4 }
+      (-area._1 <= generation, area._2 >= generation) match {
+        case (true, true) => {
+          log.debug("getFamilyJS case true true " + family.toString(Model.getUnderlying));
+          var childrenIds: StringBuffer = new StringBuffer("")
+          if (family.husbandId > 0)this.getPersonJS((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
+          if (family.wifeId > 0)this.getPersonJS((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
+          if (area._3/* || generation >= 0*/) {
+            // show siblings
+            (generation >= 0) match {
+              case true =>
+                var separ = ""
+                val iter = family.children.iterator
+                while (iter.hasNext) {
+                  childrenIds.append(separ + iter.next().id.toString)
+                  separ = ","
+                }
+              case false =>
+                childrenIds = childrenIds.append(area._4.toString)
+            }
+          } else {
+            // a caller Person is only one child
+            //- childrenIds = childrenIds.append(area._4.toString)
+          }
+          if (childrenIds.length > 0) childrenIds = new StringBuffer("f.children='" + childrenIds.toString + "';");
+          val marrDatePlace: Tuple2[String, String] = this.getFaEvent(family, "MARR")
+          val divDatePlace: Tuple2[String, String] = this.getFaEvent(family, "DIV")
+          jsText.append("\nvar f={};var r=[];f.r=r;" +
+            <_>f.id={family.id};g['f'+f.id]=f;f.generation={generation};f.father={family.husbandId};f.mother={family.wifeId};{childrenIds.toString}</_>.text +
+            <_>f.md='{marrDatePlace._1}';f.mp='{marrDatePlace._2.replaceAll("'", "")}';</_>.text +
+            <_>f.dd='{divDatePlace._1}';f.dp='{divDatePlace._2.replaceAll("'", "")}';</_>.text
+          )
+        }
+        case _ =>
+          log.debug("getFamilyJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+family.toString(Model.getUnderlying));
+        /*
+                case (false, false) =>
+                  log.debug("getFamilyJS case false false " + family.toString(Model.getUnderlying));
+                case (false, true) =>
+                  log.debug("getFamilyJS case false true " + family.toString(Model.getUnderlying));
+                case (true, false) =>
+                  log.debug("getFamilyJS case true false " + family.toString(Model.getUnderlying));
+                  //if (family.husbandId > 0)this.getPersonJS((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
+                  //if (family.wifeId > 0)this.getPersonJS((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
+        */
       }
     }
 

@@ -46,8 +46,8 @@ mvn clean install -Dmaven.test.skip=true
         <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
         <scala.version>2.9.1</scala.version>
         <!-- 2.8.1  2.8.0  -->
-        <lift.version>2.4-RC1</lift.version>
-        <!--  2.3 -->
+        <lift.version>2.4</lift.version>
+        <!-- 2.4-RC1  2.3 -->
         <!--  error: 2.8.1-2.2  buvo: 2.3-RC3 2.3-M1 2.2-M1 2.2-RC5 2.1 2.0 2.0-M5 2.0-M2 1.1-M8 1.1-SNAPSHOT 1.1-M5 buvo:1.1-M7 1.0 -->
         <!--  buvo: [2.8.0 2.2-RC5] -->
         <!--  klaida: [2.8.1 2.3-M1] Forest.render JsRaw perdavime browseriui  -->

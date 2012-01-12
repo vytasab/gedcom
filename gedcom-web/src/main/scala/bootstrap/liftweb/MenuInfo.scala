@@ -65,14 +65,23 @@ object MenuInfo {
     //    Menu(Loc("UserReset", List("login", "resetPassword"),S.?("Password Reset"))),
     //    Menu(Loc("UserAdd", List("login", "useradd"),S.?("Add.User"))),
 
-/*  Bc01/vsh deprecated
-    Menu(Loc("settings", List("settings"), S.?("settings"))
+    Menu(Loc("addendum", List("addendum", "export"), S.?("Addendum")),
+      Menu(Loc("aExportAll", List("addendum", "exportAll"), S.?("export.all"))),
+      Menu(Loc("aExportPart", List("addendum", "exportPart"), S.?("export.part")))
+      //Menu(Loc("aExport", List("addendum", "export"), S.?("export.gedcom")))
     ),
-*/
+/*
+    // Build SiteMap
+    def sitemap = SiteMap(
+      Menu.i("Home") / "index", // the simple way to declare a menu
+      Menu.i("My Pages") / "user" / "index" >> EarlyResponse(loggedIn), //Show the page but redirect if user is not logged in
+      RegisterLogin.menu, //the register/login snippet menu part
 
-    Menu(Loc("addendum", List("addendum"), S.?("Addendum")),
-      Menu(Loc("aExport", List("addendum", "export"), S.?("export.gedcom")))
-    ),
+      // more complex because this menu allows anything in the
+      // /static path to be visible
+      Menu(Loc("Static", Link(List("static"), true, "/static/index"),
+        "Static Content")))
+ */
 
     Menu(Loc("loginout", List("authent"), S.?("authentication")),
       //Loc("authent", User.basePath, "Authentication"),
