@@ -409,6 +409,35 @@ c112-3/vsh =====================================================================
     .../gedcom> mvn clean install -Pspa_padargas  -Dmaven.test.skip=true
 
 
+c116-1/vsh ==============================================================================
+
+Global setup:
+ Set up git
+  git config --global user.name "vshgit"
+  git config --global user.email vytasab@gmail.com
+
+Next steps:
+  mkdir gedcom
+  cd gedcom
+  git init
+  touch README
+  git add README
+  git commit -m 'first commit'
+  git remote add origin git@github.com:vytasab/gedcom.git
+  git push -u origin master
+
+Existing Git Repo?
+  cd existing_git_repo
+  git remote add origin git@github.com:vytasab/gedcom.git
+  git push -u origin master
+
+Importing a Subversion Repo?
+  Click here
+
+When you're done:
+  Continue
+
 ymdd-x/vsh ==============================================================================
 
-   http://pesn.com/2012/01/14/9602012_Momentous_Breakthroughs_Announced_During_Anniversary_E-Cat_Interview/
+
+ymdd-x/vsh ==============================================================================
