@@ -98,41 +98,6 @@ class PersonSnips {
 
 
   def sublist = {
-    //----------------------------------------------------------
-    //object personsVar extends /*Request*/ SessionVar[Map[Long, String]](Map.empty)
-
-//    def buildQuery(current: String, limit: Int): Seq[String] = {
-//      //log.info("buildQuery: current= " + current + " limit=" + limit)
-//      val persons = Model.createNamedQuery[Person]("findPersonOrGivnSurn").
-//        setParams("nameGivn" -> ("%" + current + "%").toString,
-//        "nameSurn" -> ("%" + current + "%").toString).getResultList().toList
-//      val id2person: Map[Long, String] = persons. /*filter{
-//        p => S.getSessionAttribute("gender") match {
-//          case Full(x) => p.gender == x
-//          case _ => true
-//        }
-//      }.*/
-//        map {
-//        p => (p.id, (<_>{if (p.gender == "M") "♂ " else "♀ "}{p.nameGivn + " "}{p.nameSurn}</_>.text))
-//      }.toMap
-//      personsVar(id2person)
-//      id2person.values.toSeq
-//    }
-//
-//    def completeQuery(value: String): Unit = {
-//      log.debug(<_>completeQuery: value={value};</_>.text)
-//      val foundPersonId: Option[(Long, String)] =
-//        personsVar.is.find {
-//          (kv) => value == kv._2
-//        }
-//      //completeQuery(foundPersonId.get._1)
-//      RequestedURL(Full(<_>/rest/person/{foundPersonId.get._1}</_>.text))
-//      S.redirectTo(RequestedURL.openOr("/"))
-//    };
-//
-//    "#selector" #> FocusOnLoad(AutoComplete("", buildQuery _,
-//      completeQuery _,
-//      List(("selectFirst", "false"), ("minChars", "1"))))
     sublistInternal("rest/person")
   }
 

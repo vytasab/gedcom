@@ -67,8 +67,8 @@ object MenuInfo {
 
     Menu(Loc("addendum", List("addendum", "export"), S.?("Addendum")),
       Menu(Loc("aExportAll", List("addendum", "exportAll"), S.?("export.all"))),
-      Menu(Loc("aExportPart", List("addendum", "exportPart"), S.?("export.part")))
-      //Menu(Loc("aExport", List("addendum", "export"), S.?("export.gedcom")))
+      Menu(Loc("aExportPart", List("addendum", "exportPart"), S.?("export.part"))),
+      Menu(Loc("bExportPart", List("addendum", "doExportPart"), "", Hidden))
     ),
 /*
     // Build SiteMap

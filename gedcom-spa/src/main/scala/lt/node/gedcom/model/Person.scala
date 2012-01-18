@@ -10,13 +10,11 @@ import scala.xml.NodeSeq
 
 import _root_.net.liftweb._
 import http.S
-//import http.rest._
-//import http._
 
 import common._
 
 import _root_.lt.node.gedcom._
-import model._
+//import model._
 
 /**
  * TstPerson
@@ -237,6 +235,23 @@ class Person  {
   //
 
   def setSubmitter(u: User) = this.submitter = u.getSubmitter()
+
+
+  def toGedcom(em: EntityManager, levelNumber: Int, lang: String): String = {
+    this.getPersonEvents(em)
+    this.getPersonAttribs(em)
+    val txt: StringBuffer = new StringBuffer(<_>{levelNumber} @{id.toString}@ INDI</_>.text+"\n")
+    txt.append(<_>1 NAME {nameGivn} /{nameSurn}/</_>.text+"\n")
+    txt.append(<_>1 SEX {gender}</_>.text+"\n")
+    for (e <- this.personevents.toList)
+      txt.append(e.toGedcom(em, levelNumber+1, lang))  // <INDIVIDUAL_EVENT_STRUCTURE>
+    for (a <- this.personattribs.toList)
+      txt.append(a.toGedcom(em, levelNumber+1, lang)) // <INDIVIDUAL_ATTRIBUTE_STRUCTURE>
+    for (f <- this.families(em))
+      txt.append(<_>{levelNumber+1} FAMS @{f.id}@</_>.text+"\n")  // <SPOUSE_TO_FAMILY_LINK>
+    txt.toString
+  }
+
 
 }
 

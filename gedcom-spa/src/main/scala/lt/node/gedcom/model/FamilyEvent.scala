@@ -97,6 +97,21 @@ class FamilyEvent {
 //    </_>
   }
 
+
+  def toGedcom(em: EntityManager, levelNumber: Int, lang: String): String = {
+    this.getEventDetail(em)
+    val txt: StringBuffer = new StringBuffer(<_>{levelNumber} {tag}</_>.text+"\n")
+    txt.append(
+      this.familydetails.toList match {
+        case x :: xs => {
+          x.toGedcom(levelNumber+1, lang)
+        }
+        case _ => ""
+      }
+    )
+    txt.toString
+  }
+
 }
 
 

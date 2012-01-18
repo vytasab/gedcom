@@ -153,6 +153,31 @@ class Family /*extends Loggable*/  {
 
   def setSubmitter(u: User) = this.submitter = u.getSubmitter()
 
+
+  def toGedcom(em: EntityManager, levelNumber: Int, lang: String): String = {
+    this.getChildren(em)
+    this.getFamilyEvents(em)
+    val txt: StringBuffer = new StringBuffer(<_>{levelNumber} @{id.toString}@ FAM</_>.text+"\n")
+    this.husbandId match {
+      case id if id > 0 => txt.append(<_>{levelNumber} HUSB {this.husbandId}</_>.text+"\n")
+      case _ => ""
+    }
+    this.wifeId match {
+      case id if id > 0 => txt.append(<_>{levelNumber} WIFE {this.wifeId}</_>.text+"\n")
+      case _ => ""
+    }
+    this.countOfChildren match {
+      case n if n > 0 => txt.append(<_>{levelNumber} NCHI {this.countOfChildren}</_>.text+"\n")
+      case _ => ""
+    }
+    for (c <- this.children.toList)
+      txt.append(<_>{levelNumber} CHIL @{c.id}@</_>.text+"\n")
+    for (a <- this.familyevents.toList)
+      txt.append(a.toGedcom(em, levelNumber, lang)) // <INDIVIDUAL_ATTRIBUTE_STRUCTURE>
+    txt.toString
+  }
+
+
 }
 
 case class FamilyClone(husbandId:String, wifeId:String, countOfChildren:String)

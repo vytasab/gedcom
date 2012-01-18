@@ -3,8 +3,8 @@ package lt.node.gedcom.model
 import _root_.javax.persistence._
 import _root_.java.util.Date
 
-import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64
-import java.security.MessageDigest
+//import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64
+//import java.security.MessageDigest
 
 /**
 This class represents a user with login privileges on the website.

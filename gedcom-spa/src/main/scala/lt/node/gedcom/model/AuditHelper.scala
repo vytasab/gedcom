@@ -2,7 +2,7 @@ package lt.node.gedcom.model
 
 import _root_.scala.xml._
 
-import net.liftweb.common._ //{Box, Full, Empty}
+//import net.liftweb.common._ //{Box, Full, Empty}
 
 
 object AuditHelper {

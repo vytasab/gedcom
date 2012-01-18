@@ -11,7 +11,7 @@ import common._
 
 @Entity
 @Table(name = "eventdetail")
-class EventDetail {
+class EventDetail extends MultiLang {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -168,6 +168,7 @@ STILLBORN = died just prior, at, or near birth, 0 years
   }
 
 
+/*
   def avoidNull(string: String): String = {
     (string != null) match {
       case true if string.startsWith("<_") == true =>
@@ -178,6 +179,7 @@ STILLBORN = died just prior, at, or near birth, 0 years
         <_ d="en"><en></en></_>.toString()
     }
   }
+*/
 
 
   def toXml(/*em: EntityManager*/): NodeSeq = {
@@ -223,6 +225,51 @@ STILLBORN = died just prior, at, or near birth, 0 years
    */
   def doLocalizedAgeAtEevent(ageAtEvent: String): String = {
     ageAtEvent
+  }
+
+
+  def toGedcom(/*em: EntityManager, */levelNumber: Int, lang: String): String = {
+    //val txt: StringBuffer = new StringBuffer(<_>1 {tag}</_>.text+"\n")
+    val txt: StringBuffer = new StringBuffer("")
+    (avoidEmpty(descriptor)).length > 0 match {
+      case true => txt.append(<_>{levelNumber} TYPE  {(avoidEmpty(descriptor))}</_>.text+"\n")
+      case _ =>
+    }
+    //(avoidEmpty(dateValue)).length > 0 match {
+    (dateValue != null && dateValue.length() > 0) match {
+      case true => txt.append(<_>{levelNumber} DATE {(dateValue)}</_>.text+"\n")  //TODO convert to dd MMM YYYY
+      case _ =>
+    }
+    (avoidEmpty(place)).length > 0 match {
+      case true => txt.append(<_>{levelNumber} PLAC {getLangText(avoidEmpty(place), lang)}</_>.text+"\n")
+      case _ =>
+    }
+    (avoidEmpty(ageAtEvent)).length > 0 match {
+      case true => txt.append(<_>{levelNumber} AGE  {(avoidEmpty(doLocalizedAgeAtEevent(ageAtEvent)))}</_>.text+"\n")
+      case _ =>
+    }
+    (avoidEmpty(cause)).length > 0 match {
+      case true => txt.append(<_>{levelNumber} CAUS {getLangText(avoidEmpty(cause), lang)}</_>.text+"\n")
+      case _ =>
+    }
+    (avoidEmpty(source)).length > 0 match {
+      case true => txt.append(<_>{levelNumber} SOUR {getLangText(avoidEmpty(source), lang)}</_>.text+"\n")
+      case _ =>
+    }
+    (avoidEmpty(note)).length > 0 match {
+      case true => txt.append(<_>{levelNumber} NOTE {getLangText(avoidEmpty(note), lang)}</_>.text+"\n")
+      case _ =>
+    }
+    /* <ed id={id.toString}>
+      //<descriptor>{Unparsed(avoidNull(descriptor))}</descriptor>
+      //<dateValue>{doLocalizedDate(dateValue)}</dateValue>
+      //<place>{/*Unparsed*/(avoidNull(place))}</place>
+      //<ageAtEvent>{doLocalizedAgeAtEevent(ageAtEvent)}</ageAtEvent>
+      //<cause>{Unparsed(avoidNull(cause))}</cause>
+      //<source>{Unparsed(avoidNull(source))}</source>
+      //<note>{Unparsed(avoidNull(note))}</note>
+    </ed> */
+    txt.toString
   }
 
 }

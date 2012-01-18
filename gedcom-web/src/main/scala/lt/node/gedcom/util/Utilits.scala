@@ -131,20 +131,20 @@ object Utilits {
   }
 
   def gedcomHEAD(rootId: Long, ance: Int, desc: Int): String = {
-    this.gedcomHEAD(<_>gedcom_p{rootId}_a{ance}_d{desc}.ged</_>.toString)
+    this.gedcomHEAD(<_>gedcom_p{rootId}_a{ance}_d{desc}.ged</_>.text)
   }
 
   def gedcomHEAD(fileName: String): String = {
     val lvlNum = 0
-    val txt: StringBuffer = new StringBuffer(<_>{lvlNum} HEAD\n</_>.toString)
+    val txt: StringBuffer = new StringBuffer(<_>{lvlNum} HEAD</_>.text+"\n")
     def txtapp(lvl: Int, tag: String, value: String): Unit =
-      txt.append(<_>{lvl} {tag} {value}\n</_>.toString)
+      txt.append(<_>{lvl} {tag} {value}</_>.text+"\n")
     txtapp(lvlNum+1, "SOUR", "gedcom-web")
     txtapp(lvlNum+2, "VERS", "1.0")
     txtapp(lvlNum+2, "NAME", "gedcom-web")
     txtapp(lvlNum+1, "DEST", "ANY")
     txtapp(lvlNum+1, "DATE", getTimeStr("d MMM yyyy"))
-    txtapp(lvlNum+2, "TINE", getTimeStr("HH:mm:ss"))
+    txtapp(lvlNum+2, "TIME", getTimeStr("HH:mm:ss"))
     txt.append("1 SUBM @B1@\n")
     txtapp(lvlNum+1, "FILE", {fileName})
     txt.append("1 GEDC \n2 VERS 5.5 \n2 FORM Lineage-Linked \n1 CHAR UTF-8\n")

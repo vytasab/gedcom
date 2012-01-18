@@ -116,8 +116,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
     case Req(List("export", "exportPart", id), _, GetRequest) => {
       S.setSessionAttribute("personId", id)
       S.unsetSessionAttribute("role")
-      S.redirectTo("/gedcom/personView")
-      //S.redirectTo("/gedcom/forest")
+      S.redirectTo("/addendum/doExportPart")
     }
 
 
@@ -490,13 +489,13 @@ object GedcomRest extends XMLApiHelper with Loggable {
    * _3: true -> show siblings, false - no
    */
   def exportPerson(area: Tuple3[Int, Int, Boolean], id: Long, generation: Int, jsText: StringBuffer, sbIdGen: StringBuffer): Unit = {
-    log.debug("getPersonJS []... id=" + id.toString);
+    log.debug("exportPerson []... id=" + id.toString);
     Model.find(classOf[Person], id) match {
       case Some(z) if this.pIsNotYetInJS(z.id) => {
         (-area._1 <= generation, area._2 >= generation) match {
           case (true, true) /*if rootId == id*/ => {
             //if (!(id != rootId && generation == 0)) {
-            log.debug("getPersonJS case true true " + z.toString(Model.getUnderlying));
+            log.debug("exportPerson case true true " + z.toString(Model.getUnderlying));
             // show
             val familyIdPart = z.family match {
               case null => ""
@@ -515,7 +514,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
             val sbFams = new StringBuffer("");
             fams match {
               case x :: xs => {
-                log.debug("getPersonJS families =" + x.toString(Model.getUnderlying));
+                log.debug("exportPerson families =" + x.toString(Model.getUnderlying));
                 val sbFam = new StringBuffer("");
                 fdIds.append("p.fd='")
                 var s = "";
@@ -540,14 +539,14 @@ object GedcomRest extends XMLApiHelper with Loggable {
             //}
           }
           case _ =>
-            log.debug("getPersonJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+z.toString(Model.getUnderlying));
+            log.debug("exportPerson case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+z.toString(Model.getUnderlying));
           /*
                     case (false, false) =>
-                      log.debug("getPersonJS case false false " + z.toString(Model.getUnderlying));
+                      log.debug("exportPerson case false false " + z.toString(Model.getUnderlying));
                     case (false, true) =>
-                      log.debug("getPersonJS case false true " + z.toString(Model.getUnderlying));
+                      log.debug("exportPerson case false true " + z.toString(Model.getUnderlying));
                     case (true, false) =>
-                      log.debug("getPersonJS case true false " + z.toString(Model.getUnderlying));
+                      log.debug("exportPerson case true false " + z.toString(Model.getUnderlying));
           */
         }
       }
@@ -555,7 +554,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
         jsText.append("\nvar p={};var r=[];p.r=r;" + <_>p.id={id};g['p'+p.id]=p;p.errmsg='{S.?("no.person.for.this.id")}';</_>.text)
       }
       case _ => {
-        log.warn("getPersonJS Model.find(classOf[Person], id) match case _");
+        log.warn("exportPerson Model.find(classOf[Person], id) match case _");
       }
     }
   }
@@ -598,7 +597,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
           val iter = family.children.iterator
           while (iter.hasNext) {
             val c: Person = iter.next()
-            this.getPersonJS((area._1, area._2, area._3), c.id, generation + 1, jsText, sbIdGen)
+            this.exportPerson((area._1, area._2, area._3), c.id, generation + 1, jsText, sbIdGen)
           }
         case false =>
       }
@@ -607,8 +606,8 @@ object GedcomRest extends XMLApiHelper with Loggable {
         case (true, true) => {
           log.debug("getFamilyJS case true true " + family.toString(Model.getUnderlying));
           var childrenIds: StringBuffer = new StringBuffer("")
-          if (family.husbandId > 0)this.getPersonJS((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
-          if (family.wifeId > 0)this.getPersonJS((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
+          if (family.husbandId > 0)this.exportPerson((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
+          if (family.wifeId > 0)this.exportPerson((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
           if (area._3/* || generation >= 0*/) {
             // show siblings
             (generation >= 0) match {
@@ -644,8 +643,8 @@ object GedcomRest extends XMLApiHelper with Loggable {
                   log.debug("getFamilyJS case false true " + family.toString(Model.getUnderlying));
                 case (true, false) =>
                   log.debug("getFamilyJS case true false " + family.toString(Model.getUnderlying));
-                  //if (family.husbandId > 0)this.getPersonJS((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
-                  //if (family.wifeId > 0)this.getPersonJS((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
+                  //if (family.husbandId > 0)this.exportPerson((area._1, area._2, area._3), family.husbandId, generation, jsText, sbIdGen)
+                  //if (family.wifeId > 0)this.exportPerson((area._1, area._2, area._3), family.wifeId, generation, jsText, sbIdGen)
         */
       }
     }
