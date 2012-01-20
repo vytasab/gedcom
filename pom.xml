@@ -247,10 +247,13 @@ mvn clean install -Dmaven.test.skip=true
     </pluginRepositories>
 
     <scm>
-        <!--<connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</connection>-->
-        <!--<developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</developerConnection>-->
-        <connection>scm:git:file//c:/Scala/gedcom</connection>
-        <developerConnection>scm:git:file//c:/Scala/gedcom</developerConnection>
+        <!--<connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</connection>
+        <developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom</developerConnection>-->
+        <!--<connection>scm:git:file//c:/Scala/gedcom</connection>
+        <developerConnection>scm:git:file//c:/Scala/gedcom</developerConnection>-->
+        <!-- http://www.sonatype.com/people/2009/09/maven-tips-and-tricks-using-github/ -->
+        <connection>scm:git:git@github.com:vytasab/gedcom.git</connection>
+        <developerConnection>scm:git:git@github.com:vytasab/gedcom.git</developerConnection>
     </scm>
 
     <dependencyManagement>
@@ -540,7 +543,6 @@ mvn clean install -Dmaven.test.skip=true
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.1</version>
-                    <!--  2.0-beta-7 -->
                 </plugin>
                 <plugin>
                     <groupId>org.scala-tools</groupId>

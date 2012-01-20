@@ -17,8 +17,9 @@
     <scm>
         <!--<connection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</connection>-->
         <!--<developerConnection>scm:svn:svn+ssh://sodas.node.lt/srv/svn/scala/trunk/gedcom/gedcom-spa</developerConnection>-->
-        <connection>scm:git:file//c:/Scala/gedcom/gedcom-spa</connection>
-        <developerConnection>scm:git:file//c:/Scala/gedcom/gedcom-spa</developerConnection>
+        <!-- http://www.sonatype.com/people/2009/09/maven-tips-and-tricks-using-github/ -->
+        <connection>scm:git:git@github.com:vytasab/gedcom.git</connection>
+        <developerConnection>scm:git:git@github.com:vytasab/gedcom.git</developerConnection>
     </scm>
 
     <dependencies>

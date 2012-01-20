@@ -445,7 +445,7 @@ c117-2/vsh =====================================================================
  c:\Scala\gedcom>git remote add origin git@github.com:vytasab/gedcom.git
 
  c:\Scala\gedcom>git push -u origin master
- Enter passphrase for key '/c/Documents and Settings/padargas/.ssh/id_rsa': rauda
+ Enter passphrase for key '/c/Documents and Settings/padargas/.ssh/id_rsa': r...a
  Counting objects: 320, done.
  Delta compression using up to 2 threads.
  Compressing objects: 100% (289/289), done.
@@ -460,7 +460,7 @@ c117-2/vsh =====================================================================
  Pushing changes to a public repository:
 
  c:\Scala\gedcom>git push git@github.com:vytasab/gedcom.git master
- Enter passphrase for key '/c/Documents and Settings/padargas/.ssh/id_rsa': rauda
+ Enter passphrase for key '/c/Documents and Settings/padargas/.ssh/id_rsa': r...a
  Counting objects: 76, done.
  Delta compression using up to 2 threads.
  Compressing objects: 100% (34/34), done.
