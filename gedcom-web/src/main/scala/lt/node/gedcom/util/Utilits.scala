@@ -147,7 +147,7 @@ object Utilits {
     txtapp(lvlNum+2, "TIME", getTimeStr("HH:mm:ss"))
     txt.append("1 SUBM @B1@\n")
     txtapp(lvlNum+1, "FILE", {fileName})
-    txt.append("1 GEDC \n2 VERS 5.5 \n2 FORM Lineage-Linked \n1 CHAR UTF-8\n")
+    txt.append("1 GEDC \n2 VERS 5.5.1 \n2 FORM Lineage-Linked \n1 CHAR UTF-8\n")
     txt.append("0 @B1@ SUBM \n1 NAME padargas\n")
     //txt.append(<_>{levelNumber+1} SOUR gedcom-web\n</_>.toString)
     //txt.append(<_>{levelNumber+2} VERS 1.0-SNAPSHOT\n</_>.toString)

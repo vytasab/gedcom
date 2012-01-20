@@ -104,17 +104,18 @@ class PersonAttrib extends MultiLang {
 
   def toGedcom(em: EntityManager, levelNumber: Int, lang: String): String = {
     this.getAttribDetail(em)
-    val txt: StringBuffer = new StringBuffer(<_>{levelNumber} {tag}</_>.text+"\n")
-    Unparsed(avoidNull(tagValue)).length > 0 match {
-      case true => txt.append(<_>{levelNumber} NOTE  {getLangText(tagValue, lang)}</_>.text+"\n")
-      case _ => ""
+    val txt: StringBuffer = new StringBuffer(/*<_>{levelNumber} {tag}</_>.text+"\n"*/)
+    //Unparsed(avoidNull(tagValue)).length > 0 match {
+    (avoidEmpty(tagValue)).length > 0 match {
+      case true => txt.append(<_>{levelNumber} {tag} {getLangText(tagValue, lang)}</_>.text+"\n")
+      case _ => """"""
     }
     txt.append(
       this.attribdetails.toList match {
         case x :: xs => {
           x.toGedcom(levelNumber+1, lang)
         }
-        case _ => ""
+        case _ => """"""
       }
     )
     txt.toString

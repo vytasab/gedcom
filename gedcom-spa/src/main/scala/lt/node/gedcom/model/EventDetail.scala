@@ -227,8 +227,9 @@ STILLBORN = died just prior, at, or near birth, 0 years
     ageAtEvent
   }
 
+// TODO C118-3/vsh suskaidyti ilgą tekstą į gabalus max 255 chars per CONT ar CONC
 
-  def toGedcom(/*em: EntityManager, */levelNumber: Int, lang: String): String = {
+  def toGedcom(levelNumber: Int, lang: String): String = {
     //val txt: StringBuffer = new StringBuffer(<_>1 {tag}</_>.text+"\n")
     val txt: StringBuffer = new StringBuffer("")
     (avoidEmpty(descriptor)).length > 0 match {
@@ -244,8 +245,9 @@ STILLBORN = died just prior, at, or near birth, 0 years
       case true => txt.append(<_>{levelNumber} PLAC {getLangText(avoidEmpty(place), lang)}</_>.text+"\n")
       case _ =>
     }
-    (avoidEmpty(ageAtEvent)).length > 0 match {
-      case true => txt.append(<_>{levelNumber} AGE  {(avoidEmpty(doLocalizedAgeAtEevent(ageAtEvent)))}</_>.text+"\n")
+    //(avoidEmpty(ageAtEvent)).length > 0 match {
+    (ageAtEvent != null && ageAtEvent.length() > 0) match {
+      case true => txt.append(<_>{levelNumber} AGE {(/*avoidEmpty*/(doLocalizedAgeAtEevent(ageAtEvent)))}</_>.text+"\n")
       case _ =>
     }
     (avoidEmpty(cause)).length > 0 match {

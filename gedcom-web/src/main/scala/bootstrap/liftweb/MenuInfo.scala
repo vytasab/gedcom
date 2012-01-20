@@ -66,8 +66,9 @@ object MenuInfo {
     //    Menu(Loc("UserAdd", List("login", "useradd"),S.?("Add.User"))),
 
     Menu(Loc("addendum", List("addendum", "export"), S.?("Addendum")),
-      Menu(Loc("aExportAll", List("addendum", "exportAll"), S.?("export.all"))),
+      Menu(Loc("aExportAll", List("addendum", "doExportAll"), S.?("export.all"))),
       Menu(Loc("aExportPart", List("addendum", "exportPart"), S.?("export.part"))),
+      //Menu(Loc("bExportAll", List("addendum", "doExportAll"), "", Hidden)),
       Menu(Loc("bExportPart", List("addendum", "doExportPart"), "", Hidden))
     ),
 /*

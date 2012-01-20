@@ -133,15 +133,17 @@ class PersonEvent {
 
   def toGedcom(em: EntityManager, levelNumber: Int, lang: String): String = {
     this.getEventDetail(em)
+    println(<_>===AAA===|{this.toString()}|===AAA===</_>.text)
     val txt: StringBuffer = new StringBuffer(<_>{levelNumber} {tag}</_>.text+"\n")
     txt.append(
       this.eventdetails.toList match {
         case x :: xs => {
-          x.toGedcom(levelNumber+1, lang)
+          x.toGedcom(levelNumber+1, lang).toString()
         }
-        case _ => ""
+        case _ => """"""
       }
     )
+    println(<_>===BBB===|{txt.toString}|===BBB===</_>.text)
     txt.toString
   }
 
