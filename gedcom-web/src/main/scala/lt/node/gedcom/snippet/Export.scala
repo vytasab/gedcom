@@ -36,9 +36,9 @@ class Export {
       GedcomRest.exportPerson(/*(04,04,true)*/ansdesxxx, person.id, 0, gedText)
     }
     val gedFileMid: String = gedText.toString()
-      val gedFile =  gedFileTop + gedFileMid + Utilits.gedcomTRLR()
-      "#gedTitle" #> <span><_>{S.?("export.gedcom")}</_>.text</span> &
-      "#gedFile" #> <pre>{gedFile}</pre>
+    val gedFile =  gedFileTop + gedFileMid + Utilits.gedcomTRLR()
+    "#gedTitle" #> <span><_>{S.?("export.gedcom")}</_>.text</span> &
+    "#gedFile" #> <pre>{gedFile}</pre>
   }
 
 
