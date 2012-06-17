@@ -17,6 +17,7 @@ class SettingSnips {
   //log.debug(<_>S.locale={S.locale.toString}</_>.text);
   //log.debug(<_>S.param("locale")={S.param("locale")}</_>.text);
   //log.debug(<_>S.get("locale")={S.get("locale").toString}</_>.text);
+  log.debug(<_>Locales.langs.size={Locales.langs.size.toString}</_>.text)
 
 //  def list = {
 //    var selectedLocale: String = S.locale.toString  //.getLanguage
@@ -58,14 +59,14 @@ class SettingSnips {
 
     def setLocale2(): Unit = {
       log.debug(<_>selectedLocale2={selectedLocale}</_>.text);
-      S.set("locale", selectedLocale);
+      S.set("locale", selectedLocale.substring(0,2));
       S.redirectTo(uri);
     };
 
 //    "#lang_lbl" #> S.?("set.locale") &
       "#lang" #> SHtml.select(Locales.LocalesVar.is.toSeq, Full(S.locale.toString),
-        { x: String => selectedLocale = x }, "size" -> "1"/*(Locales.LocalesVar.is.toSeq.size.toString)*/,
-        "onchange" -> "selectWhenChanged(this)")  &
+        { x: String => selectedLocale = x }, "size" -> "1"/*(Locales.langs.size.toString)*/,
+      "onblur" -> "selectWhenChanged(this)", "onchange" -> "selectWhenChanged(this)")  &
       "#lokale" #> <img src={"/images/flag_" + S.locale.toString.split("_").toList.head.trim + ".png"}
                         title={S.loc("set.locale")} width="4%" height="3%"/> &
       "#submit" #> SHtml.submit("Save", setLocale2)

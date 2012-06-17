@@ -4,11 +4,13 @@ import _root_.scala.xml.NodeSeq
 import org.slf4j.{LoggerFactory, Logger}
 import _root_.net.liftweb._
 import http.rest._
-import http._   //{S, LiftRules, Req, GetRequest, LiftResponse, NotFoundResponse}
+import http._
+import lt.node.gedcom.util.{GedcomUtil, MultiLangText}
+
+//{S, LiftRules, Req, GetRequest, LiftResponse, NotFoundResponse}
 import common._
 import _root_.lt.node.gedcom.model._
 import _root_.bootstrap.liftweb.{PersonIds,FamilyIds}
-import _root_.lt.node.gedcom.util.MultiLangText
 
 object GedcomRest extends XMLApiHelper with Loggable {
 
@@ -371,7 +373,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
             //}
           }
           case _ =>
-            log.debug("getPersonJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+z.toString(Model.getUnderlying));
+            log.debug("getPersonJS case "+ (-area._1 <= generation).toString+" "+(area._2 >= generation).toString+" "+z.toString(Model.getUnderlying));
           /*
                     case (false, false) =>
                       log.debug("getPersonJS case false false " + z.toString(Model.getUnderlying));
@@ -397,7 +399,9 @@ object GedcomRest extends XMLApiHelper with Loggable {
     aList.find(pe => pe.tag == evenTag) match {
       case Some(x) =>
         val ed: EventDetail = x.eventdetails.iterator.next
-        (ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
+        //(ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
+        //log.debug("getPeEvent ###########################|" + ed.place + "|");
+        (GedcomUtil.localeGedcomDate(ed.dateValue), (new MultiLangText("place", ed.place)).getLangMsg())
       case _ =>
         ("", "")
     }
@@ -409,7 +413,8 @@ object GedcomRest extends XMLApiHelper with Loggable {
     aList.find(fe => fe.tag == evenTag) match {
       case Some(x) =>
         val ed: EventDetail = x.familydetails.iterator.next
-        (ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
+        //(ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
+        (GedcomUtil.localeGedcomDate(ed.dateValue), (new MultiLangText("place", ed.place)).getLangMsg())
       case _ =>
         ("", "")
     }

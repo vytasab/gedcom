@@ -76,8 +76,10 @@ trait MultiLang/*Text*/ {
   def getLangMsgXml(dbField: String, lang: String): NodeSeq = {
     val dbFieldXml: NodeSeq = MultiLangText.txt2xml(dbField, lang)
     MultiLangText.hasLang(dbFieldXml, lang) match {
-      case true => (dbFieldXml \\ lang)
-      case _ => MultiLangText.wrapText("", lang)
+      case true => dbFieldXml \\ lang
+      case _ =>
+        val dl = (dbFieldXml \ "@d").text
+        MultiLangText.wrapText("["+dl+"]: " + (dbFieldXml \\ dl).text , dl)
     }
   }
 

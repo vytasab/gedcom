@@ -318,9 +318,9 @@ class Boot extends Loggable {
 // ...[] ===================================================================================
 
 object Locales {
-  val aMap = List("--", "lt_LT", "en_EN"/*, "de", "pl", "ru"*/).map{
-    x => (<_>{x}</_>.text, x)
-  }.toMap
+  val langs = List(/*"--",*/ "lt_LT", "en_EN"/*, "de", "pl", "ru"*/)
+
+  val aMap = langs.map{ x => (<_>{x}</_>.text, x)}.toMap
 
   object LocalesVar extends SessionVar[Map[String, String]](aMap)
 

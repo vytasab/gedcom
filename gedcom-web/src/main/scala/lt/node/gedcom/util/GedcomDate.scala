@@ -1,6 +1,8 @@
 package lt.node.gedcom.util
 
 import _root_.net.liftweb.http.S
+import java.text.SimpleDateFormat
+import org.slf4j.{LoggerFactory, Logger}
 
 abstract class GedcomDate
 case class YMD(yyyy: String, MM: String, dd: String) extends GedcomDate
@@ -16,6 +18,9 @@ case class Datext(text: String) extends GedcomDate
 
 
 object GedcomUtil {
+
+  val log: Logger = LoggerFactory.getLogger("GedcomUtil")
+  // log.debug(<_>xIsNotYetInJS={xIds.get.toString} xId={xId} result={result}</_>.text)
 
   val thisYear = new java.text.SimpleDateFormat("yyyy").format(java.util.Calendar.getInstance.getTime)
   val initYear = 1800
@@ -49,9 +54,9 @@ object GedcomUtil {
    * Transforms localized date to GEDCOM format. Date format is yyyy [mm [dd]]
    */
   def doGedcomDate(dateI18nValue: String, dateOptionI18nValue: String): String = {
-    //println(<_>dateI18nValue=|{dateI18nValue}| dateOptionI18nValue=|{dateOptionI18nValue}| </_>.text)
+    //log.debug(<_>dateI18nValue=|{dateI18nValue}| dateOptionI18nValue=|{dateOptionI18nValue}| </_>.text)
     val dateOptionKey = GedcomDateOptions.getKey(dateOptionI18nValue)
-    //println(<_>dateOptionKey=|{dateOptionKey}| </_>.text)
+    //log.debug(<_>dateOptionKey=|{dateOptionKey}| </_>.text)
     dateOptionKey match {
       case "gdt_no_date" =>
         ""
@@ -154,4 +159,107 @@ object GedcomUtil {
   var yyyyApx = "";  var MMApx = "";  var ddApx = ""
   var datext = ""
 */
+
+  /**
+   * Transforms GEDCOM format date  to localized format.
+   */
+  def localeGedcomDate(gedcomDateValue: String/*, lang: String*/): String = {
+
+    val lang: String = S.get("locale").getOrElse("en")
+    lazy val DatePtrnOpt = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
+
+    def dateLt(gedcomDateValue: String): String = {
+      val DatePtrnOpt(d, m, y) = gedcomDateValue
+      (d, m, y) match {
+        case (null, null, yy) =>
+          log.debug ("DatePtrnOpt(null, null, yy)")
+          yy
+        case (null, mm, yy) =>
+          log.debug ("DatePtrnOpt(null, mm, yy)")
+          new SimpleDateFormat("""yyyy-MM""").format(new SimpleDateFormat("""MMM yyyy""").parse(gedcomDateValue))
+        case (dd, null, yy) =>
+          log.debug ("DatePtrnOpt(dd, null, yy)")
+          "Err: " + gedcomDateValue
+        case (dd, mm, yy) =>
+          log.debug ("DatePtrnOpt(dd, mm, yy)")
+          new SimpleDateFormat("""yyyy-MM-dd""").format(new SimpleDateFormat("""d MMM yyyy""").parse(gedcomDateValue))
+      }
+    }
+
+    log.debug ( "================================================|")
+    lang match {
+      case "lt" =>
+        try {
+          val DatePtrnOpt(d, m, y) = gedcomDateValue
+          log.debug (gedcomDateValue + "==> DatePtrnOpt(d,m,y)" + (if (d!=null) d else "null") + (if (m!=null) m else "null") + (if (y!=null) y else "null"))
+          dateLt(gedcomDateValue)
+        } catch {
+          case ex: Exception =>
+            log.debug("DatePtrnOpt(null, null, null): " + ex.toString)
+            lazy val DatePeriodPtrnOpt = """(FROM .+?)?( )?(TO .+?)?""".r
+            try {
+              log.debug ("|"+gedcomDateValue + "|==>")
+              val DatePeriodPtrnOpt(from, s, to) = gedcomDateValue
+              log.debug (" DatePeriodPtrnOpt(from,s,to)" +
+                (if (from!=null) from else "null") + (if (s!=null) s else "null") + (if (to!=null) to else "null"))
+              (from, s, to) match {
+                case (null, null, null) => "Err: " + gedcomDateValue
+                case (f, null, null) =>
+                  log.debug ("NUO |"+f.substring(5)+"|")
+                  "NUO " + dateLt(f.substring(5))
+                case (null, null, t) =>
+                  log.debug ("IKI")
+                  "IKI " + dateLt(t.substring(3))
+                case (f, ss, t) =>
+                  log.debug ("NUO IKI")
+                  "NUO " + dateLt(f.substring(5)) + " IKI " + dateLt(t.substring(3))
+              }
+            } catch {
+              case ex: Exception =>
+                log.debug("DatePeriodPtrnOpt(null, null, null): " + ex.toString)
+                lazy val DateRangeBAPtrn = """(BET .+?)( AND .+?)?""".r
+                try {
+                  log.debug ("|"+gedcomDateValue + "|==>")
+                  val DateRangeBAPtrn(bet, and) = gedcomDateValue
+                  log.debug (" DateRangeBAPtrn(bet, and)" + (if (bet!=null) bet else "null") + (if (and!=null) and else "null"))
+                  (bet, and) match {
+                    case (null, null) => "Err: " + gedcomDateValue
+                    case (b, null) => "Err: " + gedcomDateValue
+                    case (null, a) => "Err: " + gedcomDateValue
+                    case (b, a) =>
+                      log.debug ("BET AND")
+                      "TARP " + dateLt(b.substring(4)) + " IR " + dateLt(a.substring(5))
+                  }
+                } catch {
+                  case ex: Exception =>
+                    log.debug("DateRangeBAPtrn(null, null): " + ex.toString)
+                    lazy val DateOtherPtrn = """(BEF .+?)?(AFT .+?)?(ABT .+?)?""".r
+                    try {
+                      log.debug ("|"+gedcomDateValue + "|==>")
+                      val DateOtherPtrn(bef, aft, abt) = gedcomDateValue
+                      log.debug (" DateOtherPtrn(bef, aft, abt)" + (if (bef!=null) bef else "null")+ (if (aft!=null) aft else "null") + (if (abt!=null) abt else "null"))
+                      (bef, aft, abt) match {
+                        case (ok, null, null) => "PRIEŠ " + dateLt(ok.substring(4))
+                        case (null, ok, null) => "PO " + dateLt(ok.substring(4))
+                        case (null, null, ok) => "APIE " + dateLt(ok.substring(4))
+                      }
+                    } catch {
+                      case ex: Exception =>
+                        log.warn("DateOtherPtrn(null, null, null): " + ex.toString)
+                        "[en]: " + gedcomDateValue
+                    }
+                }
+            }
+
+        }
+      //case "en" => gedcomDateValue
+      //case "de" => gedcomDateValue
+      //case "pl" => gedcomDateValue
+      //case "ru" => gedcomDateValue
+      case _ =>
+        log.debug ( "===|" + "_ or en")
+        gedcomDateValue  //  default case "en"
+    }
+  }
+
 }
