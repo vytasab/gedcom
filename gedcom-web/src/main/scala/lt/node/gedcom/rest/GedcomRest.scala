@@ -401,7 +401,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
         val ed: EventDetail = x.eventdetails.iterator.next
         //(ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
         //log.debug("getPeEvent ###########################|" + ed.place + "|");
-        (GedcomUtil.localeGedcomDate(ed.dateValue), (new MultiLangText("place", ed.place)).getLangMsg())
+        (GedcomUtil.i18nizeGedcomDate(ed.dateValue), (new MultiLangText("place", ed.place)).getLangMsg())
       case _ =>
         ("", "")
     }
@@ -414,7 +414,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
       case Some(x) =>
         val ed: EventDetail = x.familydetails.iterator.next
         //(ed.dateValue, (new MultiLangText("place", ed.place)).getLangMsg())
-        (GedcomUtil.localeGedcomDate(ed.dateValue), (new MultiLangText("place", ed.place)).getLangMsg())
+        (GedcomUtil.i18nizeGedcomDate(ed.dateValue), (new MultiLangText("place", ed.place)).getLangMsg())
       case _ =>
         ("", "")
     }

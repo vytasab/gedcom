@@ -16,6 +16,7 @@ object XslTransformer extends /*XMLApiHelper with*/ Loggable {
   val log = Logger("XslTransformer");
 
   def apply(xml: String, xsl: String, params: Map[String, String]): String = {
+    log.debug("===|||" + xml + "|||===");
     this.useXmlStringXslFile(xml, xsl, params)
   }
 

@@ -55,7 +55,7 @@ object PersonReading extends Loggable {
     //val resXml = AgeAtEvent.localeAgeAtEventInXml(personVar.get.get.toXmlGeneral(Model.getUnderlying, true)).toString()
     //log.debug("getFamDataHtml localeAAE |" + resXml + "|")
 
-    val resHtmlFa = XslTransformer(resXmlFa, "/xsl/person.xsl",
+    val resHtmlFa = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXmlFa), "/xsl/person.xsl",
         Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
           "lang"->S.locale.getLanguage.toLowerCase,
           "personId"->personVar.get.get.id.toString,
@@ -66,6 +66,34 @@ object PersonReading extends Loggable {
   }
 //Map("app" -> Props.get("__app").openOr("/gedcom-web/"))
 }
+
+//// http://stackoverflow.com/questions/970675/scala-modifying-nested-elements-in-xml?rq=1
+//import scala.xml._
+//import scala.xml.transform._
+//
+//object t1 extends RewriteRule {
+//  override def transform(n: Node): Seq[Node] = n match {
+//    case Elem(prefix, "dateValue", attribs, scope,/* _**/child)  =>
+//      Elem(prefix, "dateValue", attribs, scope, Text("2"))
+//    case other => other
+//  }
+//}
+//
+//object rt1 extends RuleTransformer(t1)
+//
+//object t2 extends RewriteRule {
+//  override def transform(n: Node): Seq[Node] = n match {
+//    case sn @ Elem(_, "subnode", _, _, _*) => rt1(sn)
+//    case other => other
+//  }
+//}
+//
+//object rt2 extends RuleTransformer(t2)
+//
+//rt2(InputXml)
+// =====================================================================================
+
+
 
 
 // http://simply.liftweb.net/index-15.2.html#prev
@@ -170,7 +198,7 @@ class PersonView {
         //log.debug("renderPerson Props.get(\"loc.texts.4XSL\") = " + Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved") + "|");
         //log.debug("renderPerson Props.get(\"__app\") = " + Props.get("__app").openOr("/__app/") + "|");
         log.debug("renderPerson resXml |" + resXml + "|")
-        val resHtml = XslTransformer(resXml, "/xsl/person.xsl",
+        val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
           Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
             "lang"->S.locale.getLanguage.toLowerCase,
             "mode"->"noFams",
@@ -216,7 +244,7 @@ class PersonView {
           val resXml = p.toXmlFamilies(Model.getUnderlying).toString
           log.debug("renderSpouseAndChildren resXml |" + resXml + "|")
           var resHtml =
-            XslTransformer(resXml, "/xsl/person.xsl"/*"/xsl/family.xsl"*/,
+            XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl"/*"/xsl/family.xsl"*/,
               Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
                 "lang"->S.locale.getLanguage.toLowerCase,
                 "personId"->p.id.toString(),
@@ -288,7 +316,7 @@ class PersonView {
                     val resXml = p.toXml(Model.getUnderlying).toString
                     log.debug("renderParent resXml |" + resXml + "|")
                     val resHtml =
-                      XslTransformer(resXml, "/xsl/person.xsl",
+                      XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
                         Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
                           "lang"->S.locale.getLanguage.toLowerCase,
                           "mode"->"mini",
@@ -362,7 +390,7 @@ class PersonView {
     //person.getPersonEvents(Model.getUnderlying)
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("deletePerson resXml |" + resXml + "|")
-    val resHtml = XslTransformer(resXml, "/xsl/person.xsl",
+    val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
       Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
         "lang"->S.locale.getLanguage.toLowerCase,
         "mode"->"noFams",
@@ -414,7 +442,7 @@ class PersonView {
     //person.getPersonEvents(Model.getUnderlying)
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("familyChildDelete resXml |" + resXml + "|")
-    val resHtml = XslTransformer(resXml, "/xsl/person.xsl",
+    val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
       Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
         "mode"->"parentsChildren",
         "lang"->S.locale.getLanguage.toLowerCase,
@@ -481,7 +509,7 @@ class PersonView {
     val person: Person = personVar.get.get
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("familyDelete resXml |" + resXml + "|")
-    val resHtml = XslTransformer(resXml, "/xsl/person.xsl",
+    val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
       Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
         "mode"->"spouses",
         "lang"->S.locale.getLanguage.toLowerCase,
@@ -555,7 +583,7 @@ class PersonView {
       person.getPersonEvents(Model.getUnderlying)
       val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
       log.debug("deletePe resXml |" + resXml + "|")
-      val resHtml = XslTransformer(resXml, "/xsl/person.xsl",
+      val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
         Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
           "lang"->S.locale.getLanguage.toLowerCase,
           "peId"->S.getSessionAttribute("personEventId").get,
@@ -644,7 +672,7 @@ class PersonView {
       person.getPersonEvents(Model.getUnderlying)
       val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
       log.debug("deletePa resXml |" + resXml + "|")
-      val resHtml = XslTransformer(resXml, "/xsl/person.xsl",
+      val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
         Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
           "lang"->S.locale.getLanguage.toLowerCase,
           "paId"->S.getSessionAttribute("personAttribId").get,
@@ -732,7 +760,7 @@ class PersonView {
     person.getPersonEvents(Model.getUnderlying)
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("deleteFe resXml |" + resXml + "|")
-    val resHtml = XslTransformer(resXml, "/xsl/person.xsl",
+    val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
       Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
         "lang"->S.locale.getLanguage.toLowerCase,
         "feId"->S.getSessionAttribute("familyEventId").get,

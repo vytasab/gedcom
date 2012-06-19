@@ -2,7 +2,9 @@ package lt.node.gedcom.model
 
 import javax.persistence._
 
-import scala.xml._ //{XML,NodeSeq}
+import scala.xml._
+
+//{XML,NodeSeq}
 
 import _root_.net.liftweb._
 import http.S
@@ -185,7 +187,7 @@ STILLBORN = died just prior, at, or near birth, 0 years
   def toXml(/*em: EntityManager*/): NodeSeq = {
     <ed id={id.toString}>
       <descriptor>{Unparsed(avoidNull(descriptor))}</descriptor>
-      <dateValue>{doLocalizedDate(dateValue)}</dateValue>
+      <dateValue>{/*doLocalizedDate*//*localeGedcomDate*/(dateValue)}</dateValue>
       <place>{Unparsed(avoidNull(place))}</place>
       <ageAtEvent>{doLocalizedAgeAtEevent(ageAtEvent)}</ageAtEvent>
       <cause>{Unparsed(avoidNull(cause))}</cause>
