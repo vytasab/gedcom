@@ -12,8 +12,9 @@ trait GedcomMsgsI18n {
   def getMsg(key: String, lang: String): String = tags(lang).find(_._1 == key).orElse(Full((key, key))).get._2
 
   def getKey(value: String): String = {
-    //println("GedcomMsgsI18n: " + tags.toString)
-    tags.find(_._2 == value).get._1
+    println("GedcomMsgsI18n: value=|" + value + "| tags=|" + tags.toString + "|")
+    /* // to C621-4 // */tags.find(_._2 == value).get._1
+    //tags.find(_._1 == value).get._2
   }
 
   def getKey(value: String, lang: String): String = tags(lang).find(_._2 == value).get._1

@@ -79,7 +79,10 @@ trait MultiLang/*Text*/ {
       case true => dbFieldXml \\ lang
       case _ =>
         val dl = (dbFieldXml \ "@d").text
-        MultiLangText.wrapText("["+dl+"]: " + (dbFieldXml \\ dl).text , dl)
+        (dbFieldXml \\ dl).text match {
+          case txt if txt.size == 0 => MultiLangText.wrapText("", lang)
+          case txt => MultiLangText.wrapText("["+dl+"]: " + txt , dl)
+        }
     }
   }
 

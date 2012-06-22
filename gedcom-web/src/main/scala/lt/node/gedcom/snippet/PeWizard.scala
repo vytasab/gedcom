@@ -702,10 +702,12 @@ class PeWizard extends Wizard with Loggable {
                   ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg("descriptor", wvEVEN.get, S.locale.getLanguage.toLowerCase)
                 case "DEAT" =>
                   ed.cause = /*wvDEAT.get*/  wvEDMLT.get._4.addupdLangMsg("cause", wvDEAT.get, S.locale.getLanguage.toLowerCase)
+// TODO  C6221-4 no cause value when editting
                 case _ =>
               }
 // TO-B426-DO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
-              ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Pe.get._2)
+              //ed.dateValue = GedcomUtil.gedcomizeI18nDate(GedcomUtil.doGedcomDate(wvDPAS.get._1, wvAttrDat4Pe.get._2))
+              ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
               ed.place = /*wvDPAS.get._2*/ wvEDMLT.get._3.addupdLangMsg("place", wvDPAS.get._2, S.locale.getLanguage.toLowerCase)
               ed.ageAtEvent = /*wvDPAS.get._3*/ AgeAtEvent.doGedcomAgeAtEvent(wvDPAS.get._3)
               ed.source = /*wvDPAS.get._4*/ wvEDMLT.get._5.addupdLangMsg("source", wvDPAS.get._4, S.locale.getLanguage.toLowerCase)
@@ -758,7 +760,8 @@ class PeWizard extends Wizard with Loggable {
                 case _ =>
               }
 // TO-B426-DO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
-              ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Pe.get._2)
+              //ed.dateValue = GedcomUtil.gedcomizeI18nDate(GedcomUtil.doGedcomDate(wvDPAS.get._1, wvAttrDat4Pe.get._2))
+              ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
               //ed.place = wvDPAS.get._2
               ed.place = /*wvDPAS.get._2*/ wvEDMLT.get._3.addupdLangMsg("place", wvDPAS.get._2, S.locale.getLanguage.toLowerCase)
 
@@ -830,7 +833,8 @@ class PeWizard extends Wizard with Loggable {
                     pa.tagValue = /*wvXXXX.get._1*/ wvXXXX.get._2.addupdLangMsg("tagValue", wvXXXX.get._1, S.locale.getLanguage.toLowerCase)
                 }
 // TO-B426-DO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
-              ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvAttrDat4Pe.get._2)
+              //ed.dateValue = GedcomUtil.gedcomizeI18nDate(GedcomUtil.doGedcomDate(wvDPAS.get._1, wvAttrDat4Pe.get._2))
+              ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
               ed.place = /*wvDPAS.get._2*/ wvEDMLT.get._3.addupdLangMsg("place", wvDPAS.get._2, S.locale.getLanguage.toLowerCase)
               ed.ageAtEvent = /*wvDPAS.get._3*/ AgeAtEvent.doGedcomAgeAtEvent(wvDPAS.get._3)
               ed.source = /*wvDPAS.get._4*/ wvEDMLT.get._5.addupdLangMsg("source", wvDPAS.get._4, S.locale.getLanguage.toLowerCase)              //log.debug("PeWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")
@@ -873,8 +877,8 @@ class PeWizard extends Wizard with Loggable {
                   pa.tagValue = /*wvXXXX.get._1*/ wvXXXX.get._2.addupdLangMsg("tagValue", wvXXXX.get._1, S.locale.getLanguage.toLowerCase)
               }
 // TO-B426-DO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
-              ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvAttrDat4Pe.get._2)
-              //ed.place = wvDPAS.get._2
+              //ed.dateValue = GedcomUtil.gedcomizeI18nDate(GedcomUtil.doGedcomDate(wvDPAS.get._1, wvAttrDat4Pe.get._2))
+              ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
               ed.place = /*wvDPAS.get._2*/ wvEDMLT.get._3.addupdLangMsg("place", wvDPAS.get._2, S.locale.getLanguage.toLowerCase)
               ed.ageAtEvent = /*wvDPAS.get._3*/ AgeAtEvent.doGedcomAgeAtEvent(wvDPAS.get._3)
               ed.source = /*wvDPAS.get._4*/ wvEDMLT.get._5.addupdLangMsg("source", wvDPAS.get._4, S.locale.getLanguage.toLowerCase)              //log.debug("PeWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")

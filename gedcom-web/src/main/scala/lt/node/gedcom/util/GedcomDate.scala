@@ -55,7 +55,7 @@ object GedcomUtil {
    * Transforms localized date to GEDCOM format. Date format is yyyy [mm [dd]]
    */
   def doGedcomDate(dateI18nValue: String, dateOptionI18nValue: String): String = {
-    //log.debug(<_>dateI18nValue=|{dateI18nValue}| dateOptionI18nValue=|{dateOptionI18nValue}| </_>.text)
+    log.debug(<_>dateI18nValue=|{dateI18nValue}| dateOptionI18nValue=|{dateOptionI18nValue}| </_>.text)
     val dateOptionKey = GedcomDateOptions.getKey(dateOptionI18nValue)
     //log.debug(<_>dateOptionKey=|{dateOptionKey}| </_>.text)
     dateOptionKey match {
@@ -164,13 +164,13 @@ object GedcomUtil {
   /**
    * Transforms GEDCOM format date  to localized format.
    */
-  def i18nizeGedcomDate(gedcomDateValue: String/*, lang: String*/): String = {
+  def i18nizeGedcomDate(gedcomDateValue: String): String = {
 
     val lang: String = S.get("locale").getOrElse("en")
     lazy val DatePtrnOpt = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
 
     def dateLt(gedcomDateValue: String): String = {
-      val DatePtrnOpt(d, m, y) = gedcomDateValue
+       val DatePtrnOpt(d, m, y) = gedcomDateValue
       (d, m, y) match {
         case (null, null, yy) =>
           log.debug ("DatePtrnOpt(null, null, yy)")
@@ -180,7 +180,7 @@ object GedcomUtil {
           new SimpleDateFormat("""yyyy-MM""").format(new SimpleDateFormat("""MMM yyyy""").parse(gedcomDateValue))
         case (dd, null, yy) =>
           log.debug ("DatePtrnOpt(dd, null, yy)")
-          "Err: " + gedcomDateValue
+          "Err: |" + gedcomDateValue + "|"
         case (dd, mm, yy) =>
           log.debug ("DatePtrnOpt(dd, mm, yy)")
           new SimpleDateFormat("""yyyy-MM-dd""").format(new SimpleDateFormat("""d MMM yyyy""").parse(gedcomDateValue))
@@ -190,7 +190,10 @@ object GedcomUtil {
     log.debug ( "================================================|")
     lang match {
       case "lt" =>
-        try {
+        gedcomDateValue match {
+          case "" => ""
+          case _ =>
+            try {
           val DatePtrnOpt(d, m, y) = gedcomDateValue
           log.debug (gedcomDateValue + "==> DatePtrnOpt(d,m,y)" + (if (d!=null) d else "null") + (if (m!=null) m else "null") + (if (y!=null) y else "null"))
           dateLt(gedcomDateValue)
@@ -204,7 +207,7 @@ object GedcomUtil {
               log.debug (" DatePeriodPtrnOpt(from,s,to)" +
                 (if (from!=null) from else "null") + (if (s!=null) s else "null") + (if (to!=null) to else "null"))
               (from, s, to) match {
-                case (null, null, null) => "Err: " + gedcomDateValue
+                case (null, null, null) => "Err: /" + gedcomDateValue + "/"
                 case (f, null, null) =>
                   log.debug ("NUO |"+f.substring(5)+"|")
                   "NUO " + dateLt(f.substring(5))
@@ -224,9 +227,9 @@ object GedcomUtil {
                   val DateRangeBAPtrn(bet, and) = gedcomDateValue
                   log.debug (" DateRangeBAPtrn(bet, and)" + (if (bet!=null) bet else "null") + (if (and!=null) and else "null"))
                   (bet, and) match {
-                    case (null, null) => "Err: " + gedcomDateValue
-                    case (b, null) => "Err: " + gedcomDateValue
-                    case (null, a) => "Err: " + gedcomDateValue
+                    case (null, null) => "Err: -/" + gedcomDateValue + "/-"
+                    case (b, null) => "Err: =/" + gedcomDateValue + "/="
+                    case (null, a) => "Err: +/" + gedcomDateValue + "/+"
                     case (b, a) =>
                       log.debug ("BET AND")
                       "TARP " + dateLt(b.substring(4)) + " IR " + dateLt(a.substring(5))
@@ -251,7 +254,7 @@ object GedcomUtil {
                     }
                 }
             }
-
+          }
         }
       //case "en" => gedcomDateValue
       //case "de" => gedcomDateValue
@@ -278,28 +281,30 @@ object GedcomUtil {
   }
 
   /**
-   * Transforms GEDCOM format date  to localized format.
+   * Transforms localized I18n date to GEDCOM format.
    */
-  def gedcomizeI18nDate(i18nDateValue: String, lang: String): String = {
+  def gedcomizeI18nDate(i18nDateValue: String/*, lang: String*/): String = {
+
+    val lang: String = S.get("locale").getOrElse("en")
 
     //lazy val DatePtrnOpt = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
-    lazy val DatePtrnOpt = """(\d\d\d\d)( \d\d?)?( \d\d?)?""".r
+    lazy val DatePtrnOptLt = """(\d\d\d\d)( \d\d?)?( \d\d?)?""".r
 
     def dateLt(i18nDateValue: String): String = {
-      val DatePtrnOpt(y, m, d) = i18nDateValue
-      (y, m, d) match {
+      val DatePtrnOptLt(yy, mm, dd) = i18nDateValue
+      (yy, mm, dd) match {
         case (yy, null, null) =>
-          log.debug ("DatePtrnOpt(yy, null, null)")
+          log.debug ("DatePtrnOptLt(yy, null, null)")
           yy
         case (yy, mm, null) =>
-          log.debug ("DatePtrnOpt(yy, mm, null)")
-          new SimpleDateFormat("""MMM yyyy""").format(new SimpleDateFormat("""yyyy mm""").parse(i18nDateValue))
+          log.debug ("DatePtrnOptLt(yy, mm, null)")
+          new SimpleDateFormat("""MMM yyyy""").format(new SimpleDateFormat("""yyyy mm""").parse(i18nDateValue)).toUpperCase
         case (yy, null, dd) =>
-          log.debug ("DatePtrnOpt(yy, null, dd)")
+          log.debug ("DatePtrnOptLt(yy, null, dd)")
           "Err: " + i18nDateValue
         case (yy, mm, dd) =>
-          log.debug ("DatePtrnOpt(yy, mm, dd)")
-          new SimpleDateFormat("""d MMM yyyy""").format(new SimpleDateFormat("""yyyy-MM-dd""").parse(i18nDateValue))
+          log.debug ("DatePtrnOptLt(yy, mm, dd)")
+          new SimpleDateFormat("""d MMM yyyy""").format(new SimpleDateFormat("""yyyy MM dd""").parse(i18nDateValue)).toUpperCase
       }
     }
 
@@ -307,12 +312,12 @@ object GedcomUtil {
     lang match {
       case "lt" =>
         try {
-          val DatePtrnOpt(y, m, d) = i18nDateValue
-          log.debug (i18nDateValue + "==> DatePtrnOpt(y,m,d)" + (if (y!=null) y else "null") + (if (m!=null) m else "null") + (if (d!=null) d else "null"))
+          val DatePtrnOptLt(y, m, d) = i18nDateValue
+          log.debug (i18nDateValue + "==> DatePtrnOptLt(y,m,d)" + (if (y!=null) y else "null") + (if (m!=null) m else "null") + (if (d!=null) d else "null"))
           dateLt(i18nDateValue)
         } catch {
           case ex: Exception =>
-            log.debug("DatePtrnOpt(null, null, null): " + ex.toString)
+            log.debug("DatePtrnOptLt(null, null, null): " + ex.toString)
             lazy val DatePeriodPtrnOpt = """(NUO .+?)?( )?(IKI .+?)?""".r
             try {
               log.debug ("|"+i18nDateValue + "|==>")
