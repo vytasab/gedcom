@@ -318,7 +318,7 @@ class Boot extends Loggable {
 // ...[] ===================================================================================
 
 object Locales {
-  val langs = List(/*"--",*/ "lt_LT", "en_EN"/*, "de", "pl", "ru"*/)
+  val langs = List("--", "lt_LT", "en_EN"/*, "de", "pl", "ru"*/)
 
   val aMap = langs.map{ x => (<_>{x}</_>.text, x)}.toMap
 
