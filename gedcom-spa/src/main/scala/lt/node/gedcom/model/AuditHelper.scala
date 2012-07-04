@@ -13,11 +13,20 @@ object AuditHelper {
   }
 
   def checkAddField(fieldName: String, language: String, newValue: String): NodeSeq = {
+    //println("|" +fieldName + "|" + language + "|" + newValue + "|")
     (language, newValue) match {
       case ("", newV) if newV != ""/*null*/ =>
         <f n={fieldName}>{newV}</f>
       case (lang, newV) if newV != ""/*null*/ =>
-        <f n={fieldName}>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</f>
+        val nv: String = "<__>"+newV+"</__>"
+        //println("nv=|" + nv + "|")
+        //println(<f n={fieldName}>{for (xx <- (XML.loadString(nv) \ "_")) yield xx}</f>.toString)
+        val tmpXml = <f n={fieldName}>{for (xx <- (XML.loadString(nv) \ "_")) yield xx}</f>
+        tmpXml match {
+          case tx if tx.text.size > 0 => tx
+          case _ => NodeSeq.Empty
+        }
+        //<f n={fieldName}>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</f>
         /*<f n={fieldName}>{this.wrapText(newV, lang)}</f>*/
       case _ =>
         NodeSeq.Empty

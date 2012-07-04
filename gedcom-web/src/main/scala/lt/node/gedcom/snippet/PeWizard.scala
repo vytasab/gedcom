@@ -435,7 +435,7 @@ class PeWizard extends Wizard with Loggable {
             conf
           case "gdt_exact" =>
             //S.notice("nextScreen4Date is " + "gdt_exact")
-            gdt_exact
+            ymdDate  // C703-2/vsh instead of:  gdt_exact
           case "gdt_between" =>
             //S.notice("nextScreen4Date is " + "gdt_between")
             wvDateLabels.set(S ? "gd_bet", S ? "gd_and")
@@ -473,7 +473,7 @@ class PeWizard extends Wizard with Loggable {
             conf
           case "gdt_exact" =>
             //S.notice("nextScreen4Date is " + "gdt_exact")
-            gdt_exact
+            ymdDate  // C703-2/vsh instead of:  gdt_exact
           case "gdt_between" =>
             //S.notice("nextScreen4Date is " + "gdt_between")
             wvDateLabels.set(S ? "gd_bet", S ? "gd_and")
@@ -505,14 +505,17 @@ class PeWizard extends Wizard with Loggable {
   }
 
   //val dateRawCheck = java.util.regex.Pattern.compile("^\\d{4}\\s+\\d{2}\\s+\\d{2}$")
+/*
   val patternYyyyMmDd = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$")
   val patternYyyyMm = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d[- /.](0[1-9]|1[012])$")
   val patternYyyy = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d$")
   val patternYyyyMmDd_ = java.util.regex.Pattern.compile("^(\\d+)[- /.](\\d+)[- /.](\\d+)$")
   val patternYyyyMm_ = java.util.regex.Pattern.compile("^(\\d+)[- /.](\\d+)$")
   val patternYyyy_ = java.util.regex.Pattern.compile("^(\\d+)$")
+*/
 
 
+/*
   val gdt_exact  = new Screen {
     val dateInit = wvDPAS._1  // "yyyy MM dd"
     val dateNew = field(S ? "gd_exact", dateInit, "size" -> "10", "maxlength" -> "10",
@@ -525,6 +528,7 @@ class PeWizard extends Wizard with Loggable {
       conf
     }
   }
+*/
 
   val ymdDate  = new Screen {
 // TODO B308-2 possibly extract date if any
@@ -585,7 +589,14 @@ class PeWizard extends Wizard with Loggable {
 
     /* http://stackoverflow.com/questions/237061/using-regular-expressions-to-extract-a-value-in-java */
     def mustRightRelate(s: String): List[FieldError] = {
-      val lowerDateInt = dateLowerNew.get match {
+      val isoLowerDate = GedcomUtil.iso8601Date(dateLowerNew.get).toInt
+      val isoUpperDate = GedcomUtil.iso8601Date(dateUpperNew.get).toInt
+      (isoLowerDate, isoUpperDate) match {
+        case (l, u) if l * u == 0 =>  S.?("date.is.invalid")
+        case (l, u) if l < u =>  Nil
+        case (l, u) =>  S.?("date.is.invalid")
+      }
+      /* val lowerDateInt = dateLowerNew.get match {
         case x if patternYyyyMmDd.matcher(x).matches =>
           val m = patternYyyyMmDd_.matcher(x)
           m.find match {
@@ -630,7 +641,7 @@ class PeWizard extends Wizard with Loggable {
       if (lowerDateInt < upperDateInt)
         Nil
       else
-        S.?("date.is.invalid")
+        S.?("date.is.invalid") */
     }
 
   }
@@ -706,7 +717,7 @@ class PeWizard extends Wizard with Loggable {
                   // pe.familyId = 0L
                   pe.adoptedBy = wvADOP.get
                 case "EVEN" =>
-                  //addupdLangMsg(dbField: String, msg: String, lang: String)
+                  // addupdLangMsg(dbField: String, msg: String, lang: String)
                   ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg("descriptor", wvEVEN.get, S.locale.getLanguage.toLowerCase)
                 case "DEAT" =>
                   ed.cause = /*wvDEAT.get*/  wvEDMLT.get._4.addupdLangMsg("cause", wvDEAT.get, S.locale.getLanguage.toLowerCase)

@@ -258,16 +258,18 @@ object GedcomUtil {
           }
         }
       case "en" =>
+        log.debug("en: gedcomDateValue: " + gedcomDateValue)
         val en2gedcom: Map[String,String] = Map("ABOUT" -> "ABT", "AFTER" -> "AFT ", "BEFORE" -> "BEF ", "BETWEEN" -> "BET")
         var dv: String = gedcomDateValue
         en2gedcom.keySet.foreach(k => dv = dv.replaceFirst(en2gedcom(k), k))
+        log.debug("en: gedcomDateValue: " + dv)
         dv
       //case "en" => gedcomDateValue
       //case "de" => gedcomDateValue
       //case "pl" => gedcomDateValue
       //case "ru" => gedcomDateValue
       case _ =>
-        log.debug ( "===|" + "_ or en")
+        log.debug ( "===|" + "_ or |" + lang + "|")
         gedcomDateValue  //  default case "en"
     }
   }
@@ -396,7 +398,7 @@ object GedcomUtil {
   }
 
 
-  def valiDate(date: String): Boolean /*List[FieldError]*/ = {
+  def iso8601Date(date: String): String /*List[FieldError]*/ = {
     //val dateRawCheck = java.util.regex.Pattern.compile("^\\d{4}\\s+\\d{2}\\s+\\d{2}$")
     //val pYyyyMmDd = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$")
     //val pYyyyMm = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d[- /.](0[1-9]|1[012])$")
@@ -407,7 +409,7 @@ object GedcomUtil {
 
     S.get("locale").getOrElse("en") match {
       case "en" =>
-        { try {
+        try {
           lazy val DatePtrnOpt = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
           val DatePtrnOpt(d, m, y) = date
           (d, m, y) match {
@@ -428,14 +430,9 @@ object GedcomUtil {
             case ex: Exception =>
               log.debug("valiDate): " + ex.toString)
               "00000000"
-        } } match {
-            //case "00000000" => List(S.?("date.is.invalid"))
-            case "00000000" => false//S.?("date.is.invalid")
-            case _ => true  // Nil
         }
-        //}
       case "lt" =>
-        ( try {
+        try {
           lazy val DatePtrnOptLt = """(\d\d\d\d)( \d\d?)?( \d\d?)?""".r
           val DatePtrnOptLt(yy, mm, dd) = date
           (yy, mm, dd) match {
@@ -456,13 +453,84 @@ object GedcomUtil {
           case ex: Exception =>
             log.debug("valiDate): " + ex.toString)
             "00000000"
-        } ) match {
-          //case "00000000" => List(S.?("date.is.invalid"))
-          case "00000000" => false // S.?("date.is.invalid")
-          case _ => true // Nil
         }
-      case _ => true // Nil
+      case _ => "00000000"
     }
+  }
+
+
+  /*def valiDateLU(lowerDate: String, upperDate: String): Boolean = {
+    val isoLowerDate = iso8601Date(lowerDate)
+    val isoUpperDate = iso8601Date(upperDate)
+    }*/
+
+
+  def valiDate(date: String): Boolean /*List[FieldError]*/ = {
+
+    iso8601Date(date) match {
+      case "00000000" => false//S.?("date.is.invalid")
+      case _ => true  // Nil
+    }
+
+//    S.get("locale").getOrElse("en") match {
+//      case "en" =>
+//        { try {
+//          lazy val DatePtrnOpt = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
+//          val DatePtrnOpt(d, m, y) = date
+//          (d, m, y) match {
+//            case (null, null, yy) =>
+//              log.debug ("DatePtrnOpt(null, null, yy)")
+//              new SimpleDateFormat("""yyyyMMdd""").format(new SimpleDateFormat("""yyyy""").parse(date))
+//            case (null, mm, yy) =>
+//              log.debug ("DatePtrnOpt(null, mm, yy)")
+//              new SimpleDateFormat("""yyyyMMdd""").format(new SimpleDateFormat("""MMM yyyy""").parse(date))
+//            case (dd, null, yy) =>
+//              log.debug ("DatePtrnOpt(dd, null, yy)")
+//              "00000000" // "Err: |" + date + "|"
+//            case (dd, mm, yy) =>
+//              log.debug ("DatePtrnOpt(dd, mm, yy)")
+//              new SimpleDateFormat("""yyyyMMdd""").format(new SimpleDateFormat("""d MMM yyyy""").parse(date))
+//          }
+//        } catch {
+//            case ex: Exception =>
+//              log.debug("valiDate): " + ex.toString)
+//              "00000000"
+//        } } match {
+//            //case "00000000" => List(S.?("date.is.invalid"))
+//            case "00000000" => false//S.?("date.is.invalid")
+//            case _ => true  // Nil
+//        }
+//        //}
+//      case "lt" =>
+//        ( try {
+//          lazy val DatePtrnOptLt = """(\d\d\d\d)( \d\d?)?( \d\d?)?""".r
+//          val DatePtrnOptLt(yy, mm, dd) = date
+//          (yy, mm, dd) match {
+//            case (yy, null, null) =>
+//              log.debug ("DatePtrnOptLt(yy, null, null)")
+//              new SimpleDateFormat("""yyyyMMdd""").format(new SimpleDateFormat("""yyyy""").parse(date))
+//            case (yy, mm, null) =>
+//              log.debug ("DatePtrnOptLt(yy, mm, null)")
+//              new SimpleDateFormat("""yyyyMMdd""").format(new SimpleDateFormat("""yyyy mm""").parse(date))
+//            case (yy, null, dd) =>
+//              log.debug ("DatePtrnOptLt(yy, null, dd)")
+//              "00000000" // "Err: " + date
+//            case (yy, mm, dd) =>
+//              log.debug ("DatePtrnOptLt(yy, mm, dd)")
+//              new SimpleDateFormat("""yyyyMMdd""").format(new SimpleDateFormat("""yyyy MM dd""").parse(date))
+//          }
+//        } catch {
+//          case ex: Exception =>
+//            log.debug("valiDate): " + ex.toString)
+//            "00000000"
+//        } ) match {
+//          //case "00000000" => List(S.?("date.is.invalid"))
+//          case "00000000" => false // S.?("date.is.invalid")
+//          case _ => true // Nil
+//        }
+//      case _ => true // Nil
+//    }
+
   }
 
 }

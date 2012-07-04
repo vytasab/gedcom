@@ -558,6 +558,15 @@ mvn clean install -Dmaven.test.skip=true
                         <groupId>org.zeroturnaround</groupId>
                         <artifactId>jrebel-maven-plugin</artifactId>
                         <version>1.1.1</version>   <!-- 1.0.7 -->
+                        <executions>
+                            <execution>
+                                <id>generate-rebel-xml</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                 </plugin>
                 <!--<plugin>
                 </plugin>-->

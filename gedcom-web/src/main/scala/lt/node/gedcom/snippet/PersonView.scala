@@ -611,14 +611,19 @@ class PersonView {
         if (AccessControl.isAuthenticated_?) {
           pe.getEventDetail(Model.getUnderlying)
 // TODO B414-4/vsh patikrinti kiek ED yra!
+          log.debug("[doDelete] pe.eventdetails.size ="+ pe.eventdetails.size)
           val ed: EventDetail = pe.eventdetails.iterator.next()
+          log.debug("[doDelete] ed: EventDetail ="+ ed.toString)
+          log.debug("[doDelete] ed: EventDetail ="+ ed.toXml.toString)
           var pea = new Audit
           val peClone: Box[PersonEventClone] = Empty
           pea.setFields(CurrentUser.get.get, "PE", pe.id, "del", pe.getAuditRec(peClone))
+          log.debug("[doDelete] pea ="+ pea.toString)
           //pea = Model.merge(pea)
           var eda = new Audit
           val edClone: Box[EventDetailClone] = Empty
           eda.setFields(CurrentUser.get.get, "ED", ed.id, "del", ed.getAuditRec(edClone))
+          log.debug("[doDelete] eda ="+ eda.toString)
           //eda = Model.merge(eda)
           //Model.remove(pe)
           Model.remove(Model.getReference(classOf[PersonEvent],

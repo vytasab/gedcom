@@ -28,19 +28,26 @@ object MultiLangText {
     this.wrapText(text, S.locale.getLanguage.toLowerCase)
   }
 
+  // C704-3 - ?!? - dbField is considered as DB field name and as DB field contents
   def txt2xml(dbField: String, lang: String): NodeSeq = {
     val xmlField: NodeSeq = dbField match {
       case txt if txt.length == 0 =>
+        println("========MultiLangText1 " + dbField)
         <_ d={lang}></_>
+      /*case txt =>
+        <_ d={lang}>{wrapText(dbField, lang)}</_>*/
       case txt if !txt.startsWith("<_") =>
+        println("========MultiLangText2 " + dbField)
         <_ d={lang}>{wrapText(dbField, lang)}</_>
       case txt if txt.startsWith("<_") =>
+        println("========MultiLangText3 " + dbField)
         scala.xml.XML.loadString(dbField)
     }
+    println("========MultiLangTextX " + xmlField)
     xmlField
   }
 
-  def txt2xml(dbField: String/*, lang: String*/): NodeSeq = {
+  def txt2xml(dbField: String): NodeSeq = {
     import net.liftweb.http.S
     MultiLangText.txt2xml(dbField, S.locale.getLanguage.toLowerCase)
   }
@@ -135,7 +142,11 @@ trait MultiLang/*Text*/ {
   def addupdLangMsg(dbField: String, msg: String, lang: String): String = {
     val xmlField: NodeSeq = MultiLangText.txt2xml(dbField, lang)
     val oldLangXml: NodeSeq = getLangMsgXml(lang)
-    val newLangXml: NodeSeq = MultiLangText.wrapText(msg, lang)
+    val newLangXml: NodeSeq = // C704-3  MultiLangText.wrapText(msg, lang)
+      msg match {
+      case m if m.length > 0 => MultiLangText.wrapText(msg, lang)
+      case m => NodeSeq.Empty
+    }
     val temp: Node =
       if (MultiLangText.hasLang(xmlField, lang)) {
         audit = <f n={name}><old>{oldLangXml}</old><new>{newLangXml}</new></f>
@@ -156,11 +167,19 @@ trait MultiLang/*Text*/ {
   }
 
 
-  def addLangMsg(n: Node, newLangMsg: Node): Elem = n match {
+  def addLangMsg(n: Node, newLangMsg: Node): Node/*Elem*/ = newLangMsg match {
+    case nlm if nlm.text.length > 0 => n match {
+      case Elem(prefix, label, attribs, scope, child@_*) =>
+        Elem(prefix, label, attribs, scope, child ++ nlm: _*)
+      case _ => sys.error("Can only add children to elements!")
+    }
+    case _ => n
+  }
+  /* def addLangMsg(n: Node, newLangMsg: Node): Elem = n match {
     case Elem(prefix, label, attribs, scope, child@_*) =>
       Elem(prefix, label, attribs, scope, child ++ newLangMsg: _*)
     case _ => sys.error("Can only add children to elements!")
-  }
+  } */
 
 }
 
