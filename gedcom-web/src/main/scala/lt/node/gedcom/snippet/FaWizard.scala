@@ -105,13 +105,13 @@ class FaWizard extends Wizard with Loggable {
     val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Fa.get._2)
     val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
       GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size" -> "9")
-    val placeInit = /*wvDPAS.get._2*/ wvEDMLT._3.getLangMsg()
+    val placeInit = wvEDMLT._3.getLangMsg()
     val placeNew = field(S ? "pe.place", placeInit, "style" -> "display:yes")
     val ageAtEventInit = wvDPAS.get._3
     val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
       "title"->ToolTips.getMsg("age_at_event"),
       validateAAE _ )
-    val sourceInit = /*wvDPAS.get._4*/ wvEDMLT._5.getLangMsg()
+    val sourceInit = wvEDMLT._5.getLangMsg()
     val sourceNew = field(S ? "pe.source", sourceInit, "style" -> "display:none")
     val noteInit = wvEDMLT._6.getLangMsg()
     val noteNew = field(S ? "pe.note", noteInit)
@@ -138,7 +138,7 @@ class FaWizard extends Wizard with Loggable {
     val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Fa.get._2)
     val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
       GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size" -> "9")
-    val placeInit = /*wvDPAS.get._2*/ wvEDMLT._3.getLangMsg()
+    val placeInit = wvEDMLT._3.getLangMsg()
     val placeNew = field(S ? "pe.place", placeInit, "size"->"50", "maxlength"->"55")
       // B320-7/vsh nereaguoja į (2, 50):   textarea(S ? "pe.place", placeInit, 2, 50)
       // textarea(S ? "pe.place", placeInit)
@@ -146,7 +146,7 @@ class FaWizard extends Wizard with Loggable {
     val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
       "title"->ToolTips.getMsg("age_at_event"),
       validateAAE _ )
-    val sourceInit = /*wvDPAS.get._4*/ wvEDMLT._5.getLangMsg()
+    val sourceInit = wvEDMLT._5.getLangMsg()
     val sourceNew = field(S ? "pe.source", sourceInit, "style" -> "display:none")
     val noteInit = wvEDMLT._6.getLangMsg()
     val noteNew = field(S ? "pe.note", noteInit)
@@ -161,8 +161,7 @@ class FaWizard extends Wizard with Loggable {
     }
 
     override def nextScreen = {
-      wvEvenDat4Fa.set(/*wvEaTagDat.get._1,*/ wvEvenDat4Fa.get._1, dateoptionsNew.get)
-      //wvADOP.set((adoptNew.get, GedcomDateOptions.getMsg(dateoptionsNew.get), placeNew.get, ageAtEventNew.get, sourceNew.get))
+      wvEvenDat4Fa.set(wvEvenDat4Fa.get._1, dateoptionsNew.get)
       wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
       nextScreen4Date
     }
@@ -206,32 +205,8 @@ class FaWizard extends Wizard with Loggable {
         }
   }
 
-  //val dateRawCheck = java.util.regex.Pattern.compile("^\\d{4}\\s+\\d{2}\\s+\\d{2}$")
-  /*val patternYyyyMmDd = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$")
-  val patternYyyyMm = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d[- /.](0[1-9]|1[012])$")
-  val patternYyyy = java.util.regex.Pattern.compile("^(16|17|18|19|20)\\d\\d$")
-  val patternYyyyMmDd_ = java.util.regex.Pattern.compile("^(\\d+)[- /.](\\d+)[- /.](\\d+)$")
-  val patternYyyyMm_ = java.util.regex.Pattern.compile("^(\\d+)[- /.](\\d+)$")
-  val patternYyyy_ = java.util.regex.Pattern.compile("^(\\d+)$")*/
-
-
-/*
-  val gdt_exact  = new Screen {
-    val dateInit = wvDPAS._1  // "yyyy MM dd"
-    val dateNew = field(S ? "gd_exact", dateInit, "size" -> "10", "maxlength" -> "10",
-      valRegex(patternYyyyMmDd, S ? "date.is.invalid")
-    )
-    override def screenTop = Full(<span>{GedcomDateOptions.getMsg(wvEvenDat4Fa.get._2)}: {dateFormat}</span>)
-    //override def screenBottom = Full(<span>{wvEvenDat4Fa.get._2}</span>)
-    override def nextScreen = {
-      wvDPAS.set(dateNew.is, wvDPAS.get._2, wvDPAS.get._3, wvDPAS.get._4, wvDPAS.get._5)
-      conf
-    }
-  }
-*/
 
   val ymdDate  = new Screen {
-// TODO B308-2 possibly extract date if any
     val dateInit = wvDPAS._1  // "yyyy [[MM [dd]]"
     val dateNew = field(S ? wvDateLabels.get._1, dateInit, "size" -> "11", "maxlength" -> "11", isIncompletedate _ )
     override def screenTop = Full(<span>{GedcomDateOptions.getMsg(wvEvenDat4Fa.get._2)}: {dateFormat}</span>)
@@ -239,7 +214,6 @@ class FaWizard extends Wizard with Loggable {
     override def nextScreen = {
       wvDPAS.set(<_>{S ? wvDateLabels.get._1} {dateNew.get.trim}</_>.text.trim,
         wvDPAS.get._2, wvDPAS.get._3, wvDPAS.get._4, wvDPAS.get._5)
-      //wvDPAS.set(dateNew.is, wvDPAS.get._2, wvDPAS.get._3, wvDPAS.get._4)
       conf
     }
     def isIncompletedate(s: String): List[FieldError] = {
@@ -249,24 +223,14 @@ class FaWizard extends Wizard with Loggable {
         case _ => S.?("date.is.invalid")
       }
     }
-    /*def isIncompletedate(s: String): List[FieldError] = {
-      log.debug("FaWizard ymdDate s |" + s + "|")
-      if (patternYyyyMmDd.matcher(s).matches ||
-        patternYyyyMm.matcher(s).matches ||
-        patternYyyy.matcher(s).matches)
-        Nil
-      else S.?("date.is.invalid")
-    }*/
   }
 
 
   val ymdymdDate = new Screen {
     val dateLowerInit =  wvDPAS._1
-// TODO B308-2 possibly extract lower date if any
     val dateLowerNew = field(S ? wvDateLabels.get._1, dateLowerInit, "size" -> "11", "maxlength" -> "11",
       isIncompletedate _)
     val dateUpperInit =  wvDPAS._1
-// TODO B308-2 possibly extract upper date if any
     val dateUpperNew = field(S ? wvDateLabels.get._2, dateUpperInit, "size" -> "11", "maxlength" -> "11",
       isIncompletedate _, mustRightRelate _
     )
@@ -285,14 +249,6 @@ class FaWizard extends Wizard with Loggable {
         case _ => S.?("date.is.invalid")
       }
     }
-    /*def isIncompletedate(s: String): List[FieldError] = {
-      log.debug("FaWizard ymdymdDate s |" + s + "|")
-      if (patternYyyyMmDd.matcher(s).matches ||
-        patternYyyyMm.matcher(s).matches ||
-        patternYyyy.matcher(s).matches)
-        Nil
-      else S.?("date.is.invalid")
-    }*/
 
     /* http://stackoverflow.com/questions/237061/using-regular-expressions-to-extract-a-value-in-java */
     def mustRightRelate(s: String): List[FieldError] = {
@@ -303,52 +259,6 @@ class FaWizard extends Wizard with Loggable {
         case (l, u) if l < u =>  Nil
         case (l, u) =>  S.?("date.is.invalid")
       }
-      /*val lowerDateInt = dateLowerNew.get match {
-        case x if patternYyyyMmDd.matcher(x).matches =>
-          val m = patternYyyyMmDd_.matcher(x)
-          m.find match {
-            case true =>
-              m.group(1).toInt * 10000 + m.group(2).toInt * 100 + m.group(3).toInt
-          }
-        case x if patternYyyyMm.matcher(x).matches =>
-          val m = patternYyyyMm_.matcher(x)
-          m.find match {
-            case true =>
-              m.group(1).toInt * 10000 + m.group(2).toInt * 100
-          }
-        case x if patternYyyy.matcher(x).matches =>
-          val m = patternYyyy_.matcher(x)
-          m.find match {
-            case true =>
-              m.group(1).toInt * 10000
-          }
-        case _ => 100000
-      }
-      val upperDateInt = dateUpperNew.get match {
-        case x if patternYyyyMmDd.matcher(x).matches =>
-          val m = patternYyyyMmDd_.matcher(x)
-          m.find match {
-            case true =>
-              m.group(1).toInt * 10000 + m.group(2).toInt * 100 + m.group(3).toInt
-          }
-        case x if patternYyyyMm.matcher(x).matches =>
-          val m = patternYyyyMm_.matcher(x)
-          m.find match {
-            case true =>
-              m.group(1).toInt * 10000 + m.group(2).toInt * 100
-          }
-        case x if patternYyyy.matcher(x).matches =>
-          val m = patternYyyy_.matcher(x)
-          m.find match {
-            case true =>
-              m.group(1).toInt * 10000
-          }
-        case _ => 0
-      }
-      if (lowerDateInt < upperDateInt)
-        Nil
-      else
-        S.?("date.is.invalid")*/
     }
 
   }
@@ -407,17 +317,15 @@ class FaWizard extends Wizard with Loggable {
               fe.tag = wvEvenDat4Fa.get._1
               fe.tag match {
                 case "EVEN" =>
-                  ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg("descriptor", wvEVEN.get, S.locale.getLanguage.toLowerCase)
+                  ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg(/*"descriptor", */wvEVEN.get/*, S.locale.getLanguage.toLowerCase*/)
                 case _ =>
               }
-// TODO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
-// TO-B426-DO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
               // C626-2 ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Fa.get._2)
               ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
-              ed.place = /*wvDPAS.get._2*/ wvEDMLT.get._3.addupdLangMsg("place", wvDPAS.get._2, S.locale.getLanguage.toLowerCase)
+              ed.place = wvEDMLT.get._3.addupdLangMsg(wvDPAS.get._2)
               ed.ageAtEvent = wvDPAS.get._3
-              ed.source = /*wvDPAS.get._4*/ wvEDMLT.get._5.addupdLangMsg("source", wvDPAS.get._4, S.locale.getLanguage.toLowerCase)
-              ed.note = wvEDMLT.get._6.addupdLangMsg("note", wvDPAS.get._5, S.locale.getLanguage.toLowerCase)
+              ed.source = wvEDMLT.get._5.addupdLangMsg(wvDPAS.get._4)
+              ed.note = wvEDMLT.get._6.addupdLangMsg(wvDPAS.get._5)
 
               log.debug("FaWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")
               log.debug("FaWizard.finish wvBoxCU.is wvBoxCU |" + wvBoxCU.is + "|")
@@ -446,7 +354,6 @@ class FaWizard extends Wizard with Loggable {
 // TODO B411-1/vsh  ....get.get.id).get ==> ???
               var fe: FamilyEvent = Model.find(classOf[FamilyEvent], wvBoxFamilyEvent.get.get.id).get
               log.debug("FaWizard.finish FamilyEvent.id |" + fe.id.toString() + "|")
-              //val tFE: FamilyEvent = fe  //wvBoxFamilyEvent.get.get
               val feClone: Box[FamilyEventClone] =
                 Full(FamilyEventClone(fe.tag, fe.familyevent.id.toString()))
 
@@ -464,17 +371,15 @@ class FaWizard extends Wizard with Loggable {
               fe.tag = wvEvenDat4Fa.get._1
               fe.tag match {
                 case "EVEN" =>
-                  ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg("descriptor", wvEVEN.get, S.locale.getLanguage.toLowerCase)
+                  ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg(/*"descriptor", */wvEVEN.get/*, S.locale.getLanguage.toLowerCase*/)
                 case _ =>
               }
-// TODO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
-// TO-B426-DO B331-4/vsh translate to GEDCOM (en) prior to saving to DB
               // C626-2 ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Fa.get._2)
               ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
-              ed.place = /*wvDPAS.get._2*/ wvEDMLT.get._3.addupdLangMsg("place", wvDPAS.get._2, S.locale.getLanguage.toLowerCase)
+              ed.place = wvEDMLT.get._3.addupdLangMsg(wvDPAS.get._2)
               ed.ageAtEvent = wvDPAS.get._3
-              ed.source = /*wvDPAS.get._4*/ wvEDMLT.get._5.addupdLangMsg("source", wvDPAS.get._4, S.locale.getLanguage.toLowerCase)
-              ed.note = wvEDMLT.get._6.addupdLangMsg("note", wvDPAS.get._5, S.locale.getLanguage.toLowerCase)
+              ed.source = wvEDMLT.get._5.addupdLangMsg(wvDPAS.get._4)
+              ed.note = wvEDMLT.get._6.addupdLangMsg(wvDPAS.get._5)
 
               log.debug("FaWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")
               log.debug("FaWizard.finish wvBoxCU.is wvBoxCU |" + wvBoxCU.is + "|")

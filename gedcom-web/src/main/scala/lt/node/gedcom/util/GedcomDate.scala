@@ -40,72 +40,72 @@ object GedcomUtil {
     (n,n)
   })
 
-  lazy val ymdI18n: Map[String, String] = Map(
-    "gd_abt" /*"Data apie"*/ -> "gdt_about",
-    "gd_aft" /*"Data po"*/ -> "gdt_after",
-    "gd_and" /*"ir"*/ -> "gdt_and",
-    "gd_bef" /*"Data prieš"*/ -> "gdt_before",
-    "gd_bet" /*"Data tarp"*/ -> "gdt_between",
-    "gd_from"/*"Data nuo"*/ -> "gdt_from",
-    "gd_to"  /*"Data iki"*/ -> "gdt_to",
-    "gd_txt" /*"Data tekstu"*/ -> ""
-   )
+//  lazy val ymdI18n: Map[String, String] = Map(
+//    "gd_abt" /*"Data apie"*/ -> "gdt_about",
+//    "gd_aft" /*"Data po"*/ -> "gdt_after",
+//    "gd_and" /*"ir"*/ -> "gdt_and",
+//    "gd_bef" /*"Data prieš"*/ -> "gdt_before",
+//    "gd_bet" /*"Data tarp"*/ -> "gdt_between",
+//    "gd_from"/*"Data nuo"*/ -> "gdt_from",
+//    "gd_to"  /*"Data iki"*/ -> "gdt_to",
+//    "gd_txt" /*"Data tekstu"*/ -> ""
+//   )
 
 
-  /**
-   * Transforms localized date to GEDCOM format. Date format is yyyy [mm [dd]]
-   */
-  def doGedcomDate(dateI18nValue: String, dateOptionI18nValue: String): String = {
-    log.debug(<_>dateI18nValue=|{dateI18nValue}| dateOptionI18nValue=|{dateOptionI18nValue}| </_>.text)
-    val dateOptionKey = GedcomDateOptions.getKey(dateOptionI18nValue)
-    //log.debug(<_>dateOptionKey=|{dateOptionKey}| </_>.text)
-    dateOptionKey match {
-      case "gdt_no_date" =>
-        ""
-      case "gdt_exact" =>
-        dateI18nValue
-      case "gdt_between" =>
-        dateI18nValue.replaceFirst(S.?("gd_bet"), GedcomDateOptions.getMsg(ymdI18n("gd_bet"), "xx")).
-          replaceFirst(S.?("gd_and"), GedcomDateOptions.getMsg(ymdI18n("gd_and"), "xx"))
-//        "xx" -> "BET",
-//        "en" -> "gdt_between",
-//        "lt" -> "apytikrė: [Tarp ... ir ... ]"),
-      case "gdt_before" =>
-        dateI18nValue.replaceFirst(S.?("gd_bef"), GedcomDateOptions.getMsg(ymdI18n("gd_bef"), "xx"))
-//        "xx" -> "BEFORE",
-//        "en" -> "gdt_before",
-//        "lt" -> "apytikrė: ... Prieš]"),
-      case "gdt_after" =>
-        dateI18nValue.replaceFirst(S.?("gd_aft"), GedcomDateOptions.getMsg(ymdI18n("gd_aft"), "xx"))
-//        "xx" -> "AFTER",
-//        "en" -> "gdt_after",
-//        "lt" -> "apytikrė: [Po ..."),
-      case "gdt_about" =>
-        dateI18nValue.replaceFirst(S.?("gd_abt"), GedcomDateOptions.getMsg(ymdI18n("gd_abt"), "xx"))
-//        "xx" -> "ABOUT",
-//        "en" -> "gdt_about",
-//        "lt" -> "apytikrė"),
-      case "gdt_from_to" =>
-        dateI18nValue.replaceFirst(S.?("gd_from"), GedcomDateOptions.getMsg(ymdI18n("gd_from"), "xx")).
-          replaceFirst(S.?("gd_to"), GedcomDateOptions.getMsg(ymdI18n("gd_to"), "xx"))
-//        "xx" -> "FROM_TO",
-//        "en" -> "gdt_from_to",
-//        "lt" -> "intervalas: [Nuo ... Iki]"),
-      case "gdt_from" =>
-        dateI18nValue.replaceFirst(S.?("gd_from"), GedcomDateOptions.getMsg(ymdI18n("gd_from"), "xx"))
-//        "xx" -> "FROM",
-//        "en" -> "gdt_from",
-//        "lt" -> "intervalas: [Nuo ..."),
-      case "gdt_to" =>
-        dateI18nValue.replaceFirst(S.?("gd_to"), GedcomDateOptions.getMsg(ymdI18n("gd_to"), "xx"))
-//        "xx" -> "TO",
-//        "en" -> "gdt_to",
-//        "lt" -> "intervalas: ... Iki]"),
-      case "gdt_text" =>
-        dateI18nValue
-    }
-    //log.debug(<_>dds: y={y.toString}; m={m.toString} </_>.text)
-  }
+//  /**
+//   * Transforms localized date to GEDCOM format. Date format is yyyy [mm [dd]]
+//   */
+//  def doGedcomDate(dateI18nValue: String, dateOptionI18nValue: String): String = {
+//    log.debug(<_>dateI18nValue=|{dateI18nValue}| dateOptionI18nValue=|{dateOptionI18nValue}| </_>.text)
+//    val dateOptionKey = GedcomDateOptions.getKey(dateOptionI18nValue)
+//    //log.debug(<_>dateOptionKey=|{dateOptionKey}| </_>.text)
+//    dateOptionKey match {
+//      case "gdt_no_date" =>
+//        ""
+//      case "gdt_exact" =>
+//        dateI18nValue
+//      case "gdt_between" =>
+//        dateI18nValue.replaceFirst(S.?("gd_bet"), GedcomDateOptions.getMsg(ymdI18n("gd_bet"), "xx")).
+//          replaceFirst(S.?("gd_and"), GedcomDateOptions.getMsg(ymdI18n("gd_and"), "xx"))
+////        "xx" -> "BET",
+////        "en" -> "gdt_between",
+////        "lt" -> "apytikrė: [Tarp ... ir ... ]"),
+//      case "gdt_before" =>
+//        dateI18nValue.replaceFirst(S.?("gd_bef"), GedcomDateOptions.getMsg(ymdI18n("gd_bef"), "xx"))
+////        "xx" -> "BEFORE",
+////        "en" -> "gdt_before",
+////        "lt" -> "apytikrė: ... Prieš]"),
+//      case "gdt_after" =>
+//        dateI18nValue.replaceFirst(S.?("gd_aft"), GedcomDateOptions.getMsg(ymdI18n("gd_aft"), "xx"))
+////        "xx" -> "AFTER",
+////        "en" -> "gdt_after",
+////        "lt" -> "apytikrė: [Po ..."),
+//      case "gdt_about" =>
+//        dateI18nValue.replaceFirst(S.?("gd_abt"), GedcomDateOptions.getMsg(ymdI18n("gd_abt"), "xx"))
+////        "xx" -> "ABOUT",
+////        "en" -> "gdt_about",
+////        "lt" -> "apytikrė"),
+//      case "gdt_from_to" =>
+//        dateI18nValue.replaceFirst(S.?("gd_from"), GedcomDateOptions.getMsg(ymdI18n("gd_from"), "xx")).
+//          replaceFirst(S.?("gd_to"), GedcomDateOptions.getMsg(ymdI18n("gd_to"), "xx"))
+////        "xx" -> "FROM_TO",
+////        "en" -> "gdt_from_to",
+////        "lt" -> "intervalas: [Nuo ... Iki]"),
+//      case "gdt_from" =>
+//        dateI18nValue.replaceFirst(S.?("gd_from"), GedcomDateOptions.getMsg(ymdI18n("gd_from"), "xx"))
+////        "xx" -> "FROM",
+////        "en" -> "gdt_from",
+////        "lt" -> "intervalas: [Nuo ..."),
+//      case "gdt_to" =>
+//        dateI18nValue.replaceFirst(S.?("gd_to"), GedcomDateOptions.getMsg(ymdI18n("gd_to"), "xx"))
+////        "xx" -> "TO",
+////        "en" -> "gdt_to",
+////        "lt" -> "intervalas: ... Iki]"),
+//      case "gdt_text" =>
+//        dateI18nValue
+//    }
+//    //log.debug(<_>dds: y={y.toString}; m={m.toString} </_>.text)
+//  }
 
 
   /**
