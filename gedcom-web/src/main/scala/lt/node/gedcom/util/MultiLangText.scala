@@ -28,20 +28,41 @@ object MultiLangText {
     this.wrapText(text, S.locale.getLanguage.toLowerCase)
   }
 
+//  // C704-3 - ?!? - dbField is considered as DB field name and as DB field contents
+//  def txt2xml(dbField: String, lang: String): NodeSeq = {
+//    val xmlField: NodeSeq = dbField match {
+//      case txt if txt.length == 0 =>
+//        println("========MultiLangText1 " + dbField)
+//        /*<_ d={lang}></_>*/
+//        NodeSeq.Empty
+//      /*case txt =>
+//        <_ d={lang}>{wrapText(dbField, lang)}</_>*/
+//      case txt if !txt.startsWith("<_") =>
+//        println("========MultiLangText2 " + dbField)
+//        <_ d={lang}>{wrapText(dbField, lang)}</_>
+//      case txt if txt.startsWith("<_") =>
+//        println("========MultiLangText3 " + dbField)
+//        scala.xml.XML.loadString(dbField)
+//    }
+//    println("========MultiLangTextX " + xmlField)
+//    xmlField
+//  }
+
   // C704-3 - ?!? - dbField is considered as DB field name and as DB field contents
-  def txt2xml(dbField: String, lang: String): NodeSeq = {
-    val xmlField: NodeSeq = dbField match {
+  def txt2xml(msg: String, lang: String): NodeSeq = {
+    val xmlField: NodeSeq = msg match {
       case txt if txt.length == 0 =>
-        println("========MultiLangText1 " + dbField)
-        <_ d={lang}></_>
-      /*case txt =>
-        <_ d={lang}>{wrapText(dbField, lang)}</_>*/
-      case txt if !txt.startsWith("<_") =>
-        println("========MultiLangText2 " + dbField)
-        <_ d={lang}>{wrapText(dbField, lang)}</_>
+        //println("========MultiLangText1 " + dbField)
+        /*<_ d={lang}></_>*/
+        NodeSeq.Empty
+      case txt =>
+        <_ d={lang}>{wrapText(txt, lang)}</_>
+      /*case txt if !txt.startsWith("<_") =>
+        println("========MultiLangText2 " + txt)
+        <_ d={lang}>{wrapText(txt, lang)}</_>
       case txt if txt.startsWith("<_") =>
-        println("========MultiLangText3 " + dbField)
-        scala.xml.XML.loadString(dbField)
+        println("========MultiLangText3 " + txt)
+        scala.xml.XML.loadString(txt)*/
     }
     println("========MultiLangTextX " + xmlField)
     xmlField
@@ -54,12 +75,9 @@ object MultiLangText {
 
   def hasLang(dbFieldXml: NodeSeq, lang: String): Boolean =
     dbFieldXml match {
-      case x if ((x \\ lang).size == 1) =>
-        true
-      case x if ((x \\ lang).size == 0) =>
-        false
-      case _ =>
-        true
+      case x if ((x \\ lang).size == 1) => true
+      case x if ((x \\ lang).size == 0) => false
+      case _ => true
     }
 
 }
@@ -80,15 +98,37 @@ trait MultiLang/*Text*/ {
   var audit: NodeSeq
 
 
-  def getLangMsgXml(dbField: String, lang: String): NodeSeq = {
-    val dbFieldXml: NodeSeq = MultiLangText.txt2xml(dbField, lang)
-    MultiLangText.hasLang(dbFieldXml, lang) match {
-      case true => dbFieldXml \\ lang
+  //  dbFieldValue: <_ d="lt"><lt>Švendriai</lt></_>   or   <_ d="lt"><lt>Švendriai</lt><en>Shvendriai</en></_>
+  //  returns:  <xx>some info</xx>  or  NodeSeq.Empty
+  def getLangOrDefLangXml(dbFieldValue: String, lang: String): NodeSeq = {
+    val tmpXml = XML.loadString(dbFieldValue)
+    MultiLangText.hasLang(tmpXml, lang) match {
+      case true => tmpXml \\ lang
       case _ =>
-        val dl = (dbFieldXml \ "@d").text
-        (dbFieldXml \\ dl).text match {
-          case txt if txt.size == 0 => MultiLangText.wrapText("", lang)
-          case txt => MultiLangText.wrapText("["+dl+"]: " + txt , dl)
+        val dl = (tmpXml \ "@d").text
+        (tmpXml \\ dl).text match {
+          case txt if txt.size == 0 => NodeSeq.Empty  // MultiLangText.wrapText("", lang)
+          case txt => MultiLangText.wrapText("["+dl+"]: "+txt, dl)
+        }
+    }
+  }
+  //  dbFieldValue: <_ d="lt"><lt>Švendriai</lt></_>   or   <_ d="lt"><lt>Švendriai</lt><en>Shvendriai</en></_>
+  //  returns:  <xx>some info</xx>  or  NodeSeq.Empty
+  def getLangMsgXml(dbFieldValue: String, lang: String): NodeSeq = {
+    println("========getLangMsgXml |" + dbFieldValue + "|")
+    dbFieldValue match {
+      case dbfv if dbfv == "" =>
+        NodeSeq.Empty
+      case _ =>
+        val tmpXml = XML.loadString(dbFieldValue)
+        MultiLangText.hasLang(tmpXml, lang) match {
+          case true => tmpXml \\ lang
+          case _ =>
+            val dl = (tmpXml \ "@d").text
+            (tmpXml \\ dl).text match {
+              case txt if txt.size == 0 => NodeSeq.Empty  // MultiLangText.wrapText("", lang)
+              case txt => /*NodeSeq.Empty*/ MultiLangText.wrapText("["+dl+"]: "+txt, dl)
+            }
         }
     }
   }
@@ -119,15 +159,15 @@ trait MultiLang/*Text*/ {
    * return: reduced 'dbFieldXml' as NodeSeq
    */
   def delLangMsg(dbFieldXml: Node, lang: String): NodeSeq = {
+    def delLangMsgInternal(dbFieldXml: Node, lang: String): NodeSeq = {
+      val newDbFieldXm: NodeSeq = (dbFieldXml \ "_").filter(_.label != lang)
+      newDbFieldXm
+    }
     dbFieldXml match {
-      case  Elem(prefix, label, attribs, scope, child@_*) =>
+      case  Elem(prefix, label, attribs, scope, child @ _*) =>
         Elem(prefix, label, attribs, scope, /*child ++ newLangMsg*/delLangMsgInternal(dbFieldXml, lang):_*)
       case _ => sys.error("Can only del children to elements!")
     }
-  }
-  def delLangMsgInternal(dbFieldXml: Node, lang: String): NodeSeq = {
-    val newDbFieldXm: NodeSeq = (dbFieldXml \ "_").filter(_.label != lang)
-    newDbFieldXm
   }
 
   /**
@@ -139,11 +179,18 @@ trait MultiLang/*Text*/ {
   }
 
 
-  def addupdLangMsg(dbField: String, msg: String, lang: String): String = {
-    val xmlField: NodeSeq = MultiLangText.txt2xml(dbField, lang)
+  def addupdLangMsg(/*dbField: String, */msg: String/*, lang: String*/): String = {
+    val lang: String = S.locale.getLanguage.toLowerCase
+    //val xmlField: NodeSeq = MultiLangText.txt2xml(msg, lang)
+    //val xmlField: NodeSeq = mlt match {
+    val xmlField: Node = mlt match {
+      case mltx if mltx == "" =>
+        <_ d={lang}></_>
+      case mltx if mltx != "" =>
+        XML.loadString(mlt) // DB field string -> NodeSeq (Node in fact)
+    }
     val oldLangXml: NodeSeq = getLangMsgXml(lang)
-    val newLangXml: NodeSeq = // C704-3  MultiLangText.wrapText(msg, lang)
-      msg match {
+    val newLangXml: NodeSeq = msg match {
       case m if m.length > 0 => MultiLangText.wrapText(msg, lang)
       case m => NodeSeq.Empty
     }
@@ -155,21 +202,26 @@ trait MultiLang/*Text*/ {
         audit = <f n={name}><new>{newLangXml}</new></f>
         xmlField.asInstanceOf[Node]
       }
-    addLangMsg(temp, newLangXml/*wrapText(msg, lang)*/.asInstanceOf[Node]).asInstanceOf[Node].toString()
+    /*val newLangXml: NodeSeq = */msg match {
+      case m if m.length > 0 => addLangMsg(temp, MultiLangText.wrapText(msg, lang).apply(0).asInstanceOf[Elem]).toString
+      case m => ""
+    }
+    //addLangMsg(temp, newLangXml).toString()
+    /*addLangMsg(temp, newLangXml.asInstanceOf[Node]).toString()*/
   }
 
 
-  /**
-   * return: updated 'mlt' as String
-   */
-  def addupdLangMsg(msg: String, lang: String): String = {
-    addupdLangMsg(mlt, msg, lang)
-  }
+//  /**
+//   * return: updated 'mlt' as String
+//   */
+//  def addupdLangMsg(msg: String, lang: String): String = {
+//    addupdLangMsg(mlt, msg, lang)
+//  }
 
 
-  def addLangMsg(n: Node, newLangMsg: Node): Node/*Elem*/ = newLangMsg match {
+  def addLangMsg(n: Node, newLangMsg: Elem/*Node*/): Node/*Elem*/ = newLangMsg match {
     case nlm if nlm.text.length > 0 => n match {
-      case Elem(prefix, label, attribs, scope, child@_*) =>
+      case Elem(prefix, label, attribs, scope, child @ _*) =>
         Elem(prefix, label, attribs, scope, child ++ nlm: _*)
       case _ => sys.error("Can only add children to elements!")
     }
@@ -183,7 +235,7 @@ trait MultiLang/*Text*/ {
 
 }
 
-/*
+/*  !!! do not delete
 scala>   var z = <a><b>bb</b><c>cc</c></a>
 z: scala.xml.Elem = <a><b>bb</b><c>cc</c></a>
 scala> z \ "a"

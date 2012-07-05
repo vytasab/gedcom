@@ -9,69 +9,92 @@ object AuditHelper {
 
   def checkAddFields(fieldNew: List[( /*fieldName:*/ String, /*language:*/ String, /*newValue:*/ String)]): NodeSeq = {
     //for (fn <- fieldNew) println(fn.toString);
+
+    def checkAddField(fieldName: String, language: String, newValue: String): NodeSeq = {
+      //println("|" +fieldName + "|" + language + "|" + newValue + "|")
+      (language, newValue) match {
+        case ("", newV) if newV != "" =>
+          <f n={fieldName}>{newV}</f>
+        case (lang, newV) if newV != "" =>
+          /*val nv: String = "<__>"+newV+"</__>"
+//println("nv=|" + nv + "|")
+//println(<f n={fieldName}>{for (xx <- (XML.loadString(nv) \ "_")) yield xx}</f>.toString)
+val tmpXml = <f n={fieldName}>{for (xx <- (XML.loadString(nv) \ "_")) yield xx}</f>*/
+          val tmpXml = <f n={fieldName}>{XML.loadString(newV)}</f>
+          tmpXml match {
+            case tx if tx.text.size > 0 => tx
+            case _ => NodeSeq.Empty
+          }
+        //<f n={fieldName}>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</f>
+        /*<f n={fieldName}>{this.wrapText(newV, lang)}</f>*/
+        case _ =>
+          NodeSeq.Empty
+      }
+    }
+
     <_>{for (fn <- fieldNew) yield checkAddField(fn._1, fn._2, fn._3)}</_>
   }
 
-  def checkAddField(fieldName: String, language: String, newValue: String): NodeSeq = {
-    //println("|" +fieldName + "|" + language + "|" + newValue + "|")
-    (language, newValue) match {
-      case ("", newV) if newV != ""/*null*/ =>
-        <f n={fieldName}>{newV}</f>
-      case (lang, newV) if newV != ""/*null*/ =>
-        val nv: String = "<__>"+newV+"</__>"
-        //println("nv=|" + nv + "|")
-        //println(<f n={fieldName}>{for (xx <- (XML.loadString(nv) \ "_")) yield xx}</f>.toString)
-        val tmpXml = <f n={fieldName}>{for (xx <- (XML.loadString(nv) \ "_")) yield xx}</f>
-        tmpXml match {
-          case tx if tx.text.size > 0 => tx
-          case _ => NodeSeq.Empty
-        }
-        //<f n={fieldName}>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</f>
-        /*<f n={fieldName}>{this.wrapText(newV, lang)}</f>*/
-      case _ =>
-        NodeSeq.Empty
-    }
-  }
 
   def checkChanges(fieldNewOld: List[(String, String, String, String)]): NodeSeq = {
+    /**
+     *
+     * @param fieldName
+     * @param language  lt |  en | ...
+     * @param newValue sample: <_ d="lt"><lt>nauja informacija</lt></_>
+     * @param oldValue sample  <_ d="lt"><lt>sena informacija</lt><en>maybe some info as in lt</en></_>
+     * @return
+     */
+    def checkChange(fieldName: String, language: String, newValue: String, oldValue: String): NodeSeq = {
+      language match {
+        case "" =>
+           println(<_>fieldName=|{fieldName}| language=|""| newValue=|{newValue}| oldValue=|{oldValue}| </_>.text)
+          (newValue, oldValue) match {
+            case (newV, oldV) if newV != "" && oldV != "" && newV != oldV =>
+              <f n={fieldName}><new>{newV}</new><old>{oldV}</old></f>
+            case (newV, oldV) if newV != "" && oldV == "" =>
+              <f n={fieldName}><new>{newV}</new></f>
+            case (newV, oldV) if newV == "" && oldV != "" =>
+              <f n={fieldName}><old>{oldV}</old></f>
+            case _ => NodeSeq.Empty
+          }
+        case lang =>
+          println(<_>fieldName=|{fieldName}| language=|{lang}| newValue=|{newValue}| oldValue=|{oldValue}| </_>.text)
+//        val new_Value = AuditHelper.getLangMsg(XML.loadString/*Unparsed*/(newValue), lang)
+//        val old_Value = AuditHelper.getLangMsg(XML.loadString/*Unparsed*/(oldValue), lang)
+//        println(<_>language=|{lang}| new_Value=|{new_Value}| old_Value=|{old_Value}| </_>.text)
+          (newValue, oldValue) match {
+            case (newV, oldV) if newV != "" && oldV != "" && newV != oldV =>
+              // println("aaa")
+              val new_Value = AuditHelper.getLangMsg(XML.loadString(newValue), lang)
+              val old_Value = AuditHelper.getLangMsg(XML.loadString(oldValue), lang)
+              <f n={fieldName}><new>{new_Value}</new><old>{old_Value}</old></f>
+              //<f n={fieldName}><new>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</new><old>{this.wrapText(this.getLangMsg(XML.loadString(oldV), lang), lang)}</old></f>
+              /*<f n={fieldName}><new>{this.wrapText(newV, lang)}</new><old>{this.wrapText(oldV, lang)}</old></f>*/
+            case (newV, oldV) if newV != "" && oldV == "" =>
+              // println("bbb")
+              val new_Value = AuditHelper.getLangMsg(XML.loadString(newValue), lang)
+              <f n={fieldName}><new>{new_Value}</new></f>
+              //<f n={fieldName}><new>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</new></f>
+              /*<f n={fieldName}><new>{this.wrapText(newV, lang)}</new></f>*/
+            case (newV, oldV) if newV == "" && oldV != "" =>
+              // println("ccc")
+              val old_Value = AuditHelper.getLangMsg(XML.loadString(oldValue), lang)
+              <f n={fieldName}><old>{old_Value}</old></f>
+              //<f n={fieldName}><old>{this.wrapText(this.getLangMsg(XML.loadString(oldV), lang), lang)}</old></f>
+              /*<f n={fieldName}><old>{this.wrapText(oldV, lang)}</old></f>*/
+            case (newV, oldV) if newV == "" && oldV == "" =>
+              // println("ddd")
+              NodeSeq.Empty
+            case _ => NodeSeq.Empty
+          }
+      }
+    }
+
     <_>{for (fno <- fieldNewOld) yield checkChange(fno._1, fno._2, fno._3, fno._4)}</_>
   }
 
-  def checkChange(fieldName: String, language: String, newValue: String, oldValue: String): NodeSeq = {
-    language match {
-      case "" =>
-//        println(<_>fieldName=|{fieldName}| language=|""| newValue=|{newValue}| oldValue=|{oldValue}| </_>.text)
-        (newValue, oldValue) match {
-          case (newV, oldV) if newV != ""/*null*/ && oldV != ""/*null*/ && newV != oldV =>
-            <f n={fieldName}><new>{newV}</new><old>{oldV}</old></f>
-          case (newV, oldV) if newV != ""/*null*/ && oldV == ""/*null*/ =>
-            <f n={fieldName}><new>{newV}</new></f>
-          case (newV, oldV) if newV == ""/*null*/ && oldV != ""/*null*/ =>
-            <f n={fieldName}><old>{oldV}</old></f>
-          case _ => NodeSeq.Empty
-        }
-      case lang =>
-        println(<_>fieldName=|{fieldName}| language=|{lang}| newValue=|{newValue}| oldValue=|{oldValue}| </_>.text)
-        val new_Value = AuditHelper.getLangMsg(Unparsed(newValue), lang)
-        val old_Value = AuditHelper.getLangMsg(Unparsed(oldValue), lang)
-        println(<_>language=|{lang}| new_Value=|{new_Value}| old_Value=|{old_Value}| </_>.text)
-        (/*new_Value*/newValue, /*old_Value*/oldValue) match {
-          case (newV, oldV) if newV != ""/*null*/ && oldV != ""/*null*/ && newV != oldV =>
-//            println("aaa")
-            <f n={fieldName}><new>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</new><old>{this.wrapText(this.getLangMsg(XML.loadString(oldV), lang), lang)}</old></f>
-            /*<f n={fieldName}><new>{this.wrapText(newV, lang)}</new><old>{this.wrapText(oldV, lang)}</old></f>*/
-          case (newV, oldV) if newV != ""/*null*/ && oldV == ""/*null*/ =>
-//            println("bbb")
-            <f n={fieldName}><new>{this.wrapText(this.getLangMsg(XML.loadString(newV), lang), lang)}</new></f>
-            /*<f n={fieldName}><new>{this.wrapText(newV, lang)}</new></f>*/
-          case (newV, oldV) if newV == ""/*null*/ && oldV != ""/*null*/ =>
-//            println("ccc")
-            <f n={fieldName}><old>{this.wrapText(this.getLangMsg(XML.loadString(oldV), lang), lang)}</old></f>
-            /*<f n={fieldName}><old>{this.wrapText(oldV, lang)}</old></f>*/
-          case _ => NodeSeq.Empty
-        }
-    }
-  }
+
 //  def checkChange(fieldName: String, language: String, newValue: String, oldValue: String):NodeSeq = {
 //    (language, newValue, oldValue) match {
 //      case ("", newV, oldV) if newV != null && oldV != null && newV != oldV =>

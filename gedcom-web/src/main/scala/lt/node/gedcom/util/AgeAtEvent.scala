@@ -11,7 +11,6 @@ import scala.xml.transform._
 object AgeAtEvent {
 
 
-
   def validateAgeAtEvent(aaeText: String, lang: String): Boolean = {
     aaeText.size match {
       case 0 =>
@@ -129,7 +128,7 @@ object AgeAtEvent {
   // http://download.oracle.com/javase/tutorial/essential/regex/quant.html
   val regex: Map[String, String] = Map(
     "en" -> """^[<|>]?(\d{1,2}y\s+\d{1,2}m\s+\d{1,3}d|\d{1,2}y|\d{1,2}m|\d{1,3}d|\d{1,2}y\s+\d{1,2}m|\d{1,2}y\s+\d{1,3}d|\d{1,2}m\s+\d{1,3}d|CHILD|INFANT|STILLBORN)$""",
-    "lt" -> """^[<|>]?(\d{1,2}M\s+\d{1,2}m\s+\d{1,3}d|\d{1,2}M|\d{1,2}m|\d{1,3}d|\d{1,2}M\s+\d{1,2}m|\d{1,2}M\s+\d{1,3}d|\d{1,2}m\s+\d{1,3}d|vaikas|kūdikis|naujagimis)$"""
+    "lt" -> """^[<|>]?(\d{1,2}M\s+\d{1,2}m\s+\d{1,3}d|\d{1,2}M|\d{1,2}m|\d{1,3}d|\d{1,2}M\s+\d{1,2}m|\d{1,2}M\s+\d{1,3}d|\d{1,2}m\s+\d{1,3}d|VAIKAS|KŪDIKIS|NAUJAGIMIS)$"""
   )
 
 
@@ -149,15 +148,15 @@ object AgeAtEvent {
     ),
     "child" -> Map(
       "en" -> "CHILD",
-      "lt" -> "vaikas"
+      "lt" -> "VAIKAS"
     ),
     "infant" -> Map(
       "en" -> "INFANT",
-      "lt" -> "kūdikis"
+      "lt" -> "KŪDIKIS"
     ),
     "stillborn" -> Map(
       "en" -> "STILLBORN",
-      "lt" -> "naujagimis"
+      "lt" -> "NAUJAGIMIS"
     )
   )
 }

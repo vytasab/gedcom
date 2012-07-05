@@ -233,11 +233,11 @@ class FaWizard extends Wizard with Loggable {
   val ymdDate  = new Screen {
 // TODO B308-2 possibly extract date if any
     val dateInit = wvDPAS._1  // "yyyy [[MM [dd]]"
-    val dateNew = field(S ? wvDateLabels.get._1, dateInit, "size" -> "10", "maxlength" -> "10", isIncompletedate _ )
+    val dateNew = field(S ? wvDateLabels.get._1, dateInit, "size" -> "11", "maxlength" -> "11", isIncompletedate _ )
     override def screenTop = Full(<span>{GedcomDateOptions.getMsg(wvEvenDat4Fa.get._2)}: {dateFormat}</span>)
     //override def screenBottom = Full(<span>{wvEvenDat4Fa.get._2}</span>)
     override def nextScreen = {
-      wvDPAS.set(<_>{S ? wvDateLabels.get._1} {dateNew.get}</_>.text,
+      wvDPAS.set(<_>{S ? wvDateLabels.get._1} {dateNew.get.trim}</_>.text.trim,
         wvDPAS.get._2, wvDPAS.get._3, wvDPAS.get._4, wvDPAS.get._5)
       //wvDPAS.set(dateNew.is, wvDPAS.get._2, wvDPAS.get._3, wvDPAS.get._4)
       conf
@@ -263,17 +263,17 @@ class FaWizard extends Wizard with Loggable {
   val ymdymdDate = new Screen {
     val dateLowerInit =  wvDPAS._1
 // TODO B308-2 possibly extract lower date if any
-    val dateLowerNew = field(S ? wvDateLabels.get._1, dateLowerInit, "size" -> "10", "maxlength" -> "10",
+    val dateLowerNew = field(S ? wvDateLabels.get._1, dateLowerInit, "size" -> "11", "maxlength" -> "11",
       isIncompletedate _)
     val dateUpperInit =  wvDPAS._1
 // TODO B308-2 possibly extract upper date if any
-    val dateUpperNew = field(S ? wvDateLabels.get._2, dateUpperInit, "size" -> "10", "maxlength" -> "10",
+    val dateUpperNew = field(S ? wvDateLabels.get._2, dateUpperInit, "size" -> "11", "maxlength" -> "11",
       isIncompletedate _, mustRightRelate _
     )
     override def screenTop = Full(<span>{GedcomDateOptions.getMsg(wvEvenDat4Fa.get._2)}: {dateFormat} - {dateFormat}</span>)
     //override def screenBottom = Full(<span>{wvEvenDat4Fa.get._2}</span>)
     override def nextScreen = {
-      wvDPAS.set(<_>{S ? wvDateLabels.get._1} {dateLowerNew.get} {S ? wvDateLabels.get._2} {dateUpperNew}</_>.text,
+      wvDPAS.set(<_>{S ? wvDateLabels.get._1} {dateLowerNew.get.trim} {S ? wvDateLabels.get._2} {dateUpperNew.get.trim}</_>.text.trim,
         wvDPAS.get._2, wvDPAS.get._3, wvDPAS.get._4, wvDPAS.get._5)
       conf
     }
