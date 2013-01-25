@@ -34,13 +34,21 @@
             <artifactId>scala-compiler</artifactId>
             <!--<scope>test</scope>-->
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.scala-libs</groupId>-->
+            <!--<artifactId>scalajpa</artifactId>-->
+            <!--<version>1.2-SNAPSHOT</version>-->
+            <!--&lt;!&ndash;<version>[1.2-SNAPSHOT,)</version>&ndash;&gt;-->
+            <!--&lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.scala-libs</groupId>
-            <artifactId>scalajpa</artifactId>
-            <!--<version>1.2-SNAPSHOT</version>-->
-            <version>[1.2-SNAPSHOT,)</version>
-            <!--<scope>test</scope>-->
+            <!--<artifactId>scalajpa_2.9.1</artifactId>-->
+            <artifactId>scalajpa_${scala.version}</artifactId>
+            <version>1.4</version>
         </dependency>
+
         <dependency>
             <groupId>org.scala-tools.testing</groupId>
             <artifactId>specs_2.8.1</artifactId>  <!-- specs_2.8.0 -->
@@ -87,17 +95,6 @@
             <!--<groupId>uk.com.robust-it</groupId>-->
             <!--<artifactId>cloning</artifactId>-->
         <!--</dependency>-->
-
-        <!-- s_a_v_i -->
-        <!--<dependency>-->
-        <!--[INFO] The projects in the reactor contain a cyclic reference: Edge between-->
-        <!--'Vertex{label='lt.node.gedcom:gedcom-web'}'-->
-            <!--and 'Vertex{label='lt.node.gedcom:gedcom-spa'}'-->
-        <!--introduces to cycle in the graph lt.node.gedcom:gedcom-spa &ndash;&gt;-->
-        <!--lt.node.gedcom:gedcom-web &ndash;&gt; lt.node.gedcom:gedcom-spa-->
-            <!--<groupId>${pom.groupId}</groupId>-->
-            <!--<artifactId>gedcom-web</artifactId>-->
-        <!--</dependency>-->
     </dependencies>
 
     <!--<build>-->
@@ -105,25 +102,59 @@
     <!--</build>-->
     <build>
         <defaultGoal>
-            clean process-resources -Pspa_padargas -Dmaven.test.skip=true
-            <!--clean install -Pspa_padargas -Dmaven.test.skip=true-->
+            <!--clean process-resources -Pspa_dev -Dmaven.test.skip=true-->
+            clean install -Pspa_dev -Dmaven.test.skip=true
         </defaultGoal>
+        <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
+        <!--<filters><filter>src/main/resources/filters/dev.properties</filter></filters>-->
+        <resources>
+            <resource>
+                <directory>src/main/resources/META-INF</directory>
+                <targetPath>META-INF</targetPath>
+                <filtering>true</filtering>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/META-INF</directory>
+                <targetPath>META-INF</targetPath>
+                <filtering>false</filtering>
+                <includes>
+                    <include>orm.xml</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
     <profiles>
-        <!--  mvn clean install -Pspa_padargas  -Dmaven.test.skip=true  -->
+        <!--  mvn clean install -Pspa_dev  -Dmaven.test.skip=true  -->
         <profile>
-            <id>spa_padargas</id>
-            <activation>
-                <property>
-                    <name>spa_padargas-on</name>
-                </property>
-            </activation>
-            <build>
+            <id>spa_dev</id>
+            <!--<activation><property><name>spa_dev-on</name></property></activation>-->
+            <!--
+            hibernate.dialect=org.hibernate.dialect.MySQLDialect
+            hibernate.connection.driver_class=com.mysql.jdbc.Driver
+            hibernate.connection.url=jdbc:mysql://localhost:3306/datasource-gedcom
+            hibernate.connection.username=shaknisgedcom
+            hibernate.connection.password=123123
+            hibernate.max_fetch_depth=3
+            hibernate.show_sql=false
+            hibernate.hbm2ddl.auto=update
+            -->
+            <properties>
+                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
+                <hibernate.connection.url>jdbc:mysql://localhost:3306/datasource-gedcom</hibernate.connection.url>
+                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
+                <hibernate.connection.password>123123</hibernate.connection.password>
+                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
+                <hibernate.show_sql>true</hibernate.show_sql>
+                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+            </properties>
+            <!--<build>-->
                 <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
-                <filters>
-                    <filter>src/main/resources/filters/padargas.properties</filter>
-                </filters>
-                <resources>
+                <!--<filters><filter>src/main/resources/filters/dev.properties</filter></filters>-->
+                <!--<resources>
                     <resource>
                         <directory>src/main/resources/META-INF</directory>
                         <targetPath>META-INF</targetPath>
@@ -140,31 +171,45 @@
                             <include>orm.xml</include>
                         </includes>
                     </resource>
-                </resources>
-                <plugins>
+                </resources>-->
+                <!--<plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
-                </plugins>
-            </build>
+                </plugins>-->
+            <!--</build>-->
         </profile>
-        <!--  mvn clean install -Pspa_stax  -Dmaven.test.skip=true  -->
+        <!--  mvn -Pspa_prod -Dmaven.test.skip=true clean install  -->
         <profile>
-            <id>spa_stax</id>
-            <activation>
-                <property>
-                    <name>spa_stax-on</name>
-                </property>
-            </activation>
-            <build>
+            <id>spa_prod</id>
+            <!--<activation><property><name>spa_stax-on</name></property></activation>-->
+            <!--
+            hibernate.dialect=org.hibernate.dialect.MySQLDialect
+            hibernate.connection.driver_class=com.mysql.jdbc.Driver
+            hibernate.connection.url=jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom
+            hibernate.connection.username=shaknisgedcom
+            hibernate.connection.password=123123
+            hibernate.max_fetch_depth=3
+            hibernate.show_sql=false
+            hibernate.hbm2ddl.auto=update
+            -->
+            <properties>
+                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
+                <hibernate.connection.url>jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom</hibernate.connection.url>
+                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
+                <hibernate.connection.password>123123</hibernate.connection.password>
+                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
+                <hibernate.show_sql>false</hibernate.show_sql>
+                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+            </properties>
+            <!--<build>-->
                 <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
-                <filters>
-                    <filter>src/main/resources/filters/stax.properties</filter>
-                </filters>
-                <resources>
+                <!--<filters><filter>src/main/resources/filters/stax.properties</filter></filters>-->
+                <!--<resources>
                     <resource>
                         <directory>src/main/resources/META-INF</directory>
                         <targetPath>META-INF</targetPath>
@@ -181,16 +226,16 @@
                             <include>orm.xml</include>
                         </includes>
                     </resource>
-                </resources>
-                <plugins>
+                </resources>-->
+                <!--<plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
-                </plugins>
-            </build>
+                </plugins>-->
+            <!--</build>-->
         </profile>
     </profiles>
 

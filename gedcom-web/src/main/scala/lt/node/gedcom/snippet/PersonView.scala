@@ -5,6 +5,7 @@ import xml._
 
 import _root_.net.liftweb._
 import http._
+import provider.servlet.HTTPServletContext
 import SHtml._
 import js._
 import JsCmds._
@@ -15,7 +16,10 @@ import _root_.net.liftweb.util.Props
 import _root_.net.liftweb.util.Helpers._
 
 import _root_.bootstrap.liftweb._
-import _root_.lt.node.gedcom.model._ //{Model, Person, PersonEvent, PersonAttrib, Family, FamilyEvent, EventDetail}
+import _root_.lt.node.gedcom.model._
+import java.io.File
+
+//{Model, Person, PersonEvent, PersonAttrib, Family, FamilyEvent, EventDetail}
 import _root_.lt.node.gedcom.util._  //XslTransformer
 //import _root_.lt.node.gedcom.util.{GedcomDateOptions,PeTags,PaTags,GedcomDate}
 
@@ -23,9 +27,34 @@ object personVar extends RequestVar[Box[Person]](Empty)
 
 object familyReqVar extends RequestVar[Map[Int, Family]](Map.empty)
 
+object locTexts4XSLfilePathReqVar extends RequestVar[String](LiftRules.getResource("/xsl/locTexts4XSL.xml") match {
+  case Full(url) => url.getProtocol match {
+    case "file" => url.getFile //.substring(0*1)
+    case _ =>
+      val msg = "PersonView.renderPerson: /xsl/locTexts4XSL.xml: the resource protocol is not 'file'"
+      Logger("PersonReading").error(msg)
+      S.redirectTo("/errorPage", () => {
+        ErrorXmlMsg.set(Some(Map(
+          "location" -> <p>PersonView.renderPerson</p>,
+          "message" -> <p>{msg}</p>)))
+      })
+      url.toString
+  }
+  case _ =>
+    val msg = "PersonView.renderPerson: /xsl/locTexts4XSL.xml: the resource is missing"
+    Logger("PersonReading").error(msg)
+    S.redirectTo("/errorPage", () => {
+      ErrorXmlMsg.set(Some(Map(
+        "location" -> <p>PersonView.renderPerson</p>,
+        "message" -> <p>{msg}</p>)))
+    })
+    "loc_texts_4XSL_unresolved"
+}
+)
+
 
 object PersonReading extends Loggable {
-  val log = Logger("PersonReading");
+  val log = Logger("PersonReading")
 
   def apply(): Box[Person] = {
     personVar.is match {
@@ -56,7 +85,8 @@ object PersonReading extends Loggable {
     //log.debug("getFamDataHtml localeAAE |" + resXml + "|")
 
     val resHtmlFa = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXmlFa), "/xsl/person.xsl",
-        Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+        Map(
+          "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
           "lang"->S.locale.getLanguage.toLowerCase,
           "personId"->personVar.get.get.id.toString,
           "app"->Props.get("__app").openOr("/gedcom-web/"))
@@ -135,6 +165,31 @@ class PersonView {
 
   if (S.get("familyEventId") != Empty) S.unsetSessionAttribute("familyEventId")
 
+  /*val locTexts4XSLfilePath = LiftRules.getResource("/xsl/locTexts4XSL.xml") match {
+    case Full(url) => url.getProtocol match {
+      case "file" => url.getFile //.substring(1*0)
+      case _ =>
+        val msg = "PersonView.renderPerson: /xsl/locTexts4XSL.xml: the resource protocol is not 'file'"
+        log.error(msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map(
+            "location" -> <p>PersonView.renderPerson</p>,
+            "message" -> <p>{msg}</p>)))
+        })
+        url.toString
+    }
+    case _ =>
+      val msg = "PersonView.renderPerson: /xsl/locTexts4XSL.xml: the resource is missing"
+      log.error(msg)
+      S.redirectTo("/errorPage", () => {
+        ErrorXmlMsg.set(Some(Map(
+          "location" -> <p>PersonView.renderPerson</p>,
+          "message" -> <p>{msg}</p>)))
+      })
+      "loc_texts_4XSL_unresolved"
+  }*/
+
+
   // google-group: Lift: [CSS Selector bindings and attributes]
   def render0: net.liftweb.util.CssSel = {
     PersonReading()
@@ -182,9 +237,32 @@ class PersonView {
     }
   }
 
+  def getBaseApplicationPath: Box[String] = {
+    LiftRules.context match {
+      case context: HTTPServletContext => {
+        var baseApp: String = context.ctx.getRealPath("/")
+        if (!baseApp.endsWith(File.separator))
+          baseApp = baseApp + File.separator
+        Full(baseApp)
+      }
+      case _ => Empty
+    }
+  }
 
   def renderPerson(): net.liftweb.util.CssSel = {
     log.debug("renderPerson []...")
+    log.debug("/ path =|" + getBaseApplicationPath.openOr("___no_path_for_/_") + "|")
+    println("/ path =|" + getBaseApplicationPath.openOr("___no_path_for_/_") + "|")
+    log.debug("/ path =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").openOr("___no_path_for_/_") + "|")
+    println("/ path =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").openOr("___no_path_for_/_") + "|")
+    log.debug("LiftRules.getResource.getContent =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getContent + "|")
+    log.debug("LiftRules.getResource.getProtocol =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getProtocol + "|")
+    log.debug("LiftRules.getResource.getFile =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getFile + "|")
+    log.debug("LiftRules.getResource.getPath =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getPath + "|")
+    println("LiftRules.getResource.getContent =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getContent + "|")
+    println("LiftRules.getResource.getProtocol =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getProtocol + "|")
+    println("LiftRules.getResource.getFile =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getFile + "|")
+    println("LiftRules.getResource.getPath =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getPath + "|")
 
     PersonReading
     log.debug("renderPerson ...[]")
@@ -199,7 +277,8 @@ class PersonView {
         //log.debug("renderPerson Props.get(\"__app\") = " + Props.get("__app").openOr("/__app/") + "|");
         log.debug("renderPerson resXml |" + resXml + "|")
         val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-          Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+          Map(
+            "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
             "lang"->S.locale.getLanguage.toLowerCase,
             "mode"->"noFams",
             "app"->Props.get("__app").openOr("/gedcom-web/"))).toString()
@@ -213,7 +292,7 @@ class PersonView {
                 <lift:loc>wiz.add.pepa</lift:loc>
               </button>
               <br/>
-            </span>
+            </span> /* <img src="/images/image_new.gif"/>*/
 //          "#pewiz" #> <span>
 //              <button class="lift:PeWizard.ajaxRender">
 //                <lift:loc>wiz.add.pepa</lift:loc>
@@ -245,27 +324,19 @@ class PersonView {
           log.debug("renderSpouseAndChildren resXml |" + resXml + "|")
           var resHtml =
             XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl"/*"/xsl/family.xsl"*/,
-              Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+              Map(
+                "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
                 "lang"->S.locale.getLanguage.toLowerCase,
                 "personId"->p.id.toString(),
                 "app"->Props.get("__app").openOr("/gedcom-web/"))).toString()
-          //XslTransformer(resXml, Localizer.xsl4SpouseAndChildren, Map("personId"->p.id.toString)).toString
           log.debug("resHtml |" + resHtml + "|")
           "#childreninfo" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", resHtml))
-
-        //        "#childreninfo" #> Unparsed(XslTransformer(p.toXmlFamilies(Model.getUnderlying).toString,
-        //          xsl4SpouseAndChildren, Map("personId"->p.id.toString)))
-
         case _ =>
           val msg = "PersonView.renderSpouseAndChildren: wrong precondition: the Person is missing"
           S.redirectTo("/errorPage", () => {
             ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>
-                PersonView.renderSpouseAndChildren
-              </p>,
-              "message" -> <p>
-                {msg}
-              </p>)))
+              "location" -> <p>PersonView.renderSpouseAndChildren</p>,
+              "message" -> <p>{msg}</p>)))
           })
       }
     }
@@ -317,7 +388,8 @@ class PersonView {
                     log.debug("renderParent resXml |" + resXml + "|")
                     val resHtml =
                       XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-                        Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+                        Map(
+                          "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
                           "lang"->S.locale.getLanguage.toLowerCase,
                           "mode"->"mini",
                           "app"->Props.get("__app").openOr("/gedcom-web/"))
@@ -328,12 +400,8 @@ class PersonView {
                     val msg = "PersonView.renderParent: No person for " + p.id
                     S.redirectTo("/errorPage", () => {
                       ErrorXmlMsg.set(Some(Map(
-                        "location" -> <p>
-                          PersonView.renderParent
-                        </p>,
-                        "message" -> <p>
-                          {msg}
-                        </p>)))
+                        "location" -> <p>PersonView.renderParent</p>,
+                        "message" -> <p>{msg}</p>)))
                     })
                 }
             }
@@ -391,7 +459,8 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("deletePerson resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+      Map(
+        "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "lang"->S.locale.getLanguage.toLowerCase,
         "mode"->"noFams",
         "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
@@ -443,7 +512,8 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("familyChildDelete resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+      Map(
+        "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "mode"->"parentsChildren",
         "lang"->S.locale.getLanguage.toLowerCase,
         "personId"->S.getSessionAttribute("personId").get,
@@ -510,7 +580,8 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("familyDelete resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+      Map(
+        "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "mode"->"spouses",
         "lang"->S.locale.getLanguage.toLowerCase,
         "personId"->S.getSessionAttribute("personId").get,
@@ -584,7 +655,9 @@ class PersonView {
       val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
       log.debug("deletePe resXml |" + resXml + "|")
       val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-        Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+        Map(
+          "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
+          //"locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
           "lang"->S.locale.getLanguage.toLowerCase,
           "peId"->S.getSessionAttribute("personEventId").get,
           "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
@@ -678,7 +751,8 @@ class PersonView {
       val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
       log.debug("deletePa resXml |" + resXml + "|")
       val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-        Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+        Map(
+          "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
           "lang"->S.locale.getLanguage.toLowerCase,
           "paId"->S.getSessionAttribute("personAttribId").get,
           "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
@@ -766,7 +840,8 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("deleteFe resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map("locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
+      Map(
+        "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "lang"->S.locale.getLanguage.toLowerCase,
         "feId"->S.getSessionAttribute("familyEventId").get,
         "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
@@ -828,6 +903,86 @@ class PersonView {
     "#cancel" #> SHtml.link("index", () => {
       S.unsetSessionAttribute("familyEventId")
       S.redirectTo(RequestedURL.is.openOr("/")) }, Text(S ? "answer.no" /*"return"*/))
+  }
+
+
+  def deleteMultiMedia: net.liftweb.util.CssSel = {
+    RequestedURL(Full(S.referer.openOr("/")))
+    println("deleteMultiMedia: S.referer= " + S.referer)
+    log.debug("deleteMultiMedia: S.referer= " + S.referer)
+
+    PersonReading()
+    val person: Person = personVar.get.get
+    person.getPersonEvents(Model.getUnderlying)
+    val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
+    log.debug("deleteMultiMedia resXml |" + resXml + "|")
+    val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
+      Map(
+        "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
+        "lang"->S.locale.getLanguage.toLowerCase,
+        //"paId"->S.getSessionAttribute("personAttribId").get,
+        "mmId"->S.getSessionAttribute("mmId").get,
+        "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+    log.debug("deleteMultiMedia resHtml |" + resHtml + "|")
+    var mm: MultiMedia = null
+    val optionMm: Option[MultiMedia] =
+      Model.find(classOf[MultiMedia], S.getSessionAttribute("mmId").get.toLong)
+    optionMm match {
+      case Some(mmr) =>
+        mm = mmr
+      case _ =>
+        val place = "PersonView.deleteMultiMedia"
+        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("mmId").get)
+        log.debug(place+": "+msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map(
+            "location" -> <p>{place}</p>,
+            "message" -> <p>{msg}</p>)))
+        })
+    }
+
+    def doDelete(): Unit = {
+      log.debug("[doDelete-mm]...")
+      if (AccessControl.isAuthenticated_?) {
+        mm.idRoot = mm.id
+        mm.setModifier(CurrentUser.get.get)
+//        pa.getAttribDetail(Model.getUnderlying)
+//        val ed: EventDetail = pa.attribdetails.iterator.next()
+//        var paa = new Audit
+//        val paClone: Box[PersonAttribClone] = Empty
+//        paa.setFields(CurrentUser.get.get, "PA", pa.id, "del", pa.getAuditRec(paClone))
+//        //paa = Model.merge(paa)
+//        var eda = new Audit
+//        val edClone: Box[EventDetailClone] = Empty
+//        eda.setFields(CurrentUser.get.get, "ED", ed.id, "del", ed.getAuditRec(edClone))
+//        //eda = Model.merge(eda)
+//        //Model.remove(pa)
+//        Model.remove(Model.getReference(classOf[PersonAttrib],
+//          S.getSessionAttribute("personAttribId").get.toLong))
+//        paa = Model.merge(paa)
+//        eda = Model.merge(eda)
+        Model.merge(mm)
+        Model.flush
+        S.unsetSessionAttribute("mmId")
+        log.debug("...[doDelete-mm]")
+        S.redirectTo(RequestedURL.is.openOr("/"))
+      } else {
+        val place = "PersonView.deleteMultiMedia.doDelete"
+        val msg = ("You are not logged in")
+        log.debug(place+": "+msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map(
+            "location" -> <p>{place}</p>,
+            "message" -> <p>{msg}</p>)))
+        })
+      }
+    }
+    "#partinfo" #> Unparsed(Localizer.tagMsg("Pe", "pe", "_", Localizer.tagMsg("Pa", "pa", "_", resHtml))) &
+      "#confirm" #> LongMsgs.getMsgText("confirm.del.pepafe") &
+      "#submit" #> SHtml.submit(S ? "answer.yes"/*"submit"*/, doDelete) &
+      "#cancel" #> SHtml.link("index", () => {
+        S.unsetSessionAttribute("mmId")
+        S.redirectTo(RequestedURL.is.openOr("/")) }, Text(S ? "answer.no"))
   }
 
 

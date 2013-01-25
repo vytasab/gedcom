@@ -9,6 +9,10 @@ import _root_.net.liftweb.util.Helpers._
 import lt.node.gedcom.rest.GedcomRest
 import java.lang.StringBuffer
 import bootstrap.liftweb.{FamilyIds, PersonIds}
+import org.slf4j.{LoggerFactory,Logger}
+//import org.apache.log4j.Level
+
+//import java.util.logging.Level
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,6 +25,9 @@ import bootstrap.liftweb.{FamilyIds, PersonIds}
 class Export {
 
   object personVar extends RequestVar[Box[Person]](Empty)
+
+  val log: Logger = LoggerFactory.getLogger("Export");
+  //Logger.getLogger("org.hibernate").setLevel(Level.OFF)
 
   def doAll = {
     GedcomRest.emptyPids

@@ -15,7 +15,7 @@
  */
 package bootstrap.liftweb
 
-import _root_.java.util.Locale
+import java.util.{ResourceBundle, Locale}
 import _root_.java.text.MessageFormat
 import org.slf4j.{LoggerFactory, Logger}
 
@@ -33,6 +33,7 @@ import common._
 import _root_.lt.node.gedcom._
 import model._
 import _root_.lt.node.gedcom.rest.GedcomRest
+
 /**
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
@@ -43,7 +44,9 @@ class Boot extends Loggable {
     println("==================================================================")
     //deprec LogBoot._log4JSetup
     //deprec Slf4jLogBoot.enable
-    val log: Logger = LoggerFactory.getLogger("Boot");
+    val log: Logger = LoggerFactory.getLogger("Boot")
+    log.debug("=====================================================================")
+    log.debug("====== ===== ==== === == = Boot gedcom-web = == === ==== ===== ======")
     //log.debug("GedCom ab24-3"); //log.info("GedCom ab24-3"); log.warn("GedCom ab24-3");
     //    //---------------------------------------
     //    println("------->" + (Locale.getAvailableLocales.
@@ -75,14 +78,24 @@ class Boot extends Loggable {
     // where to search snippet
     LiftRules.addToPackages("lt.node.gedcom")
 
-    LiftRules.resourceBundleFactories prepend {
-      case (name, locale) =>
-        tryo { java.util.ResourceBundle.getBundle("i18n." + name, locale) } openOr null
-    }
+//    LiftRules.resourceBundleFactories prepend {
+//      case (name, locale) =>
+//        //tryo { java.util.ResourceBundle.getBundle("i18n." + name, locale) } openOr null
+//        tryo { ResourceBundle.getBundle("text." + name, locale) } openOr null
+//    }
 
     // Set locale dependent text
-    LiftRules.resourceNames = List("i18n.lingua", "lift", "text")
+    LiftRules.resourceNames = List(/*"i18n.lingua", "lift",*/ "text")
 // TODO B417-7/vsh  atsikratyti "i18n.lingua", "lift"
+
+
+//    LiftRules.resourceBundleFactories prepend {
+//      case (name, locale) =>
+//        //log.debug(MessageFormat.format("Boot LiftRules.resourceBundleFactories  - |{0}| - |{1}|", name, locale))
+//        tryo { ResourceBundle.getBundle(/*"text." + */name, locale) } openOr null
+//    }
+
+
 
     ResourceServer.allow{
       // AA26-2/vsh no need this line ?!
@@ -111,31 +124,15 @@ class Boot extends Loggable {
     // where to search snippet
     LiftRules.addToPackages("lt.node.gedcom")
     // !!! B324-4/vsh DB initialization MUST preceed  Schemifier.schemify ...
-    Schemifier.schemify(true, /*Log*/ Schemifier.infoF _ /*, User, ImageInfo, ImageBlob, AuctionItem, AuctionBid*/) //, ModelMovedTospaSpa
+    Schemifier.schemify(true, /*Log*/ Schemifier.infoF _ )
 
-    //    // Set up a site map
-    //    //    val entries = SiteMap(
-    //    val entries: List[Menu] = List(
-    //      Menu(Loc("Home", "index" :: Nil, ?("Home"))),
-    //      Menu(Loc("Authors", "authors" :: "list" :: Nil, ?("Author List"))),
-    //      Menu(Loc("Add Author", "authors" :: "add" :: Nil, ?("Add Author"), Hidden)),
-    //      Menu(Loc("Books", "books" :: "list" :: Nil, ?("Book List"))),
-    //      Menu(Loc("Add Book", "books" :: "add" :: Nil, ?("Add Book"), Hidden)),
-    //      Menu(Loc("BookSearch", "books" :: "search" :: Nil, ?("Book Search"))),
-    //
-    //      Menu(Loc("UserCred", "credentials" :: "index" :: Nil, ?("Credentials"))),
-    //      Menu(Loc("UserLogin", "login" :: "index" :: Nil, ?("Login"))),
-    //      Menu(Loc("UserReset", "password_reset" :: "index" :: Nil, ?("Password Reset")))
-    //    )
-    //    // Set up a site map ...
-    //    LiftRules.setSiteMap(SiteMap(entries: _*))
-
-    // B321-1=============================================
+    // B321-1 =============================================
     // Set up a site map ...
     LiftRules.setSiteMap(SiteMap(MenuInfo.entries: _*))
     // ... and show it in JS based menu
     //LiftRules.setSiteMap(entries)
-    // B321-1=============================================
+    // B321-1 =============================================
+
 //    // Google-group: Lift: [Does my Url Rewriting look correct?]
 //    // https://github.com/dpp/starting_point/blob/menu_fun/src/main/scala/bootstrap/liftweb/Boot.scala
 //    // Build SiteMap
@@ -157,8 +154,12 @@ class Boot extends Loggable {
 //    //LiftRules.setSiteMapFunc(() => sitemapMutators(sitemap))
     // B321-1=============================================
 
-    // Locale calculation
-    // http://www.assembla.com/wiki/show/liftweb/Internationalization
+    //LiftRules.statelessDispatchTable.append(ImageInfo.serveImage)
+    LiftRules.statelessDispatchTable.append(MultiMediaService.serveImage)
+
+    //-- Locale calculation
+    //-- http://www.assembla.com/wiki/show/liftweb/Internationalization
+    //log.debug(MessageFormat.format("Locale.getDefault() - {0}", Locale.getDefault().toString))
     def localeCalculator(request: Box[HTTPRequest]): Locale =
       request.flatMap(r => {
         val cookieName = "vsh.gedcom"; //  "your.cookie.name"
@@ -166,7 +167,8 @@ class Boot extends Loggable {
           HTTPCookie(cookieName, Full(in),
             Full(S.hostName), Full(S.contextPath), Full(2629743), Empty, Empty)
         def localeFromString(in: String): Locale = {
-          val x = in.split("_").toList;
+          val x = in.split("_").toList
+          //log.debug(MessageFormat.format("localeCalculator localeFromString - |{0}|", new Locale(x.head, x.last).toString))
           new Locale(x.head, x.last)
         }
         def calcLocale: Box[Locale] =
@@ -175,12 +177,17 @@ class Boot extends Loggable {
           ).openOr(Full(LiftRules.defaultLocaleCalculator(request)))
         S.get("locale") match {
           case f@Full(selectedLocale) =>
+            //log.debug(MessageFormat.format("localeCalculator f@Full(selectedLocale) - |{0}|", selectedLocale.toString))
             S.addCookie(localeCookie(selectedLocale))
             tryo(localeFromString(selectedLocale))
           case _ =>
+            //log.debug(MessageFormat.format("localeCalculator _ "))
             S.param("locale") match {
-              case Full(null) => calcLocale
+              case Full(null) =>
+                //log.debug(MessageFormat.format("localeCalculator  _ Full(null) - |{0}|", calcLocale.toString))
+                calcLocale
               case f@Full(selectedLocale) =>
+                //log.debug(MessageFormat.format("localeCalculator _ f@Full(selectedLocale) - |{0}|", selectedLocale.toString))
                 S.addCookie(localeCookie(selectedLocale))
                 tryo(localeFromString(selectedLocale))
               case _ => calcLocale
@@ -188,24 +195,24 @@ class Boot extends Loggable {
         }
       }).openOr(Locale.getDefault())
 
-    LiftRules.localeCalculator = localeCalculator _ //    val lithuanianChef = new Locale("lt_LT") // chef
+    LiftRules.localeCalculator = localeCalculator _
 
 
-    // Charles F. Munat: Encrypting user passwords with Jasypt and JPA []... ====================
+    //-- Charles F. Munat: Encrypting user passwords with Jasypt and JPA []... ====================
     LiftRules.dispatch.prepend{
       case Req(List("logout"), "", _) => AccessControl.logout
     }
 
-    // http://blog.getintheloop.eu/2009/05/03/url-rewriting-with-the-lift-framework
+    //-- http://blog.getintheloop.eu/2009/05/03/url-rewriting-with-the-lift-framework
     LiftRules.statelessRewrite.prepend(/*NamedPF("UserValidation")*/ {
       case RewriteRequest(ParsePath(List("validation", page), _, _, _), _, _) => {
-        log.debug("RewriteRequest validation page = " + page);
+        log.debug("RewriteRequest validation page = " + page)
         RewriteResponse(ParsePath(List("login", "changePassword"), "", true, false),
           Map("code" -> page.toString), true)
       }
       case RewriteRequest(ParsePath(List("addendup", page), _, _, _), _, _) => {
         log.debug("S.inStatefulScope_?= |" + S.inStatefulScope_? + "|")
-        log.debug("RewriteRequest signup page = " + page);
+        log.debug("RewriteRequest signup page = " + page)
         log.debug("userOption = |" +
           Model.createNamedQuery[User]("findUserByValidationCode",
           "code" -> page).findOne + "|")
@@ -277,7 +284,7 @@ class Boot extends Loggable {
     })
 
     LiftRules.dispatch.prepend{
-      case Req /*uestState*/ ("admin" :: page, "", _)
+      case Req /*guestState*/ ("admin" :: page, "", _)
         if !AccessControl.isAuthenticated_? =>
         S.error("Please log in to view the page you requested.")
         RequestedURL(Full(S.uri))
@@ -318,7 +325,7 @@ class Boot extends Loggable {
 // ...[] ===================================================================================
 
 object Locales {
-  val langs = List("--", "lt_LT", "en_EN"/*, "de", "pl", "ru"*/)
+  val langs = List(/*"--", */"lt_LT", "en_EN"/*, "de", "pl", "ru"*/)
 
   val aMap = langs.map{ x => (<_>{x}</_>.text, x)}.toMap
 

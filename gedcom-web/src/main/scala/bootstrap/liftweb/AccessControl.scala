@@ -52,4 +52,7 @@ object AccessControl {
     case Full(m) => true
     case _ => false
   }
+
+  def isDeveloper_?() = isAuthenticated_?() && CurrentUser.is.get.emailAddress == "vytasab@gmail.com"
+
 }

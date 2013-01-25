@@ -69,6 +69,9 @@ class Family /*extends Loggable*/  {
   @OneToMany(mappedBy = "familyevent", targetEntity = classOf[FamilyEvent], cascade = Array(CascadeType.REMOVE))
   var familyevents: java.util.Set[FamilyEvent] = new java.util.HashSet[FamilyEvent]()
 
+  @OneToMany(mappedBy = "familymultimedia", targetEntity = classOf[MultiMedia], cascade = Array(CascadeType.REMOVE))
+  var familymultimedias: java.util.Set[MultiMedia] = new java.util.HashSet[MultiMedia]()
+
   //@ManyToOne(fetch = FetchType.LAZY, optional = true)
   var submitter = ""
 
@@ -86,6 +89,13 @@ class Family /*extends Loggable*/  {
       setParameter("family", this).
       getResultList().asInstanceOf[java.util.List[FamilyEvent]]
     this.familyevents = new java.util.HashSet[FamilyEvent](retrievedEntity)
+  }
+
+  def getFamilyMultiMedias(em: EntityManager) = {
+    val retrievedFamilyMultiMedia: java.util.List[MultiMedia] = em.createNamedQuery("findMultiMediaByFamily").
+      setParameter("family", this).
+      getResultList().asInstanceOf[java.util.List[MultiMedia]]
+    this.familymultimedias = new java.util.HashSet[MultiMedia](retrievedFamilyMultiMedia)
   }
 
   def toString(em: EntityManager) = {

@@ -10,6 +10,7 @@ import _root_.java.util.Date
 This class represents a user with login privileges on the website.
  */
 
+// TODO CB15-4/vsh: reikėtų čia pridėti optional MultiMwedia mblob
 @Entity
 @Table(name = "audit")
 class Audit {
@@ -23,6 +24,7 @@ class Audit {
   // Pe-Person, PE-PersonEvent, PA-PersonAttrib,
   // Fa-Family, FA-FamilyAttrib,
   // ED-EventDetail
+  // MM-MultiMedia
 
   @Column(unique = false, nullable = false)
   var entityId: Long = _

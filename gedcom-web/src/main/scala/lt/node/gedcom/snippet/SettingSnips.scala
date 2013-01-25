@@ -3,14 +3,12 @@ package lt.node.gedcom.snippet
 //import _root_.scala._
 
 import _root_.net.liftweb._
-import http.provider.HTTPCookie
-
+import util.Helpers._
 import http._
 import common._
-import net.liftweb.util._
-import Helpers._
 //import bootstrap.liftweb.{Locales}
 import bootstrap.liftweb._  //{ErrorXmlMsg, AccessControl, RequestedURL, CurrentUser}
+//import
 
 class SettingSnips {
   val log = Logger("SettingSnips")
@@ -31,9 +29,9 @@ class SettingSnips {
       S.redirectTo(uri)
     }
 
-    //    "#lang_lbl" #> S.?("set.locale") &
+    //"#lang_lbl" #> S.?("set.locale") &
     "#lang" #> SHtml.select(Locales.LocalesVar.is.toSeq, Full(S.locale.toString),
-    { x: String => selectedLocale = x }, "size" -> "1"/*(Locales.langs.size.toString)*/,
+    { x: String => selectedLocale = x }, "size" ->/* "1"*/(Locales.langs.size.toString),
     "onblur" -> "selectWhenChanged(this)", "onchange" -> "selectWhenChanged(this)")  &
       "#lokale" #> <img src={"/images/flag_" + S.locale.toString.split("_").toList.head.trim + ".png"}
                         title={S.loc("set.locale")} width="4%" height="3%"/> &

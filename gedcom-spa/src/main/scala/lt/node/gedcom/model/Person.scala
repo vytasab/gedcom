@@ -71,30 +71,15 @@ class Person  {
   @OneToMany(mappedBy = "personattrib", targetEntity = classOf[PersonAttrib], cascade = Array(CascadeType.REMOVE))
   var personattribs: java.util.Set[PersonAttrib] = new java.util.HashSet[PersonAttrib]()
 
+  @OneToMany(mappedBy = "personmultimedia", targetEntity = classOf[MultiMedia], cascade = Array(CascadeType.REMOVE))
+  var personmultimedias: java.util.Set[MultiMedia] = new java.util.HashSet[MultiMedia]()
+
   @ManyToOne(fetch = FetchType.EAGER, optional = true)
   var family: Family = _
   // Is child in the family;  look at 'children' in Family
 
   //@ManyToOne(fetch = FetchType.LAZY, optional = true)
   var submitter = ""
-
-
-  /**
-   * This person is father or mother in these families
-   */
-
-  def families(em: EntityManager): List[Family] = {
-    val retrievedFamily: java.util.List[Family] = this.gender match {
-      case "M" => em.createNamedQuery("findFamilyByHusbandId").
-        setParameter("husbandId", this.id).
-        getResultList().asInstanceOf[java.util.List[Family]]
-      case "F" => em.createNamedQuery("findFamilyByWifeId").
-        setParameter("wifeId", this.id).
-        getResultList().asInstanceOf[java.util.List[Family]]
-      case _ => Nil
-    }
-    retrievedFamily.toList
-  }
 
 
   def getPersonEvents(em: EntityManager) = {
@@ -112,6 +97,31 @@ class Person  {
       setParameter("person", this).
       getResultList().asInstanceOf[java.util.List[PersonAttrib]]
     this.personattribs = new java.util.HashSet[PersonAttrib](retrievedPersonAttrib)
+  }
+
+
+  def getPersonMultiMedias(em: EntityManager) = {
+    val retrievedPersonMultiMedia: java.util.List[MultiMedia] = em.createNamedQuery("findMultiMediaByPerson").
+      setParameter("person", this).
+      getResultList().asInstanceOf[java.util.List[MultiMedia]]
+    this.personmultimedias = new java.util.HashSet[MultiMedia](retrievedPersonMultiMedia)
+  }
+
+
+  /**
+   * This person is father or mother in these families
+   */
+  def families(em: EntityManager): List[Family] = {
+    val retrievedFamily: java.util.List[Family] = this.gender match {
+      case "M" => em.createNamedQuery("findFamilyByHusbandId").
+        setParameter("husbandId", this.id).
+        getResultList().asInstanceOf[java.util.List[Family]]
+      case "F" => em.createNamedQuery("findFamilyByWifeId").
+        setParameter("wifeId", this.id).
+        getResultList().asInstanceOf[java.util.List[Family]]
+      case _ => Nil
+    }
+    retrievedFamily.toList
   }
 
 
@@ -172,6 +182,7 @@ class Person  {
       </attrib>}
       {if (withFamilies) this.toXmlFamilies(em) }
     </person>
+// TODO CB15-4/vsh: add MultiMedia
     //this.toXmlFamilies(em) // ? recursive call
   }
 

@@ -470,6 +470,7 @@ c117-2/vsh =====================================================================
     ecf0bff..ebb2ed0  master -> master
  c:\Scala\gedcom>
 
+
 C525-5/vsh ==============================================================================
  http://www.regular-expressions.info/regexbuddy/dateyyyymmdd.html
     Matching a Date in yyyy-mm-dd Format
@@ -481,12 +482,94 @@ C525-5/vsh =====================================================================
 
 
 
-ymdd-x/vsh ==============================================================================
+C731-2/vsh ==============================================================================
+Maven use problems for gedcom-web POM
+ [ERROR] Failed to execute goal on project gedcom-web:
+ Could not resolve dependencies for project lt.node.gedcom:gedcom-web:war:1.0-SNAPSHOT:
+ Failed to collect dependencies for [
+  org.scala-lang:scala-library:jar:2.9.1 (compile),
+  org.scala-lang:scala-compiler:jar:2.9.1 (test),
+  org.scala-libs:scalajpa:jar:[1.2-SNAPSHOT,) (compile),
+  org.scala-tools.testing:specs_2.8.1:jar:1.6.7 (test),
+  net.liftweb:lift-common_2.9.1:jar:2.4 (compile),
+  net.liftweb:lift-util_2.9.1:jar:2.4 (compile),
+  net.liftweb:lift-webkit_2.9.1:jar:2.4 (compile),
+  net.liftweb:lift-mapper_2.9.1:jar:2.4 (compile),
+  net.liftweb:lift-jpa_2.9.1:jar:2.4 (compile),
+  net.liftweb:lift-widgets_2.9.1:jar:2.4 (compile),
+  net.liftweb:lift-textile_2.9.1:jar:2.4 (compile),
+  net.liftweb:lift-wizard_2.9.1:jar:2.4 (compile),
+  org.apache.derby:derby:jar:10.4.2.0 (compile),
+  mysql:mysql-connector-java:jar:5.0.8 (compile),
+  javax.transaction:jta:jar:1.0.1B (compile),
+  geronimo-spec:geronimo-spec-jta:jar:1.0.1B-rc4 (runtime),
+  javax.servlet:servlet-api:jar:2.5 (provided), junit:junit:jar:4.7 (test),
+  org.mortbay.jetty:jetty:jar:6.1.25 (test),
+  org.zeroturnaround:jrebel-maven-plugin:jar:1.1.3 (compile),
+  log4j:log4j:jar:[1.2.13,) (runtime), org.slf4j:slf4j-api:jar:1.6.1 (compile),
+  org.slf4j:slf4j-log4j12:jar:1.5.10 (compile),
+  ch.qos.logback:logback-classic:jar:0.9.26 (compile),
+  lt.node.gedcom:gedcom-spa:jar:1.0-SNAPSHOT (compile),
+  org.dbunit:dbunit:jar:2.2 (test),
+  javax.persistence:persistence-api:jar:1.0 (compile),
+  org.hibernate:hibernate-entitymanager:jar:3.4.0.GA (compile)
+  ]:
+  No versions available for
+  org.scala-libs:scalajpa:jar:[1.2-SNAPSHOT,) within specified range -> [Help 1]
+
+
+C812-7/vsh ==============================================================================
+JPA logging problem:
+        http://stackoverflow.com/questions/4861110/hibernate-seam-hibernate-show-sql-setting
+        http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/session-configuration.html#configuration-logging
+        C814-2 pagaliau išsprendė log'inimo valdymo problemą -->
+            https://groups.google.com/forum/#!msg/liftweb/fvayO0t8t4o/u4cNVO_4y8MJ%5B1-25%5D    <--
+
+
+CC20-4/vsh ==============================================================================
+    Apache Tomcat 7 Properties:  JRebel sako: YOU DO NOT HAVE A VALID JREBEL LICENSE!
+    -Dcatalina.base=c:\Tomcat
+    -Dcatalina.home=c:\Tomcat
+    -Djava.endorsed.dirs=c:\Tomcat\endorsed
+    -Djava.io.tmpdir=c:\Tomcat\temp
+    -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+    -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+    -Drebel.log4j-plugin=true
+    -Drebel.log=true
+    -Xverify:none
+    -javaagent:C:\Documents and Settings\vsh\.IdeaIC11\config\plugins\jr-ide-idea\lib\jrebel\jrebel.jar
+
+
+D110-4/vsh ==============================================================================
+Pagaliau pavyko sutvarkyti JRebal naudojimo licenziją metams į priekį.
+
+1) DON'T create any jrebel.lic!! myJRebel licensing does NOT use license files, infact,
+   if license files are present, it can prevent myjrebel licensing from taking effect!
+Please also remove those files if you have them:
+C:\Documents and Settings\vsh\.IdeaIC11\config\plugins\jr-ide-idea\lib\jrebel\jrebel.lic
+C:\Documents and Settings\vsh\.IdeaIC11\config\plugins\jr-ide-idea\lib\jrebel\javarebel.lic
+   ==> ištryniau
+2) Configuration wizard will show you success when it was able to store the values with Java Preferences API,
+   to your CURRENT user. These values are NOT global!! So this success-message is also not global => if you execute your tomcat under a different user, it would not find those values!
+Btw, what is your *normal* username when you are using windows? not "SYSTEM", is assume..?
+   ==> čia buvo mano klaida
+
+I think you have 2 options here:
+a) run tomcat also from your normal windows user (verification: in your jrebel log, we should see "user.name=Vytautas", and not "user.name=SYSTEM" as it currently is.
+ There was my error - Tomcat service was started under "Local System account", ie SYSTEM, not my account.
+b) run config-wizard under system.. this is what my colleague previously suggested.. i'm not sure if you succeeded in testing that (did you verify that jr-config JVM started under SYSTEM user for sure?).
+
+Sorry about the inconvenience!
+
+
+
+
 
 ymdd-x/vsh ==============================================================================
-
+ymdd-x/vsh ==============================================================================
+ymdd-x/vsh ==============================================================================
+ymdd-x/vsh ==============================================================================
+ymdd-x/vsh ==============================================================================
+ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
 
-ymdd-x/vsh ==============================================================================
-
-ymdd-x/vsh ==============================================================================

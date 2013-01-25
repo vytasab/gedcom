@@ -3,12 +3,10 @@ package lt.node.gedcom.model
 import javax.persistence._
 
 import scala.xml._
-
-//{XML,NodeSeq}
-
 import _root_.net.liftweb._
 import http.S
 import common._
+import scala.collection.JavaConverters._
 
 
 @Entity
@@ -94,9 +92,19 @@ STILLBORN = died just prior, at, or near birth, 0 years
   @ManyToOne(fetch = FetchType.LAZY, optional = true)
   var familyevent: FamilyEvent = _
 
+  @OneToMany(mappedBy = "eventdetailmultimedia", targetEntity = classOf[MultiMedia], cascade = Array(CascadeType.REMOVE))
+  var eventdetailmultimedias: java.util.Set[MultiMedia] = new java.util.HashSet[MultiMedia]()
+
   var submitter = ""
 
   def setSubmitter(u: User) = this.submitter = u.getSubmitter()
+
+  def getEventDetailMultiMedias(em: EntityManager) = {
+    val retrievedEventDetailMultiMedia: java.util.List[MultiMedia] = em.createNamedQuery("findMultiMediaByEventDetail").
+      setParameter("eventdetail", this).getResultList().asInstanceOf[java.util.List[MultiMedia]]
+    this.eventdetailmultimedias = new java.util.HashSet[MultiMedia](retrievedEventDetailMultiMedia)
+  }
+
 
   override def toString(/*em: EntityManager*/) = "eventdetail:[" + id + "] " + descriptor + "; " + dateValue + "; " +
     place + "; " + ageAtEvent + "; " + cause + "; " + source + "; " +
@@ -184,7 +192,10 @@ STILLBORN = died just prior, at, or near birth, 0 years
 */
 
 
-  def toXml(/*em: EntityManager*/): NodeSeq = {
+  def toXml(): NodeSeq = {
+    //val a: NodeSeq = (for (mm <- this.eventdetailmultimedias.toArray) yield mm.asInstanceOf[MultiMedia].toXml()).
+    /*val a: NodeSeq = (this.eventdetailmultimedias.toArray.asInstanceOf[Array[MultiMedia]]).map {
+      (m: MultiMedia) => { m.toXml() } } toSeq*/
     <ed id={id.toString}>
       <descriptor>{Unparsed(avoidNull(descriptor))}</descriptor>
       <dateValue>{/*doLocalizedDate*//*localeGedcomDate*/(dateValue)}</dateValue>
@@ -193,9 +204,15 @@ STILLBORN = died just prior, at, or near birth, 0 years
       <cause>{Unparsed(avoidNull(cause))}</cause>
       <source>{Unparsed(avoidNull(source))}</source>
       <note>{Unparsed(avoidNull(note))}</note>
+      {(this.eventdetailmultimedias.asScala.toList).map{m: MultiMedia => {m.toXml}}.toSeq}
+      <!--{ val it = this.eventdetailmultimedias.iterator();  while (it.hasNext) { {it.next().toXml()} } }-->
+      <!--{ for (mm: MultiMedia <- this.eventdetailmultimedias.toArray) yield
+        {mm.toXml()}
+      } -->
+      <!--{ this.eventdetailmultimedias.toArray.foreach ((mm: MultiMedia) =>  {mm.toXml()}) }-->
     </ed>
   }
-
+  // {(this.eventdetailmultimedias.asInstanceOf[java.util.Set[MultiMedia]])..map{m: MultiMedia => {m.toXml}}.toSeq}
 
   /**
    * Transforms GEDCOM date to localized format. Date format is yyyy [mm [dd]]

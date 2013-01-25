@@ -1,5 +1,17 @@
 <?xml version="1.0"?>
 <nodes d="en">
+    <n k="add.multimedia">
+        <en>Add a picture, sound, video</en>
+        <lt>Pridėti vaizdą, garsą, video</lt>
+    </n>
+    <n k="edit.multimedia">
+        <en>Edit a picture, sound, video</en>
+        <lt>Redaguoti vaizdą, garsą, video</lt>
+    </n>
+    <n k="delete.multimedia">
+        <en>Delete a picture, sound, video</en>
+        <lt>Trinti vaizdą, garsą, video</lt>
+    </n>
     <n k="back.to.forest">
         <en>Go back to family forest</en>
         <lt>Grįžti giminės miškan</lt>

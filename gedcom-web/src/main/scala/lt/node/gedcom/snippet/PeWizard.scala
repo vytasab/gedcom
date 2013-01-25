@@ -512,6 +512,7 @@ class PeWizard extends Wizard with Loggable {
 
 
   val ymdymdDate = new Screen {
+// TODO CB18-7 wrong LT case date after edition
     val dateLowerInit =  wvDPAS._1
 // TODO B308-2 possibly extract lower date if any
     val dateLowerNew = field(S ? wvDateLabels.get._1, dateLowerInit, "size" -> "11", "maxlength" -> "11",
@@ -850,7 +851,7 @@ class PeWizard extends Wizard with Loggable {
             wvBoxPerson.set(Full(pe.personevent))
             //wvFE.set((pe.id, pe.tag))
             //  //-- extends WizardVar[(/*id*/Long, /*tag*/String)] (0L, "")
-            //log.debug("FaWizard getFamilyData wvFE.get "+wvFE.get.toString())
+            //log.debug("PeWizard getFamilyData wvFE.get "+wvFE.get.toString())
             pe.eventdetails.size match {
               case 1 =>
                 log.debug("PeWizard getEventAttribData personEventId case 1")
@@ -876,8 +877,8 @@ class PeWizard extends Wizard with Loggable {
                 wvDEAT.set(mltDescr.getLangMsg)
                 log.debug("PeWizard getEventAttribData wvDEAT.get "+wvDEAT.get.toString())
               case 0 =>
-                val place = "FaWizard getEventAttribData"
-                val msg = ("FaWizard getEventAttribData: There is no EventDetail for PersonEvent id = " + personEventId)
+                val place = "PeWizard getEventAttribData"
+                val msg = ("PeWizard getEventAttribData: There is no EventDetail for PersonEvent id = " + personEventId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
                   ErrorXmlMsg.set(Some(Map(
@@ -885,8 +886,8 @@ class PeWizard extends Wizard with Loggable {
                     "message" -> <p>{msg}</p>)))
                 })
               case n =>
-                val place = "FaWizard getEventAttribData"
-                val msg = ("FaWizard getEventAttribData: There are more than 1 EventDetail for PersonEvent id = " + personEventId)
+                val place = "PeWizard getEventAttribData"
+                val msg = ("PeWizard getEventAttribData: There are more than 1 EventDetail for PersonEvent id = " + personEventId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
                   ErrorXmlMsg.set(Some(Map(
@@ -895,8 +896,8 @@ class PeWizard extends Wizard with Loggable {
                 })
             }
           case None =>
-            val place = "FaWizard getEventAttribData"
-            val msg = ("FaWizard getEventAttribData: There is no PersonEvent id = " + personEventId)
+            val place = "PeWizard getEventAttribData"
+            val msg = ("PeWizard getEventAttribData: There is no PersonEvent id = " + personEventId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
               ErrorXmlMsg.set(Some(Map(
@@ -904,8 +905,8 @@ class PeWizard extends Wizard with Loggable {
                 "message" -> <p>{msg}</p>)))
             })
           case _ =>
-            val place = "FaWizard getEventAttribData"
-            val msg = ("FaWizard getEventAttribData: Case _  for PersonEvent id = " + personEventId)
+            val place = "PeWizard getEventAttribData"
+            val msg = ("PeWizard getEventAttribData: Case _  for PersonEvent id = " + personEventId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
               ErrorXmlMsg.set(Some(Map(
@@ -933,7 +934,7 @@ class PeWizard extends Wizard with Loggable {
             wvBoxPerson.set(Full(pa.personattrib))
             //wvFE.set((pe.id, pe.tag))
             //  //-- extends WizardVar[(/*id*/Long, /*tag*/String)] (0L, "")
-            //log.debug("FaWizard getFamilyData wvFE.get "+wvFE.get.toString())
+            //log.debug("PeWizard getFamilyData wvFE.get "+wvFE.get.toString())
             pa.attribdetails.size match {
               case 1 =>
                 actionCUD = "U" //-- C create, U update, D delete
@@ -954,8 +955,8 @@ class PeWizard extends Wizard with Loggable {
                 wvXXXX.set((mlt.getLangMsg, mlt))
                 log.debug("PeWizard getEventAttribData wvXXXX.get "+wvXXXX.get.toString())
               case 0 =>
-                val place = "FaWizard getEventAttribData"
-                val msg = ("FaWizard getEventAttribData: There is no EventDetail for PersonAttrib id = " + personAttribId)
+                val place = "PeWizard getEventAttribData"
+                val msg = ("PeWizard getEventAttribData: There is no EventDetail for PersonAttrib id = " + personAttribId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
                   ErrorXmlMsg.set(Some(Map(
@@ -963,8 +964,8 @@ class PeWizard extends Wizard with Loggable {
                     "message" -> <p>{msg}</p>)))
                 })
               case n =>
-                val place = "FaWizard getEventAttribData"
-                val msg = ("FaWizard getEventAttribData: There are more than 1 EventDetail for PersonAttrib id = " + personAttribId)
+                val place = "PeWizard getEventAttribData"
+                val msg = ("PeWizard getEventAttribData: There are more than 1 EventDetail for PersonAttrib id = " + personAttribId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
                   ErrorXmlMsg.set(Some(Map(
@@ -973,8 +974,8 @@ class PeWizard extends Wizard with Loggable {
                 })
             }
           case None =>
-            val place = "FaWizard getEventAttribData"
-            val msg = ("FaWizard getEventAttribData: There is no PersonAttrib id = " + personAttribId)
+            val place = "PeWizard getEventAttribData"
+            val msg = ("PeWizard getEventAttribData: There is no PersonAttrib id = " + personAttribId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
               ErrorXmlMsg.set(Some(Map(
@@ -982,8 +983,8 @@ class PeWizard extends Wizard with Loggable {
                 "message" -> <p>{msg}</p>)))
             })
           case _ =>
-            val place = "FaWizard getEventAttribData"
-            val msg = ("FaWizard getEventAttribData: Case _  for PersonAttrib id = " + personAttribId)
+            val place = "PeWizard getEventAttribData"
+            val msg = ("PeWizard getEventAttribData: Case _  for PersonAttrib id = " + personAttribId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
               ErrorXmlMsg.set(Some(Map(

@@ -33,6 +33,7 @@
         /* ]]> */
     <!-- #ff9    #9cf    #fcc    #999    -->
     <!-- #dedeef #e9fceb #ffe1e1 #ffffdb    -->
+    <!--  -->
     </style>
     <script type="text/javascript" src="/scripts/jquery.blockUI.js"></script>
     <script type="text/javascript">
@@ -79,7 +80,7 @@
                 </span>
             </form>
         </span>
-        <span class="column span-20 last">
+        <span class="column span-24 last">
             <table border="1">
                 <tr>
                     <td width="15%">&nbsp;</td>
@@ -87,27 +88,9 @@
                     <td width="20%">&nbsp;</td>
                     <td width="20%">&nbsp;</td>
                     <td width="15%">&nbsp;</td>
-                    <td width="15%">&nbsp;</td>
+                    <td width="*">&nbsp;</td>
                 </tr>
 
-
-                <!--<tr>-->
-                    <!--&lt;!&ndash;<td>Tėvai:</td>&ndash;&gt;-->
-                    <!--<td><lift:loc>parents</lift:loc></td>-->
-                    <!--<td colspan="2">-->
-                        <!--&lt;!&ndash;<lift:bind name="father-content"/>&ndash;&gt;-->
-                        <!--<span class="lift:PersonView.renderFather">-->
-                            <!--<span id="fatherinfo" style="">father</span>-->
-                        <!--</span>-->
-                    <!--</td>-->
-                    <!--<td colspan="2">-->
-                        <!--&lt;!&ndash;<lift:bind name="mother-content"/>&ndash;&gt;-->
-                        <!--<span class="lift:PersonView.renderMother">-->
-                            <!--<span id="motherinfo" style="">mother</span>-->
-                        <!--</span>-->
-                    <!--</td>-->
-                    <!--<td>&nbsp;</td>-->
-                <!--</tr>-->
                 <tr>
                     <td colspan="6"><lift:loc>parents</lift:loc>:&nbsp;&nbsp;&nbsp;
                         <span class="lift:PersonView.renderFather " >
@@ -118,22 +101,6 @@
                         </span>
                     </td>
                 </tr>
-<!--
-                <tr>
-                    <td><lift:loc>parents</lift:loc></td>
-                    <td colspan="2">
-                        <span class="lift:PersonView.renderFather " >
-                            <span id="fatherinfo">father</span>
-                        </span>
-                    </td>
-                    <td colspan="2">
-                        <span class="lift:PersonView.renderMother ">
-                            <span id="motherinfo">mother</span>
-                        </span>
-                    </td>
-                    <td>&nbsp;</td>
-                </tr>
--->
 
 
                 <tr>
@@ -143,8 +110,7 @@
                         <lift:bind name="person-content"/>
                     </td>
                 </tr>
-<!--
-                <tr>
+                <!--<tr>
                     <td>
                         <lift:loc>person</lift:loc>
 
@@ -173,12 +139,8 @@
                         &ndash;&gt;
                     </td>
                     <td>&nbsp;</td>
-                </tr>
--->
-
-
-<!--
-                <tr>
+                </tr>-->
+                <!--<tr>
                     <td><lift:loc>spouse.n.children</lift:loc></td>
                     <td colspan="4">
                         &lt;!&ndash;<lift:bind name="family-content"/>&ndash;&gt;
@@ -195,8 +157,7 @@
                         &ndash;&gt;
                     </td>
                     <td>&nbsp;</td>
-                </tr>
--->
+                </tr>-->
             </table>
 
         </span>

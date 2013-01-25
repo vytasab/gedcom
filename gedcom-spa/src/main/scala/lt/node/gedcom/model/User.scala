@@ -162,6 +162,8 @@ class User /*extends BaseEntity*/ {
       (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())
     )
 
+  def getModifier(): String = getSubmitter()
+
 }
 
 }

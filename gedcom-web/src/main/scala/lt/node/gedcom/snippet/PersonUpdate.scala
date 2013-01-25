@@ -1,7 +1,7 @@
 package lt.node.gedcom.snippet
 
 import _root_.scala._
-import _root_.scala.xml.{Text, Unparsed}
+import _root_.scala.xml.Text
 
 import _root_.net.liftweb._
 import http._
@@ -9,8 +9,6 @@ import SHtml._
 import js._
 import JsCmds._
 import common._
-import lt.node.gedcom.util.XslTransformer
-import _root_.net.liftweb.util.Props
 import _root_.net.liftweb.util.Helpers._
 
 import http.{SessionVar, S, SHtml}
@@ -36,63 +34,12 @@ class PersonUpdate {
 
   object dateSessVar extends SessionVar[Box[GedcomDate]](Empty)
 
-
-//  def render() = {
-//    log.debug("render S.getSessionAttribute('personId').openOr('')=" + S.getSessionAttribute("personId").openOr("-negerai-"))
-//    if (!AccessControl.isAuthenticated_?()) S.redirectTo("/login/login")
-//    S.getSessionAttribute("personId") match {
-//      case Full(personId) =>
-//        val person: Option[Person] = Model.find(classOf[Person], S.getSessionAttribute("personId").openOr("1").toLong)
-//        person match {
-//          case Some(p) =>
-//            import net.liftweb.util.Props
-//            val xml = p.toXml4Update(Model.getUnderlying).toString()
-//            log.debug("PersonUpdate.render xml =" + xml)
-//            personVar.set(Full(p))
-//            "#fullinfo" #> Unparsed(XslTransformer(p.toXml4Update(Model.getUnderlying).toString(), xsl4Update,
-//              Map("app" -> Props.get("__app").openOr("/gedcom-web/"))/*Map.empty*/))
-//          case _ =>
-//            val msg = "PersonUpdate.render: No person for " + S.getSessionAttribute("personId").openOr("1").toLong
-//            S.redirectTo("/errorPage", () => {
-//              ErrorXmlMsg.set(Some(Map(
-//                "location" -> <p>PersonUpdate.render</p>,
-//                "message" -> <p>{msg}</p>)))
-//            })
-//        }
-//      case _ =>
-//        personVar.is match {
-//          case Full(p) =>
-//            val xml = p.toXml4Update(Model.getUnderlying).toString
-//            log.debug("PersonUpdate.render xml =" + xml)
-//            "#fullinfo" #> Unparsed(XslTransformer(xml, xsl4Update,
-//              Map("app" -> Props.get("__app").openOr("/gedcom-web/"))/*Map.empty*/))
-//          case _ =>
-//            val msg = "PersonUpdate.render: No person for " + S.getSessionAttribute("personId").openOr("1").toLong
-//            S.redirectTo("/errorPage", () => {
-//              ErrorXmlMsg.set(Some(Map(
-//                "location" -> <p>PersonUpdate.render</p>,
-//                "message" -> <p>{msg}</p>)))
-//            })
-//        }
-//    }
-//  }
-
-
   def listPePa = {
 
     if (!AccessControl.isAuthenticated_?()) S.redirectTo("/")
 
     RequestedURL(Full(S.referer.openOr("gedcom/personView")))
 
-    //    val items = Model.createNamedQuery[Person]("findAllPersons").getResultList()
-    //    var personList = items.map(i => ((/*"/rest/person/" + */ i.id.toString),
-    //      ((if (i.gender == "M") "♀" else "\u2642") + " " + i.nameGivn + " " + i.nameSurn)
-    //      )
-    //    ).toList;
-    //    personList = ("", "-- " + S.?("select.person") + " --") :: personList
-    //
-
-    //log.debug(items.size.toString)
     var selectedPeTag: String = ""
     var selectedPaTag: String = ""
 
@@ -121,6 +68,7 @@ class PersonUpdate {
 
 
  def addAlonePerson() = {
+   S.unsetSessionAttribute("role")
    S.setSessionAttribute("role", "newAlone")
    log.debug("addAlonePerson: S.getSessionAttribute('role').openOr('')= " + S.getSessionAttribute("role").openOr("-negerai-"))
    addEdit()
@@ -197,7 +145,7 @@ class PersonUpdate {
             case Full("newAlone") =>
               person = new Person
             case _ =>
-              val msg = ("doAddEdit: You are not logged in")
+              val msg = ("doAddEdit: invalid 'role' = |" +  S.getSessionAttribute("role").openOr("no-role") + "|")
               log.debug(msg)
               S.redirectTo("/errorPage", () => {
                 ErrorXmlMsg.set(Some(Map(
