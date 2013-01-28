@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Home</title>
+    <style>
+        #lift__noticesContainer___notice {background-color: green;}
+        #lift__noticesContainer___warning {background-color: yellow;}
+        #lift__noticesContainer___error {background-color: red;}
+    </style>
+
+</head>
+<body class="lift:content_id=real_content">
+<div class="lift:surround?with=default;at=content" id="real_content">
+    <head>
+        <title>
+            <lift:loc>add.edit.person</lift:loc>
+        </title>
+    </head>
+
+    <form id="form" class="lift:PersonUpdate.addAlonePerson" action="POST">
+        <table class="editor"  border="1">
+            <tr>
+                <td colspan="2" style="font-weight:bold">
+                    <div id="title"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:25%">
+                    <lift:loc>nameGivn</lift:loc>
+                </td>
+                <td>
+                    <div id="nameGivn"></div>
+                    <div class="lift__noticesContainer___error" style="color:red;">
+                        <lift:msg id="nameGivn_error"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <lift:loc>nameSurn</lift:loc>
+                </td>
+                <td>
+                    <div id="nameSurn"></div>
+                    <div class="lift__noticesContainer___error" style="color:red">
+                        <lift:msg id="nameSurn_error"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <lift:loc>gender</lift:loc>
+                </td>
+                <td>
+                    <div id="gender"></div>
+                    <div class="lift__noticesContainer___error" style="color:red">
+                        <lift:msg id="gender_error"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="">
+                    <div id="submit"></div>
+                    &nbsp;&nbsp;&nbsp;
+                    <div id="cancel"></div>
+                </td>
+            </tr>
+        </table>
+        <!--<div id="nameGivn"></div>-->
+        <!--<div id="nameSurn"></div>-->
+        <!--<div id="gender"></div>-->
+        <!--<div id="submit"></div>-->
+        <!--<div id="cancel"></div>-->
+    </form>
+</div>
+</body>
+</html>
+

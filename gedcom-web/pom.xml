@@ -490,11 +490,11 @@
             <build>
                 <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
                 <filters>
-                    <filter>src/main/dev-resources/default.properties</filter>
+                    <filter>src/main/resources/dev-resources/default.properties</filter>
                 </filters>
                 <resources>
                     <resource>
-                        <directory>src/main/dev-resources</directory>
+                        <directory>src/main/resources/dev-resources</directory>
                         <targetPath>./props</targetPath>
                         <!--<targetPath>./filtered</targetPath>-->
                         <filtering>false</filtering>
@@ -618,11 +618,11 @@
             <build>
                 <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
                 <filters>
-                    <filter>src/main/prod-resources/default.properties</filter>
+                    <filter>src/main/resources/prod-resources/default.properties</filter>
                 </filters>
                 <resources>
                     <resource>
-                        <directory>src/main/prod-resources</directory>
+                        <directory>src/main/resources/prod-resources</directory>
                         <targetPath>./props</targetPath>
                         <!--<targetPath>./filtered</targetPath>-->
                         <filtering>false</filtering>
