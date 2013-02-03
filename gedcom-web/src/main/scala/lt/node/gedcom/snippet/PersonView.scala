@@ -927,6 +927,7 @@ class PersonView {
     var mm: MultiMedia = null
     val optionMm: Option[MultiMedia] =
       Model.find(classOf[MultiMedia], S.getSessionAttribute("mmId").get.toLong)
+    // --^ person.xsl <xsl:template match="mm" mode="full"> assures mmId refres to active record
     optionMm match {
       case Some(mmr) =>
         mm = mmr
@@ -946,21 +947,6 @@ class PersonView {
       if (AccessControl.isAuthenticated_?) {
         mm.idRoot = mm.id
         mm.setModifier(CurrentUser.get.get)
-//        pa.getAttribDetail(Model.getUnderlying)
-//        val ed: EventDetail = pa.attribdetails.iterator.next()
-//        var paa = new Audit
-//        val paClone: Box[PersonAttribClone] = Empty
-//        paa.setFields(CurrentUser.get.get, "PA", pa.id, "del", pa.getAuditRec(paClone))
-//        //paa = Model.merge(paa)
-//        var eda = new Audit
-//        val edClone: Box[EventDetailClone] = Empty
-//        eda.setFields(CurrentUser.get.get, "ED", ed.id, "del", ed.getAuditRec(edClone))
-//        //eda = Model.merge(eda)
-//        //Model.remove(pa)
-//        Model.remove(Model.getReference(classOf[PersonAttrib],
-//          S.getSessionAttribute("personAttribId").get.toLong))
-//        paa = Model.merge(paa)
-//        eda = Model.merge(eda)
         Model.merge(mm)
         Model.flush
         S.unsetSessionAttribute("mmId")

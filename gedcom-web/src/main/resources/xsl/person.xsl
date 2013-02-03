@@ -1132,7 +1132,7 @@
     <xsl:template match="mm" mode="full">
         <!--<xsl:value-of select="idRoot"/>|-->
         <!--<xsl:value-of select="idRoot='0'"/>-->
-        <xsl:if test="idRoot='0'">
+        <xsl:if test="idRoot='0'"> <!-- idRoot='0' ==> active record -->
             <span class="span-2">
                 <a>
                     <xsl:attribute name="href">

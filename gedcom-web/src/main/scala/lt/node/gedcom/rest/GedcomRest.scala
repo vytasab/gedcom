@@ -272,31 +272,33 @@ object GedcomRest extends XMLApiHelper with Loggable {
       log.debug("('rest', 'addMultiMedia', 'Pe', idPe)")
       S.setSessionAttribute("role", "Pe")
       S.setSessionAttribute("personId", idPe)
+      S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
     }
     // TODO CC12-3/vsh not implemented yet
-    /*case Req(List("rest", "addMultiMedia", "Fa", idFa), _, GetRequest) => {
+    case Req(List("rest", "addMultiMedia", "Fa", idFa), _, GetRequest) => {
       log.debug("('rest', 'addMultiMedia', 'Fa', idFa)")
       S.setSessionAttribute("role", "Fa")
       S.setSessionAttribute("familyId", idFa)
+      S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
-    }*/
+    }
     case Req(List("rest", "addMultiMedia", role, idMm), _, GetRequest) => {
       log.debug("('rest', 'addMultiMedia', " + role + ", " + idMm + ")")
       S.setSessionAttribute("role", role) // possible values: PE PA FE
-      S.setSessionAttribute("idMm", idMm)
+      S.setSessionAttribute("idParentED", idMm) // parent id of future MultiMedia record
       S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
     }
     case Req(List("rest", "editMultiMedia", idMm), _, GetRequest) => {
       log.debug("('rest', 'editMultiMedia', "+idMm)
-      S.setSessionAttribute("idMm", idMm)
+      S.setSessionAttribute("idMm", idMm)  // tobe updated MultiMedia record id
       S.setSessionAttribute("mmActionCUD", "U")
       S.redirectTo("/gedcom/editMultiMedia")
     }
     case Req(List("rest", "deleteMultiMedia", idMm), _, GetRequest) => {
       log.debug("('rest', 'deleteMultiMedia', "+idMm)
-      S.setSessionAttribute("mmId", idMm)
+      S.setSessionAttribute("mmId", idMm)  // tobe deleted MultiMedia record id
       S.setSessionAttribute("mmActionCUD", "D")
       S.redirectTo("/gedcom/deleteMultiMedia")
     }

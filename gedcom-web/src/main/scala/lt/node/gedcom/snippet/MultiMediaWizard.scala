@@ -10,7 +10,8 @@ import wizard._
 import common._
 import _root_.net.liftweb.util.Helpers._
 import _root_.lt.node.gedcom.model._
-import bootstrap.liftweb.{AccessControl, CurrentUser}
+import bootstrap.liftweb.{ErrorXmlMsg, AccessControl, CurrentUser}
+import javax.persistence.EntityTransaction
 
 //import _root_.bootstrap.liftweb.CurrentUser
 //import _root_.bootstrap.liftweb._
@@ -37,67 +38,42 @@ class/*object*/ MultiMediaWizardRunner {
 // http://grokbase.com/t/gg/liftweb/129jpker9z/lift-upload-field-on-a-lift-screen
 // http://stackoverflow.com/questions/9019250/liftscreen-validate-custom-fields
 // https://www.assembla.com/wiki/show/liftweb/Add_custom_field_types_to_LiftScreen
-object  MultiMediaWizard extends Wizard with Loggable {
+class MultiMediaWizard extends Wizard with Loggable {
 
   val log: Logger = LoggerFactory.getLogger("MultiMediaWizard")
   require(AccessControl.isAuthenticated_?())
   object wvInt extends WizardVar[(Box[FileParamHolder], String, MultiLangText)] (Empty, "", new MultiLangText("title", ""))
   object wvDb extends WizardVar[(Box[FileParamHolder], String, String)] (Empty, "", "")
+  //object wvMm extends WizardVar[Box[MultiMedia]] (Empty)
 
   private object /*wvEA*/editCase extends WizardVar[String]("title")
+  val mimes: List[String] = List("image/gif", "image/png", "image/jpeg")
   val editCases: List[(String, String)] =
     List(("mm", "wizmm.mm"), ("title", "wizmm.title"), ("mm_title", "wizmm.mmTitle")).map((kv)=>(kv._1, S ? kv._2))
-  // log.debug("MultiMediaWizard editCases = " + editCases.toString())
-  //  val editCases: List[(String, String)] =
-//    List(("event", "wiz.event"), ("attrib", "wiz.attribute")).map((kv)=>(kv._1, S ? kv._2))
 
-  //  getEventAttribData()
-//  log.debug("PeWizard wvBoxPerson after getEventAttribData |" + wvBoxPerson.get./*get.*/toString + "|")
-//  log.debug("PeWizard actionCUD updatePePa |" + actionCUD + "|" + updatePePa + "|")
-//  override protected def calcAjaxOnDone = Unblock
-//  override def calcFirstScreen = { //  : Box[Screen]
-//    log.debug("PeWizard calcFirstScreen  []...")
-//    actionCUD match  {
-//      case "C" =>
-//        log.debug("PeWizard calcFirstScreen C")
-//        Full(addEventOrAttib)
-//      case "U" => updatePePa match {
-//        case "PE" =>
-//          log.debug("PeWizard calcFirstScreen Pe")
-//          Full(selPeTag)
-//        case "PA" =>
-//          log.debug("PeWizard calcFirstScreen Pa")
-//          Full(selPaTag)
-//        case _ =>
-//          log.debug("PeWizard calcFirstScreen _")
-//          Empty
-//      }
-//      case _ =>
-//        log.debug("PeWizard calcFirstScreen  ...[]")
-//        Empty
-//    }
-//  }
-
-  log.debug("MultiMediaWizard mmActionCUD = " + S.getSessionAttribute("mmActionCUD").getOrElse("?") )
+  //log.debug("MultiMediaWizard mmActionCUD = " + S.getSessionAttribute("mmActionCUD").getOrElse("?") )
   var actionCUD = S.getSessionAttribute("mmActionCUD").getOrElse("?") //--    C add, U update, D delete
   S.unsetSessionAttribute("mmActionCUD")
+  val optionMm: Option[MultiMedia] = actionCUD match  {
+    case "C" => Empty
+    case "U" =>
+      Model.find(classOf[MultiMedia], S.getSessionAttribute("idMm").get.toLong)
+      // --^ person.xsl <xsl:template match="mm" mode="full"> assures mmId refres to active record
+    case _ => Empty
+  }
 
   override def calcFirstScreen = { //  : Box[Screen]
     log.debug("MultiMediaWizard calcFirstScreen  []...")
+    log.debug("MultiMediaWizard mmActionCUD = " + S.getSessionAttribute("mmActionCUD").getOrElse("?") )
+    //actionCUD = S.getSessionAttribute("mmActionCUD").getOrElse("?") //--    C add, U update, D delete
     actionCUD match  {
       case "C" =>
         log.debug("MultiMediaWizard calcFirstScreen C")
-        Full(uploadScreen)
+        Full(newMmScreen)
       case "U" =>
         log.debug("MultiMediaWizard calcFirstScreen U")
         Full(updateOptionScreen)
       /*case "U" => updatePePa match {
-        case "PE" =>
-          log.debug("MultiMediaWizard calcFirstScreen Pe")
-          Full(selPeTag)
-        case "PA" =>
-          log.debug("MultiMediaWizard calcFirstScreen Pa")
-          Full(selPaTag)
         case _ =>
           log.debug("MultiMediaWizard calcFirstScreen _")
           Empty
@@ -109,235 +85,334 @@ object  MultiMediaWizard extends Wizard with Loggable {
   }
 
 
+  val newMmScreen = new Screen {
+
+    override protected def hasUploadField = true
+
+    val file = makeField[Array[Byte], Nothing](
+      S ? "wizmm.file", new Array[Byte](0),
+      field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
+      NothingOtherValueInitializer, isValidMime _ )
+
+    val titleNew = field(S ? "pe.note", wvInt._3.getLangMsg(), isValidTitle _)
+
+
+    override def nextScreen = {
+      //wvInt.set(wvInt.get._1, wvInt.get._2, wvInt.get._3)
+      //log.debug("newMmScreen nextScreen mimeType: ==>" + wvInt._2 + "<====")
+      wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
+      Empty //--> finish  // conf
+    }
+
+    def isValidMime(s: Array[Byte]): List[FieldError] = {
+      // !!! there is some strange validation implementation
+      wvInt._1 match {
+        case Full(x) if (mimes.exists(m => m == x.mimeType)) => Nil
+        /*case Full(x) if x.mimeType == "image/gif" => Nil
+        case Full(x) if x.mimeType == "image/png" => Nil
+        case Full(x) if x.mimeType == "image/jpeg" => Nil*/
+        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.open_!.mimeType
+      }
+    }
+    def isValidTitle(s: String): List[FieldError] = {
+      s match {
+        case s if s.length > 0  => Nil
+        case _ => S.?("wizmm.no.title")
+      }
+    }
+
+  }
+
+
+
   val updateOptionScreen = new Screen {
     val editCaseInit = editCase.get
     val editCaseNew = radio(S ? "wizmm.choose",
       editCases.filter((kv) => kv._1==editCaseInit).head._2, editCases.map( _._2)/*, valMinLen(1, S ? "wiz.click.radio")*/)
 
     override def nextScreen = {
-      //wvEA.set(eaCases.find(_._2 == eoaNew.get).get._1)
       editCase.set(editCases.find(_._2 == editCaseNew.get).get._1)
-      editCaseNew.get match {
+      log.debug("updateOptionScreen editCaseNew.get: " + editCaseNew.get)
+      log.debug("updateOptionScreen editCase.get: " + editCase.get)
+      editCase.get match {
         //case xxx if xxx == "" => editTitle
-        case theRest => editCases.find(_._2 == theRest.toString).get._1 match {
-          //case "mm" => editMm
-          //case "title" => editTitle
-          case _ => editMmTitle
-        }
+        //case theRest => editCases.find(_._2 == theRest.toString).get._1 match {
+          case "mm" => editMm
+          case "title" => editTitle
+          case " mm_title" => editMmTitle
+          case _ => editMmTitle /*Empty*/
+        //}
       }
     }
   }
+
 
 
   val editMmTitle = new Screen {
 
     override protected def hasUploadField = true
 
+    log.debug("editMmTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
     val file = makeField[Array[Byte], Nothing](
-      /*"File"*/S ? "file'as", new Array[Byte](0),
+      S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
         NothingOtherValueInitializer, isValidMime _ )
-
-    //val titleInit = wvInt._3.getLangMsg()
-    val titleNew = field(S ? "pe.note", wvInt._3.getLangMsg(), isValidTitle _)
-
-
-    override def nextScreen = {
-      wvInt.set(wvInt.get._1, wvInt.get._2, wvInt.get._3)
-      log.debug("nextScreen  [titleScreen]...")
-      log.debug("uploadScreen nextScreen ==>" + wvInt._2 + "<====")
-      wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-      Empty //conf //titleScreen
+    var mm: MultiMedia = null
+    optionMm match {
+      case Some(mmr) =>
+        mm = mmr
+        log.debug("editMmTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
+      case _ =>
+        val place = "MultiMediaWizard.editMmTitle"
+        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+        log.debug(place+": "+msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map(
+            "location" -> <p>{place}</p>,
+            "message" -> <p>{msg}</p>)))
+        })
     }
 
+    val titleNew = field(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(), isValidTitle _)
+
+    override def nextScreen = {
+      log.debug("editMmTitle screen nextScreen wvInt._2 ==>" + wvInt._2 + "<====")
+      wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
+      Empty // --> finish
+    }
     def isValidMime(s: Array[Byte]): List[FieldError] = {
-      // !!! there is some strange validation implementation
       wvInt._1 match {
-        case Full(x) if x.mimeType == "image/gif" => Nil
-        case Full(x) if x.mimeType == "image/png" => Nil
-        case Full(x) if x.mimeType == "image/jpeg" => Nil
-        case _ => S.?("mime type is not supported") + ": " + wvInt._1.open_!.mimeType
+        case Full(x) if (mimes.exists(/*m => m*/_ == x.mimeType)) => Nil
+        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.open_!.mimeType
       }
     }
     def isValidTitle(s: String): List[FieldError] = {
       s match {
         case s if s.length > 0  => Nil
-        case _ => S.?("there.is.no.title")
-        // TODO  S.?("there.is.no.title")
+        case _ => S ? "wizmm.no.title"
       }
     }
 
   }
-//  val uploadScreen = new Screen {
-//
-//    override protected def hasUploadField = true
-//
-//    val file = makeField[Array[Byte], Nothing](
-//      /*"File"*/S ? "file'as", new Array[Byte](0),
-//      field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
-//        NothingOtherValueInitializer, isValidMime _ )
-//
-//    //val titleInit = wvInt._3.getLangMsg()
-//    val titleNew = field(S ? "pe.note", wvInt._3.getLangMsg(), isValidTitle _)
-//
-//
-//    override def nextScreen = {
-//      wvInt.set(wvInt.get._1, wvInt.get._2, wvInt.get._3)
-//      log.debug("nextScreen  [titleScreen]...")
-//      log.debug("uploadScreen nextScreen ==>" + wvInt._2 + "<====")
-//      wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-//      Empty //conf //titleScreen
-//    }
-//
-//    def isValidMime(s: Array[Byte]): List[FieldError] = {
-//      // !!! there is some strange validation implementation
-//      wvInt._1 match {
-//        case Full(x) if x.mimeType == "image/gif" => Nil
-//        case Full(x) if x.mimeType == "image/png" => Nil
-//        case Full(x) if x.mimeType == "image/jpeg" => Nil
-//        case _ => S.?("mime type is not supported") + ": " + wvInt._1.open_!.mimeType
-//      }
-//    }
-//    def isValidTitle(s: String): List[FieldError] = {
-//      s match {
-//        case s if s.length > 0  => Nil
-//        case _ => S.?("there.is.no.title")
-//        // TODO  S.?("there.is.no.title")
-//      }
-//    }
-//
-//  }
-
-//  val uploadScreen = new Screen {
-//
-//    override protected def hasUploadField = true
-//
-//    val file = makeField[Array[Byte], Nothing](
-//      /*"File"*/S ? "file'as", new Array[Byte](0),
-//      field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
-//        NothingOtherValueInitializer, isValidMime _ )
-//
-//    //val titleInit = wvInt._3.getLangMsg()
-//    val titleNew = field(S ? "pe.note", wvInt._3.getLangMsg(), isValidTitle _)
-//
-//
-//    override def nextScreen = {
-//      wvInt.set(wvInt.get._1, wvInt.get._2, wvInt.get._3)
-//      log.debug("nextScreen  [titleScreen]...")
-//      log.debug("uploadScreen nextScreen ==>" + wvInt._2 + "<====")
-//      wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-//      Empty //conf //titleScreen
-//    }
-//
-//    def isValidMime(s: Array[Byte]): List[FieldError] = {
-//      // !!! there is some strange validation implementation
-//      wvInt._1 match {
-//        case Full(x) if x.mimeType == "image/gif" => Nil
-//        case Full(x) if x.mimeType == "image/png" => Nil
-//        case Full(x) if x.mimeType == "image/jpeg" => Nil
-//        case _ => S.?("mime type is not supported") + ": " + wvInt._1.open_!.mimeType
-//      }
-//    }
-//    def isValidTitle(s: String): List[FieldError] = {
-//      s match {
-//        case s if s.length > 0  => Nil
-//        case _ => S.?("there.is.no.title")
-//        // TODO  S.?("there.is.no.title")
-//      }
-//    }
-//
-//  }
 
 
 
-  val uploadScreen = new Screen {
+  val editMm = new Screen {
 
     override protected def hasUploadField = true
 
+    log.debug("editMmTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
     val file = makeField[Array[Byte], Nothing](
-      /*"File"*/S ? "file'as", new Array[Byte](0),
+      S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
         NothingOtherValueInitializer, isValidMime _ )
-
-    //val titleInit = wvInt._3.getLangMsg()
-    val titleNew = field(S ? "pe.note", wvInt._3.getLangMsg(), isValidTitle _)
-
-
-    override def nextScreen = {
-      wvInt.set(wvInt.get._1, wvInt.get._2, wvInt.get._3)
-      log.debug("nextScreen  [titleScreen]...")
-      log.debug("uploadScreen nextScreen ==>" + wvInt._2 + "<====")
-      wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-      Empty //conf //titleScreen
+    var mm: MultiMedia = null
+    optionMm match {
+      case Some(mmr) =>
+        mm = mmr
+        log.debug("editMmTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
+      case _ =>
+        val place = "MultiMediaWizard.editMmTitle"
+        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+        log.debug(place+": "+msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map(
+            "location" -> <p>{place}</p>,
+            "message" -> <p>{msg}</p>)))
+        })
     }
 
+    override def nextScreen = {
+      log.debug("editMm screen nextScreen  wvInt._2 ==>" + wvInt._2 + "<====")
+      wvDb.set(wvInt.get._1, wvInt.get._2, ""/*wvInt.get._3.*//*.addupdLangMsg(titleNew.get)*/)
+      Empty // --> finish
+    }
     def isValidMime(s: Array[Byte]): List[FieldError] = {
       // !!! there is some strange validation implementation
       wvInt._1 match {
-        case Full(x) if x.mimeType == "image/gif" => Nil
-        case Full(x) if x.mimeType == "image/png" => Nil
-        case Full(x) if x.mimeType == "image/jpeg" => Nil
-        case _ => S.?("mime type is not supported") + ": " + wvInt._1.open_!.mimeType
-      }
-    }
-    def isValidTitle(s: String): List[FieldError] = {
-      s match {
-        case s if s.length > 0  => Nil
-        case _ => S.?("there.is.no.title")
-        // TODO  S.?("there.is.no.title")
+        //case Full(x) if (mimes.exists(m => m == x.mimeType)) => Nil
+        case Full(x) if (mimes.exists(_ == x.mimeType)) => Nil
+        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.open_!.mimeType
       }
     }
 
   }
 
 
-//  val titleScreen = new Screen {
-//    val titleInit = wvInt._3.getLangMsg()
-//    val titleNew = field(S ? "pe.note", titleInit, isIncompletedate _)
-//    /*wvInt.set((wvInt.get._1, wvInt.get._2,
-//      //wvInt.get._3.addupdLangMsg(titleNew.toString)
-//      new MultiLangText("title", titleNew.get)
-//      )
-//    )*/
-//
-//    /*val uploadedFile = File.createTempFile(wvInt.is.map(v => v.fileName).toString + (new Date()).getTime(), ".tmp")
-//    FileUtils.writeByteArrayToFile(uploadedFile, uploadScreen.file.get)
-//    val importSummary = // fetch the metadata
-//    val name = field("Name", importSummary.name,
-//      trim, valMinLen(1,"Name too short"),
-//      valMaxLen(1000,"That's a long name"))
-//    val files = field("Import %s files?".format(importSummary.files.size), true)
-//    val children = field("Import %s children?".format(importSummary.children.size), true)*/
-//
-//    override def nextScreen = {
-//      log.debug("nextScreen [conf]...|" + titleNew.get + "|")
-//      /*wvInt.set(wvInt.get._1, wvInt.get._2, wvInt.get._3
-//        //wvInt.get._3.addupdLangMsg(titleNew.get)
-//        //new MultiLangText("title", titleNew.get)
-//        //new MultiLangText("title", wvInt.get._3.)
-//        )*/
-//
-//      ///wvDb.set((wvInt.get._1.open_!.file, wvInt.get._2, wvDb.get._3.addupdLangMsg(wvInt.get._3)
-//        //wvInt.get._3.addupdLangMsg(titleNew.get)
-//        //new MultiLangText("title", titleNew.get)
-//        //new MultiLangText("title", wvInt.get._3.)
-//
-//      //  wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3)  // /*, titleNew.get*/
-//        wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-//      conf
-//    }
-//
-//    def isIncompletedate(s: String): List[FieldError] = {
-//      s match {
-//        case s if s.length > 0  => Nil
-//        case _ => S.?("there.is.no.title")
-//// TODO  S.?("there.is.no.title")
-//      }
-//    }
-//
-//  }
+
+  val editTitle = new Screen {
+
+    override protected def hasUploadField = true
+
+    log.debug("editTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+    var mm: MultiMedia = null
+    optionMm match {
+      case Some(mmr) =>
+        mm = mmr
+        log.debug("editTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
+      case _ =>
+        val place = "MultiMediaWizard.editMmTitle"
+        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+        log.debug(place+": "+msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map(
+            "location" -> <p>{place}</p>,
+            "message" -> <p>{msg}</p>)))
+        } )
+    }
+
+    val titleNew = field(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(), isValidTitle _)
+
+    override def nextScreen = {
+      log.debug("editTitle screen nextScreen wvInt._3 ==>" + wvInt._3 + "<====")
+      wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
+      Empty // --> finish
+    }
+    def isValidTitle(s: String): List[FieldError] = {
+      s match {
+        case s if s.length > 0 => Nil
+        case _ => S ? "wizmm.no.title"
+      }
+    }
+
+  }
 
 
+  def finish() {
+    log.debug("[finish]...")
+    val entityTransaction: EntityTransaction = Model.getTransaction()
+    try {
+      /*S.notice("Thanks for uploading a file")
+      log.debug("Thanks for uploading a file")
+      //S.notice("Thanks for uploading a file of " + wvInt._1.open_!.length + " bytes")
+      S.notice("MIME is |" + wvDb._2 + "|")
+      log.debug("MIME is |" + wvDb._2 + "|")
+      S.notice("title is |" + wvDb._3/*.getLangMsg()*/ + "|")
+      log.debug("title is |" + wvDb._3/*.getLangMsg()*/ + "|")*/
+      actionCUD match  {
+        case "C" =>
+          require(AccessControl.isAuthenticated_?())
+          val msg = "Uploading a file" + " | " +
+            <_>MIME: ({wvDb._2})</_>.text + " | " +
+            "title: ("+{wvDb._3}+")"
+          log.debug(msg)
+          S.notice(msg)
+          var mm = new MultiMedia
+          Model.persist(mm)
+          log.debug("MultiMedia.id |" + mm.id.toString + "|")
+          mm.idRoot = 0L
+          mm.mimeType = wvDb._2
+          mm.title = wvDb._3
+          mm.blobas = wvDb._1.get.file
+          S.getSessionAttribute("role").open_! match {
+            case "Pe" =>
+              val person: Person = Model.find(classOf[Person], S.getSessionAttribute("personId").get.toLong).get
+              mm.personmultimedia = person
+              S.unsetSessionAttribute("personId")
+            case "PE" =>
+              val pe: PersonEvent = Model.find(classOf[PersonEvent], S.getSessionAttribute("idParentED").get.toLong).get
+              val ed: EventDetail = pe.eventdetails.iterator.next()
+              mm.eventdetailmultimedia = ed
+              S.unsetSessionAttribute("idParentED")
+            case "PA" =>
+              val pa: PersonAttrib = Model.find(classOf[PersonAttrib], S.getSessionAttribute("idParentED").get.toLong).get
+              val ed: EventDetail = pa.attribdetails.iterator.next()
+              mm.eventdetailmultimedia = ed
+              S.unsetSessionAttribute("idParentED")
+            case "Fa" =>
+              val family: Family = Model.find(classOf[Family], S.getSessionAttribute("familyId").get.toLong).get
+              mm.familymultimedia = family
+              S.unsetSessionAttribute("familyId")
+            case "FE" =>
+              val fe: FamilyEvent = Model.find(classOf[FamilyEvent], S.getSessionAttribute("idParentED").get.toLong).get
+              val ed: EventDetail = fe.familydetails.iterator.next()
+              mm.eventdetailmultimedia = ed
+              S.unsetSessionAttribute("idParentED")
+          }
+          mm.setSubmitter(CurrentUser.open_!)
+          mm = Model.merge(mm)
+          logMmRecord(mm)
+          Model.flush()
+          S.unsetSessionAttribute("role")
+
+        case "U" =>
+          require(AccessControl.isAuthenticated_?())
+          var mmOld = optionMm.get
+          var mmNew = new MultiMedia
+          Model.persist(mmNew)
+          log.debug("U MultiMedia.id |" + mmNew.id.toString + "|")
+          mmNew.idRoot = 0L
+          mmNew.personmultimedia = mmOld.personmultimedia
+          mmNew.familymultimedia= mmOld.familymultimedia
+          mmNew.eventdetailmultimedia = mmOld.eventdetailmultimedia
+          mmNew.setSubmitter(CurrentUser.open_!)
+          editCase.get match {
+            case "mm" => //edit Mm
+              val msg = "U: uploading MM only" + " | " + <_>MIME:({wvDb._2})</_>.text
+              log.debug(msg)
+              S.notice(msg)
+              mmNew.blobas = wvDb._1.get.file
+              mmNew.mimeType = wvDb._2
+              mmNew.title = mmOld.title
+              mmNew = Model.merge(mmNew)
+              logMmRecord(mmNew)
+              //--v create audit record from former one
+              mmOld.idRoot = mmNew.id
+              mmOld.setModifier(CurrentUser.open_!)
+              mmOld = Model.merge(mmOld)
+            case "title" => //edit title
+              val msg = "U: editing title only: ("+{wvDb._3}+")"
+              log.debug(msg)
+              S.notice(msg)
+              mmNew.blobas = mmOld.blobas
+              mmNew.mimeType = mmOld.mimeType
+              mmNew.title = wvDb._3
+              mmNew = Model.merge(mmNew)
+              logMmRecord(mmNew)
+              //--v create audit record from former one
+              mmOld.idRoot = mmNew.id
+              mmOld.blobas = null
+              mmOld.setModifier(CurrentUser.open_!)
+              mmOld = Model.merge(mmOld)
+            case "mm_title" => //edit MmTitle
+              val msg = "U: uploading MM and title" + " | " + <_>MIME:({wvDb._2})</_>.text + " | " + "title:("+{wvDb._3}+")"
+              log.debug(msg)
+              S.notice(msg)
+              mmNew.blobas = wvDb._1.get.file
+              mmNew.mimeType = wvDb._2
+              mmNew.title = wvDb._3
+              mmNew = Model.merge(mmNew)
+              logMmRecord(mmNew)
+              //--v create audit record from former one
+              mmOld.idRoot = mmNew.id
+              mmOld.setSubmitter(CurrentUser.open_!)
+              mmOld = Model.merge(mmOld)
+            case _ =>
+          }
+          Model.flush()
+          entityTransaction.commit()
+        case _ =>
+      }
+    } catch {
+      case e: Exception => // TODO D203/vsh išsiaiškinti Transaction veikimą
+        entityTransaction.rollback()
+    }
+
+    def logMmRecord(mmRec: MultiMedia) {
+      val msge = "MultiMedia: | " + <_>idRoot: ({mmRec.idRoot})</_>.text + " | " +
+        <_>MIME: ({mmRec.mimeType})</_>.text + " | " + <_>title: ({mmRec.title})</_>.text + " | " +
+        <_>blobas.length: ({mmRec.blobas.length})</_>.text + " | " +
+        <_>person: ({if (mmRec.personmultimedia.isInstanceOf[Person]) mmRec.personmultimedia.id else "-"})</_>.text + " | " +
+        <_>family: ({if (mmRec.familymultimedia.isInstanceOf[Family]) mmRec.familymultimedia.id else "-"})</_>.text + " | " +
+        <_>eventdetail: ({if (mmRec.eventdetailmultimedia.isInstanceOf[EventDetail]) mmRec.eventdetailmultimedia.id else "-"})</_>.text + " | " +
+        <_>submitter: ({if (mmRec.submitter.eq(null)) "-" else mmRec.submitter})</_>.text + " | " +
+        <_>modifier: ({if (mmRec.modifier.eq(null)) "-" else mmRec.modifier})</_>.text + " | "
+      log.debug(msge)
+    }
+  }
+
+
+  //-- development time Screen
   val conf = new Screen {
     log.debug("[conf]...")
     log.debug("MIME is |" + wvDb._2 + "|")
@@ -347,69 +422,5 @@ object  MultiMediaWizard extends Wizard with Loggable {
     override def nextScreen = Empty
   }
 
-
-  def finish() {
-    log.debug("[finish]...")
-    /*S.notice("Thanks for uploading a file")
-    log.debug("Thanks for uploading a file")
-    //S.notice("Thanks for uploading a file of " + wvInt._1.open_!.length + " bytes")
-    S.notice("MIME is |" + wvDb._2 + "|")
-    log.debug("MIME is |" + wvDb._2 + "|")
-    S.notice("title is |" + wvDb._3/*.getLangMsg()*/ + "|")
-    log.debug("title is |" + wvDb._3/*.getLangMsg()*/ + "|")*/
-    val msg = <_>Uploading a file</_>.text + " | " +
-      <_>MIME: ({wvDb._2})</_>.text + " | " +
-      "title: ("+{wvDb._3}+")"
-    log.debug(msg)
-    S.notice(msg)
-    var mm = new MultiMedia
-    log.debug("MultiMedia.id |" + mm.id.toString + "|")
-    mm.idRoot = 0L
-    mm.mimeType = wvDb._2
-    mm.title = wvDb._3
-    mm.blobas = wvDb._1.get.file
-    S.getSessionAttribute("role").open_! match {
-      case "Pe" =>
-        var person: Person = Model.find(classOf[Person], S.getSessionAttribute("personId").get.toLong).get
-        mm.personmultimedia = person
-        S.unsetSessionAttribute("personId")
-      case "PE" =>
-        var pe: PersonEvent = Model.find(classOf[PersonEvent], S.getSessionAttribute("idParentED").get.toLong).get
-        val ed: EventDetail = pe.eventdetails.iterator.next()
-        mm.eventdetailmultimedia = ed
-        S.unsetSessionAttribute("idParentED")
-      case "PA" =>
-        var pa: PersonAttrib = Model.find(classOf[PersonAttrib], S.getSessionAttribute("idParentED").get.toLong).get
-        val ed: EventDetail = pa.attribdetails.iterator.next()
-        mm.eventdetailmultimedia = ed
-        S.unsetSessionAttribute("idParentED")
-      case "FE" =>
-        var fe: FamilyEvent = Model.find(classOf[FamilyEvent], S.getSessionAttribute("idParentED").get.toLong).get
-        val ed: EventDetail = fe.familydetails.iterator.next()
-        mm.eventdetailmultimedia = ed
-        S.unsetSessionAttribute("idParentED")
-      case "Fa" =>
-        var family: Family = Model.find(classOf[Family], S.getSessionAttribute("familyId").get.toLong).get
-        mm.familymultimedia = family
-        S.unsetSessionAttribute("familyId")
-    }
-    require(AccessControl.isAuthenticated_?())
-    mm.setSubmitter(CurrentUser.open_!)
-    val msge = <_>MultiMedia: </_>.text + " | " +
-      <_>idRoot: ({mm.idRoot})</_>.text + " | " +
-      <_>MIME: ({mm.mimeType})</_>.text + " | " +
-      <_>title: ({mm.title})</_>.text + " | " +
-      <_>blobas.length: ({mm.blobas.length})</_>.text + " | " +
-      <_>person: ( ({if (mm.personmultimedia.eq(null)) "-" else mm.personmultimedia.id})</_>.text + " | " +
-      <_>family: ( ({if (mm.familymultimedia.eq(null)) "-" else mm.familymultimedia.id})</_>.text + " | " +
-      <_>eventdetail: ( ({if (mm.eventdetailmultimedia.eq(null)) "-" else mm.eventdetailmultimedia.id})</_>.text + " | " +
-      <_>submitter: ({mm.submitter})</_>.text + " | " +
-      <_>modifier: ({mm.modifier})</_>.text + " | " + ""
-    log.debug(msge)
-
-    mm = Model.merge(mm)
-    Model.flush()
-    S.unsetSessionAttribute("role")
-  }
-
 }
+
