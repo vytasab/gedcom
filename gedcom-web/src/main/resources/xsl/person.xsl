@@ -1,6 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
+    <xsl:param name="userIs" select="'guest'"/>
     <xsl:param name="locTexts4XSL" select="'No_value_for_param=locTexts4XSL'"/>
     <xsl:param name="lang" select="lt"/>
     <xsl:param name="mode" select="'mini'"/>
@@ -59,207 +60,22 @@
 
 
     <xsl:template match="person" mode="onepepafe">
+        <xsl:if test="$userIs!='guest'"></xsl:if>
         <span>
-            <!--<xsl:attribute name="class">
-                <xsl:value-of select="concat(gender,'-style')"/>
-            </xsl:attribute>-->
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
-                </xsl:attribute>
-                <span>
-                    <b>
-                        <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
-                        <xsl:apply-templates select="gender"/>
-                    </b>
-                </span>
-            </a>
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="concat($app,'rest/person/',./@id)"/>
-                </xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:call-template name="locstr">
-                        <xsl:with-param name="k">back.to.forest</xsl:with-param>
-                        <xsl:with-param name="l" select="$lang"/>
-                    </xsl:call-template>
-                </xsl:attribute>
-                <img>
-                    <xsl:attribute name="src">
-                        <xsl:value-of select="concat($app,'images/page_tree.gif')"/>
-                    </xsl:attribute>
-                </img>
-            </a>
-        </span>
-        <br/>
-        <br/>
-        <xsl:apply-templates select="event" mode="PE"/>
-        <xsl:apply-templates select="attrib"/>
-        <xsl:if test="$feId != 0">
-            <xsl:apply-templates select="families/family" mode="fullInfo"/>
-        </xsl:if>
-        <br/>
-        <br/>
-    </xsl:template>
-
-
-    <xsl:template match="person" mode="onemm">
-        <span>
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
-                </xsl:attribute>
-                <span>
-                    <b>
-                        <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
-                        <xsl:apply-templates select="gender"/>
-                    </b>
-                </span>
-            </a>
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="concat($app,'rest/person/',./@id)"/>
-                </xsl:attribute>
-                <xsl:attribute name="title">
-                    <xsl:call-template name="locstr">
-                        <xsl:with-param name="k">back.to.forest</xsl:with-param>
-                        <xsl:with-param name="l" select="$lang"/>
-                    </xsl:call-template>
-                </xsl:attribute>
-                <img>
-                    <xsl:attribute name="src">
-                        <xsl:value-of select="concat($app,'images/page_tree.gif')"/>
-                    </xsl:attribute>
-                </img>
-            </a>
-        </span>
-        <br/>
-        <br/>
-        <xsl:call-template name="mm4del"/>
-        <!--<xsl:apply-templates select="mm" mode="mmonly"/>-->
-        <br/>
-        <br/>
-    </xsl:template>
-
-
-    <xsl:template match="person" mode="mini">
-        <span>
-            <!--<xsl:attribute name="class">
-                <xsl:value-of select="concat(gender,'-style')"/>
-            </xsl:attribute>-->
-            <a>
-                <xsl:attribute name="href">
-                    <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
-                </xsl:attribute>
-                <span>
-                    <b>
-                        <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
-                        <xsl:apply-templates select="gender"/>
-                    </b>
-                </span>
-            </a>
-            <!--
-                        <a>
-                             <xsl:attribute name="href">
-                                 &lt;!&ndash;<xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>&ndash;&gt;
-                                 <xsl:value-of select="concat($app,'gedcom/personDelete/',./@id)"/>
-                             </xsl:attribute>
-                             <img>
-                                 <xsl:attribute name="src">
-                                     <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
-                                 </xsl:attribute>
-                             </img>
-                         </a>
-            -->
-
-        </span>
-    </xsl:template>
-
-
-    <xsl:template match="person" mode="noFams">
-        <!--<xsl:attribute name="class">
-            <xsl:value-of select="concat(gender,'-style')"/>
-        </xsl:attribute>-->
-        <div class="container">
-            <div class="span-2">
-                <a>
-                    <xsl:attribute name="href">
-                        <!--<xsl:value-of select="concat($app,'rest/editFe/',fe/@id)"/>-->
-                        <xsl:value-of select="concat($app,'gedcom/personUpdate/',./@id)"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:call-template name="locstr">
-                            <xsl:with-param name="k">edit.person</xsl:with-param>
-                            <xsl:with-param name="l" select="$lang"/>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                    <img>
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
-                        </xsl:attribute>
-                    </img>
-                </a>
-                <xsl:choose>
-                    <xsl:when test="count(//event)=0 and count(//attrib)=0">
-                        <a>
-                            <xsl:attribute name="href">
-                                <!--<xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>-->
-                                <xsl:value-of select="concat($app,'gedcom/personDelete/',./@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">delete.person</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
-                                </xsl:attribute>
-                         </img>
-                        </a>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <img>
-                            <xsl:attribute name="src">
-                                <xsl:value-of select="concat($app,'images/','page_deny.gif')"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">pre.delete.person</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                        </img>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="concat($app,'rest/addMultiMedia/Pe/',./@id)"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:call-template name="locstr">
-                            <xsl:with-param name="k">add.multimedia</xsl:with-param>
-                            <xsl:with-param name="l" select="$lang"/>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                    <img>
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="concat($app,'images/image_new.gif')"/>
-                        </xsl:attribute>
-                    </img>
-                </a>
-            </div>
-            <div class="span-7 colborder">
+                <!--<xsl:attribute name="class">
+                    <xsl:value-of select="concat(gender,'-style')"/>
+                </xsl:attribute>-->
                 <a>
                     <xsl:attribute name="href">
                         <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
                     </xsl:attribute>
-                    <b>
-                        <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
-                        <xsl:apply-templates select="gender"/>
-                    </b>
-                </a>&#160;&#160;&#160;
+                    <span>
+                        <b>
+                            <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
+                            <xsl:apply-templates select="gender"/>
+                        </b>
+                    </span>
+                </a>
                 <a>
                     <xsl:attribute name="href">
                         <xsl:value-of select="concat($app,'rest/person/',./@id)"/>
@@ -276,52 +92,91 @@
                         </xsl:attribute>
                     </img>
                 </a>
-        </div>
-        </div>
-        <!--
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
-                        </xsl:attribute>
-                        <span>
-                            <b>
-                                <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
-                                <xsl:apply-templates select="gender"/>
-                            </b>
-                        </span>
-                    </a>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="concat($app,'rest/person/',./@id)"/>
-                        </xsl:attribute>
-                        <span title="go back to family forest" >
-                            &lt;!&ndash;<img src="/gedcom-web/images/page_prev.gif" />&ndash;&gt;
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/page_prev.gif')" />
-                                </xsl:attribute>
-                            </img>
-                        </span>
-                    </a>
-        -->
+            </span>
+        <br/>
+        <br/>
         <xsl:apply-templates select="event" mode="PE"/>
         <xsl:apply-templates select="attrib"/>
+        <xsl:if test="$feId != 0">
+            <xsl:apply-templates select="families/family" mode="fullInfo"/>
+        </xsl:if>
+        <br/>
+        <br/>
     </xsl:template>
 
 
-    <xsl:template match="event" mode="PE">
-        <!--<xsl:value-of select="concat('|',$peId,'|',$paId,'|',$feId,'||',_/pe/@id,'||')"  />-->
-        <xsl:if test="($peId = 0 and $paId = 0 and $feId = 0) or ($peId = number(pe/@id))">
+    <xsl:template match="person" mode="onemm">
+        <xsl:if test="$userIs!='guest'"></xsl:if>
+        <span>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
+                </xsl:attribute>
+                <span>
+                    <b>
+                        <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
+                        <xsl:apply-templates select="gender"/>
+                    </b>
+                </span>
+            </a>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="concat($app,'rest/person/',./@id)"/>
+                </xsl:attribute>
+                <xsl:attribute name="title">
+                    <xsl:call-template name="locstr">
+                        <xsl:with-param name="k">back.to.forest</xsl:with-param>
+                        <xsl:with-param name="l" select="$lang"/>
+                    </xsl:call-template>
+                </xsl:attribute>
+                <img>
+                    <xsl:attribute name="src">
+                        <xsl:value-of select="concat($app,'images/page_tree.gif')"/>
+                    </xsl:attribute>
+                </img>
+            </a>
+        </span>
+        <xsl:if test="$userIs!='guest'">
+            <br/>
+            <br/>
+            <xsl:call-template name="mm4del"/>
+            <!--<xsl:apply-templates select="mm" mode="mmonly"/>-->
+            <br/>
+            <br/>
+        </xsl:if>
+    </xsl:template>
+
+
+    <xsl:template match="person" mode="mini">
+        <xsl:if test="$userIs!='guest'"></xsl:if>
+        <span>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
+                </xsl:attribute>
+                <span>
+                    <b>
+                        <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
+                        <xsl:apply-templates select="gender"/>
+                    </b>
+                </span>
+            </a>
+        </span>
+    </xsl:template>
+
+
+    <xsl:template match="person" mode="noFams">
             <div class="container">
-                <xsl:if test="$peId = 0 and $paId = 0 and $feId = 0">
+                <xsl:if test="$userIs!='guest'">
                     <div class="span-2">
                         <a>
                             <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/editPe/',pe/@id)"/>
+                                <!--<xsl:value-of select="concat($app,'rest/editFe/',fe/@id)"/>-->
+                                <xsl:value-of select="concat($app,'gedcom/personUpdate/',./@id)"/>
                             </xsl:attribute>
                             <xsl:attribute name="title">
                                 <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">edit.person.event</xsl:with-param>
+                                    <xsl:with-param name="k">edit.person</xsl:with-param>
                                     <xsl:with-param name="l" select="$lang"/>
                                 </xsl:call-template>
                             </xsl:attribute>
@@ -331,25 +186,43 @@
                                 </xsl:attribute>
                             </img>
                         </a>
+                        <xsl:choose>
+                            <xsl:when test="count(//event)=0 and count(//attrib)=0">
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <!--<xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>-->
+                                        <xsl:value-of select="concat($app,'gedcom/personDelete/',./@id)"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:call-template name="locstr">
+                                            <xsl:with-param name="k">delete.person</xsl:with-param>
+                                            <xsl:with-param name="l" select="$lang"/>
+                                        </xsl:call-template>
+                                    </xsl:attribute>
+                                    <img>
+                                        <xsl:attribute name="src">
+                                            <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                                        </xsl:attribute>
+                                    </img>
+                                </a>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_deny.gif')"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="title">
+                                        <xsl:call-template name="locstr">
+                                            <xsl:with-param name="k">pre.delete.person</xsl:with-param>
+                                            <xsl:with-param name="l" select="$lang"/>
+                                        </xsl:call-template>
+                                    </xsl:attribute>
+                                </img>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <a>
                             <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/deletePe/',pe/@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">delete.person.event</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
-                                </xsl:attribute>
-                            </img>
-                        </a>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/addMultiMedia/PE/',pe/@id)"/>
+                                <xsl:value-of select="concat($app,'rest/addMultiMedia/Pe/',./@id)"/>
                             </xsl:attribute>
                             <xsl:attribute name="title">
                                 <xsl:call-template name="locstr">
@@ -364,6 +237,97 @@
                             </img>
                         </a>
                     </div>
+                </xsl:if>
+                <div class="span-7 colborder">
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
+                        </xsl:attribute>
+                        <b>
+                            <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
+                            <xsl:apply-templates select="gender"/>
+                        </b>
+                    </a>&#160;&#160;&#160;
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="concat($app,'rest/person/',./@id)"/>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:call-template name="locstr">
+                                <xsl:with-param name="k">back.to.forest</xsl:with-param>
+                                <xsl:with-param name="l" select="$lang"/>
+                            </xsl:call-template>
+                        </xsl:attribute>
+                        <img>
+                            <xsl:attribute name="src">
+                                <xsl:value-of select="concat($app,'images/page_tree.gif')"/>
+                            </xsl:attribute>
+                        </img>
+                    </a>
+                </div>
+            </div>
+        <xsl:apply-templates select="event" mode="PE"/>
+        <xsl:apply-templates select="attrib"/>
+    </xsl:template>
+
+
+    <xsl:template match="event" mode="PE">
+        <!--<xsl:value-of select="concat('|',$peId,'|',$paId,'|',$feId,'||',_/pe/@id,'||')"  />-->
+        <xsl:if test="($peId = 0 and $paId = 0 and $feId = 0) or ($peId = number(pe/@id))">
+            <div class="container">
+                <xsl:if test="$userIs!='guest'">
+                    <xsl:if test="$peId = 0 and $paId = 0 and $feId = 0">
+                        <div class="span-2">
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/editPe/',pe/@id)"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">edit.person.event</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/deletePe/',pe/@id)"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">delete.person.event</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/addMultiMedia/PE/',pe/@id)"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">add.multimedia</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/image_new.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                        </div>
+                    </xsl:if>
                 </xsl:if>
                 <div class="span-4 colborder">
                     <!--<span class="span-4 colborder ed_tag" title="loc_tag;  Įvykio tipas">-->
@@ -399,111 +363,85 @@
                         </span>
                         <br/>
                     </xsl:if>
-                </div>
-                <div class="span-15">
-                    <xsl:if test="(pe/@tag != 'EVEN')">
-                        <xsl:if test="string-length(pe/ed/descriptor) > 0">
-                            <span class="span-15 ed_descriptor">
+                    </div>
+                    <div class="span-15">
+                        <xsl:if test="(pe/@tag != 'EVEN')">
+                            <xsl:if test="string-length(pe/ed/descriptor) > 0">
+                                <span class="span-15 ed_descriptor">
+                                    <xsl:variable name="text">
+                                        <xsl:call-template name="MultiLangText">
+                                            <xsl:with-param name="mlt" select="pe/ed/descriptor"/>
+                                            <xsl:with-param name="language" select="$lang"/>
+                                        </xsl:call-template>
+                                    </xsl:variable>
+                                    <xsl:value-of select="concat($text,' ')"/>
+                                    <!--<xsl:value-of select="concat(pe/ed/descriptor,'  ')"/>-->
+                                </span>
+                            </xsl:if>
+                        </xsl:if>
+                        <xsl:if test="string-length(pe/ed/place) > 0">
+                            <span class="span-15 ed_place">
                                 <xsl:variable name="text">
                                     <xsl:call-template name="MultiLangText">
-                                        <xsl:with-param name="mlt" select="pe/ed/descriptor"/>
+                                        <xsl:with-param name="mlt" select="pe/ed/place"/>
                                         <xsl:with-param name="language" select="$lang"/>
                                     </xsl:call-template>
                                 </xsl:variable>
                                 <xsl:value-of select="concat($text,' ')"/>
-                                <!--<xsl:value-of select="concat(pe/ed/descriptor,'  ')"/>-->
+                                <!--<xsl:value-of select="concat(pe/ed/place,' ')"/>-->
                             </span>
+                            <br/>
                         </xsl:if>
-                    </xsl:if>
-                    <xsl:if test="string-length(pe/ed/place) > 0">
-                        <span class="span-15 ed_place">
-                            <xsl:variable name="text">
-                                <xsl:call-template name="MultiLangText">
-                                    <xsl:with-param name="mlt" select="pe/ed/place"/>
-                                    <xsl:with-param name="language" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:variable>
-                            <xsl:value-of select="concat($text,' ')"/>
-                            <!--<xsl:value-of select="concat(pe/ed/place,' ')"/>-->
-                        </span>
-                        <br/>
-                    </xsl:if>
-                    <xsl:if test="string-length(pe/ed/ageAtEvent) > 0">
-                        <span class="span-15 ed_ageAtEvent">
-                            <xsl:value-of select="concat(pe/ed/ageAtEvent,' ')"/>
-                        </span>
-                        <br/>
-                    </xsl:if>
-                    <xsl:if test="string-length(pe/ed/cause) > 0">
-                        <span class="span-15 ed_cause">
-                            <xsl:variable name="text">
-                                <xsl:call-template name="MultiLangText">
-                                    <xsl:with-param name="mlt" select="pe/ed/cause"/>
-                                    <xsl:with-param name="language" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:variable>
-                            <xsl:value-of select="concat($text,' ')"/>
-                            <!--<xsl:value-of select="concat(pe/ed/cause,' ')"/>-->
-                        </span>
-                        <br/>
-                    </xsl:if>
-                    <xsl:if test="string-length(pe/ed/source) > 0">
-                        <span class="span-15 ed_source">
-                            <xsl:variable name="text">
-                                <xsl:call-template name="MultiLangText">
-                                    <xsl:with-param name="mlt" select="pe/ed/source"/>
-                                    <xsl:with-param name="language" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:variable>
-                            <xsl:value-of select="concat($text,' ')"/>
-                            <!--<xsl:value-of select="concat(pe/ed/source,' ')"/>-->
-                        </span>
-                        <br/>
-                    </xsl:if>
-                    <xsl:if test="string-length(pe/ed/note) > 0">
-                        <span class="span-15 ed_note">
-                            <xsl:variable name="text">
-                                <xsl:call-template name="MultiLangText">
-                                    <xsl:with-param name="mlt" select="pe/ed/note"/>
-                                    <xsl:with-param name="language" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:variable>
-                            <xsl:value-of select="concat($text,' ')"/>
-                            <!--<xsl:value-of select="concat(pe/ed/note,' ')"/>-->
-                        </span>
-                        <br/>
-                    </xsl:if>
-                    <xsl:apply-templates select="pe/ed/mm" mode="full"/>
+                        <xsl:if test="string-length(pe/ed/ageAtEvent) > 0">
+                            <span class="span-15 ed_ageAtEvent">
+                                <xsl:value-of select="concat(pe/ed/ageAtEvent,' ')"/>
+                            </span>
+                            <br/>
+                        </xsl:if>
+                        <xsl:if test="string-length(pe/ed/cause) > 0">
+                            <span class="span-15 ed_cause">
+                                <xsl:variable name="text">
+                                    <xsl:call-template name="MultiLangText">
+                                        <xsl:with-param name="mlt" select="pe/ed/cause"/>
+                                        <xsl:with-param name="language" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:variable>
+                                <xsl:value-of select="concat($text,' ')"/>
+                                <!--<xsl:value-of select="concat(pe/ed/cause,' ')"/>-->
+                            </span>
+                            <br/>
+                        </xsl:if>
+                        <xsl:if test="string-length(pe/ed/source) > 0">
+                            <span class="span-15 ed_source">
+                                <xsl:variable name="text">
+                                    <xsl:call-template name="MultiLangText">
+                                        <xsl:with-param name="mlt" select="pe/ed/source"/>
+                                        <xsl:with-param name="language" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:variable>
+                                <xsl:value-of select="concat($text,' ')"/>
+                                <!--<xsl:value-of select="concat(pe/ed/source,' ')"/>-->
+                            </span>
+                            <br/>
+                        </xsl:if>
+                        <xsl:if test="string-length(pe/ed/note) > 0">
+                            <span class="span-15 ed_note">
+                                <xsl:variable name="text">
+                                    <xsl:call-template name="MultiLangText">
+                                        <xsl:with-param name="mlt" select="pe/ed/note"/>
+                                        <xsl:with-param name="language" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:variable>
+                                <xsl:value-of select="concat($text,' ')"/>
+                                <!--<xsl:value-of select="concat(pe/ed/note,' ')"/>-->
+                            </span>
+                            <br/>
+                        </xsl:if>
+                        <xsl:apply-templates select="pe/ed/mm" mode="full"/>
+                    </div>
                 </div>
-                <!--
-                            <xsl:if test="$peId = 0 and $paId = 0 and $feId = 0">
-                                <div class="span-2 last">
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="concat($app,'rest/editPe/',pe/@id)"/>
-                                        </xsl:attribute>
-                                        <img>
-                                            <xsl:attribute name="src">
-                                                <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
-                                            </xsl:attribute>
-                                        </img>
-                                    </a>
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="concat($app,'rest/deletePe/',pe/@id)"/>
-                                        </xsl:attribute>
-                                        <img>
-                                            <xsl:attribute name="src">
-                                                <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
-                                            </xsl:attribute>
-                                        </img>
-                                    </a>
-                                </div>
-                            </xsl:if>
-                -->
-            </div>
-        </xsl:if>
-        <!--<hr/>-->
+    </xsl:if>
+    <!--<hr/>-->
     </xsl:template>
 
 
@@ -512,56 +450,58 @@
         <xsl:if test="($peId = 0 and $paId = 0 and $feId = 0) or ($paId = number(pa/@id))">
             <div class="container">
                 <xsl:if test="$peId = 0 and $paId = 0 and $feId = 0">
-                    <div class="span-2">
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/editPa/',pa/@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">edit.person.attrib</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
+                    <xsl:if test="$userIs!='guest'">
+                        <div class="span-2">
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/editPa/',pa/@id)"/>
                                 </xsl:attribute>
-                            </img>
-                        </a>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/deletePa/',pa/@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">delete.person.attrib</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">edit.person.attrib</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
                                 </xsl:attribute>
-                            </img>
-                        </a>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/addMultiMedia/PA/',pa/@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">add.multimedia</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/image_new.gif')"/>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/deletePa/',pa/@id)"/>
                                 </xsl:attribute>
-                            </img>
-                        </a>
-                    </div>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">delete.person.attrib</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/addMultiMedia/PA/',pa/@id)"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">add.multimedia</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/image_new.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                        </div>
+                    </xsl:if>
                 </xsl:if>
                 <div class="span-4 colborder ed_tag">
                     <xsl:value-of select="concat('pa',pa/@tag,'_ ')"/>
@@ -659,33 +599,6 @@
                     </xsl:if>
                     <xsl:apply-templates select="pa/ed/mm" mode="full"/>
                 </div>
-                <!--<xsl:if test="$peId != 0 or $paId != 0 or $feId != 0">-->
-                <!--
-                            <xsl:if test="$peId = 0 and $paId = 0 and $feId = 0">
-                                <div class="span-2 last">
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="concat($app,'rest/editPa/',pa/@id)"/>
-                                        </xsl:attribute>
-                                        <img>
-                                            <xsl:attribute name="src">
-                                                <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
-                                            </xsl:attribute>
-                                        </img>
-                                    </a>
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="concat($app,'rest/deletePa/',pa/@id)"/>
-                                        </xsl:attribute>
-                                        <img>
-                                            <xsl:attribute name="src">
-                                                <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
-                                            </xsl:attribute>
-                                        </img>
-                                    </a>
-                                </div>
-                            </xsl:if>
-                -->
             </div>
         </xsl:if>
         <!--<hr/>-->
@@ -696,6 +609,7 @@
         <!--<xsl:value-of select="concat('|family spouses| $lang=|',$lang,'| $mode=|',$mode,'|')"/>-->
         <!--<xsl:value-of select="concat(' $peId=|',$peId,'| $paId=|',$paId,'| $feId=|',$feId,'|')"/>-->
         <!--<xsl:value-of select="concat(' $personId=|',$personId,'| $childId=|',$childId,'| $familyId=|',$familyId,'| $app=|',$app,'|')"/>-->
+        <xsl:if test="$userIs!='guest'"></xsl:if>
         <div class="container">
             <!--<xsl:apply-templates select="wife/person|husband/person" mode="spouse" />-->
             <span class="column span-1">
@@ -737,6 +651,8 @@
         <!--<xsl:value-of select="concat('|family parentsChildren| $lang=|',$lang,'| $mode=|',$mode,'|')"/>-->
         <!--<xsl:value-of select="concat(' $peId=|',$peId,'| $paId=|',$paId,'| $feId=|',$feId,'|')"/>-->
         <!--<xsl:value-of select="concat(' $personId=|',$personId,'| $childId=|',$childId,'| $familyId=|',$familyId,'| $app=|',$app,'|')"/>-->
+        <xsl:if test="$userIs!='guest'">
+        </xsl:if>
         <div class="container">
             <!--<xsl:apply-templates select="wife/person|husband/person" mode="spouse" />-->
             <span class="column span-1">
@@ -774,6 +690,7 @@
 
 
     <xsl:template match="family" mode="fullInfo">
+        <xsl:if test="$userIs!='guest'"></xsl:if>
         <div class="container">
             <div class="span-2">
                 <xsl:choose>
@@ -822,6 +739,7 @@
         <!--<xsl:value-of select="concat('|',$personId,'|',../../../../@id,'|',./@id,'|')" />-->
         <!--xsl:value-of select="concat(' ===|',..,'|=== ')"/-->
         <!--<xsl:if test="(./@id != $personId)">-->
+        <xsl:if test="$userIs!='guest'"></xsl:if>
         <span>
             <!--<xsl:attribute name="class">
                 <xsl:value-of select="concat(gender,'-style')" />
@@ -867,6 +785,7 @@
         <!--<xsl:attribute name="class">
             <xsl:value-of select="concat(gender,'-style')" />
         </xsl:attribute>-->
+        <xsl:if test="$userIs!='guest'"></xsl:if>
         <span>
             <xsl:choose>
                 <xsl:when test="$personId!=0 and $childId!=0">
@@ -888,27 +807,29 @@
                         </span>
                     </a>
                     <xsl:if test="$feId = 0">
-                        <a>
-                            <xsl:attribute name="href">
-                                <!--<xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>-->
-                                <!--<xsl:value-of select="concat($app,'gedcom/familyChildDelete/',//person/@id,'/',./@id)"/>-->
-                                <xsl:value-of select="concat($app,'gedcom/familyChildDelete/',$personId,'/',./@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">remove.child</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                        <xsl:if test="$userIs!='guest'">
+                            <a>
+                                <xsl:attribute name="href">
+                                    <!--<xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>-->
+                                    <!--<xsl:value-of select="concat($app,'gedcom/familyChildDelete/',//person/@id,'/',./@id)"/>-->
+                                    <xsl:value-of select="concat($app,'gedcom/familyChildDelete/',$personId,'/',./@id)"/>
                                 </xsl:attribute>
-                                <xsl:attribute name="style">
-                                    <xsl:value-of select="concat('vertical-align:','text-bottom')"/>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">remove.child</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
                                 </xsl:attribute>
-                            </img>
-                        </a>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="style">
+                                        <xsl:value-of select="concat('vertical-align:','text-bottom')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                        </xsl:if>
                     </xsl:if>
                 </xsl:otherwise>
             </xsl:choose>
@@ -920,59 +841,62 @@
 
     <xsl:template match="event" mode="FA">
         <!--<xsl:value-of select="concat('|',$peId,'|',$paId,'|',$feId,'^',fe/@id,'^')"/>-->
+        <xsl:if test="$userIs!='guest'"></xsl:if>
         <xsl:if test="($peId = 0 and $paId = 0 and $feId = 0) or ($feId = number(fe/@id))">
             <div class="container">
                 <xsl:if test="$peId = 0 and $paId = 0 and $feId = 0">
-                    <div class="span-2">
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/editFe/',fe/@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">edit.family.event</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
+                    <xsl:if test="$userIs!='guest'">
+                        <div class="span-2">
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/editFe/',fe/@id)"/>
                                 </xsl:attribute>
-                            </img>
-                        </a>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">delete.family.event</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">edit.family.event</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
                                 </xsl:attribute>
-                            </img>
-                        </a>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat($app,'rest/addMultiMedia/FE/',fe/@id)"/>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:call-template name="locstr">
-                                    <xsl:with-param name="k">add.multimedia</xsl:with-param>
-                                    <xsl:with-param name="l" select="$lang"/>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <img>
-                                <xsl:attribute name="src">
-                                    <xsl:value-of select="concat($app,'images/image_new.gif')"/>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>
                                 </xsl:attribute>
-                            </img>
-                        </a>
-                    </div>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">delete.family.event</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="concat($app,'rest/addMultiMedia/FE/',fe/@id)"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">add.multimedia</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                                <img>
+                                    <xsl:attribute name="src">
+                                        <xsl:value-of select="concat($app,'images/image_new.gif')"/>
+                                    </xsl:attribute>
+                                </img>
+                            </a>
+                        </div>
+                    </xsl:if>
                 </xsl:if>
                 <div class="span-4 colborder">
                     <span class="span-4 colborder ed_tag" title="loc_tag;  Įvykio tipas">
@@ -1057,30 +981,6 @@
                         <br/>
                     </xsl:if>
                 </div>
-                <!--<xsl:if test="$peId = 0 and $paId = 0 and $feId = 0">
-                <div class="span-2 last">
-                <a>
-                <xsl:attribute name="href">
-                <xsl:value-of select="concat($app,'rest/editFe/',fe/@id)"/>
-                </xsl:attribute>
-                <img>
-                <xsl:attribute name="src">
-                <xsl:value-of select="concat($app,'images/','page_edit.gif')"/>
-                </xsl:attribute>
-                </img>
-                </a>
-                <a>
-                <xsl:attribute name="href">
-                <xsl:value-of select="concat($app,'rest/deleteFe/',fe/@id)"/>
-                </xsl:attribute>
-                <img>
-                <xsl:attribute name="src">
-                <xsl:value-of select="concat($app,'images/','page_delete.gif')"/>
-                </xsl:attribute>
-                </img>
-                </a>
-                </div>
-                </xsl:if>-->
             </div>
         </xsl:if>
         <!--<hr/>-->
@@ -1134,39 +1034,42 @@
         <!--<xsl:value-of select="idRoot='0'"/>-->
         <xsl:if test="idRoot='0'"> <!-- idRoot='0' ==> active record -->
             <span class="span-2">
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="concat($app,'rest/editMultiMedia/',@id)"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:call-template name="locstr">
-                            <xsl:with-param name="k">edit.multimedia</xsl:with-param>
-                            <xsl:with-param name="l" select="$lang"/>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                    <img>
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="concat($app,'images/','image_edit.gif')"/>
+                <xsl:if test="$userIs!='guest'">
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="concat($app,'rest/editMultiMedia/',@id)"/>
                         </xsl:attribute>
-                    </img>
-                </a><xsl:value-of select="'&#160;'"/>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="concat($app,'rest/deleteMultiMedia/',@id)"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:call-template name="locstr">
-                            <xsl:with-param name="k">delete.multimedia</xsl:with-param>
-                            <xsl:with-param name="l" select="$lang"/>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                    <img>
-                        <xsl:attribute name="src">
-                            <xsl:value-of select="concat($app,'images/','image_delete.gif')"/>
+                        <xsl:attribute name="title">
+                            <xsl:call-template name="locstr">
+                                <xsl:with-param name="k">edit.multimedia</xsl:with-param>
+                                <xsl:with-param name="l" select="$lang"/>
+                            </xsl:call-template>
                         </xsl:attribute>
-                    </img>
-                </a>
-                <img width="50px" height="50px">
+                        <img>
+                            <xsl:attribute name="src">
+                                <xsl:value-of select="concat($app,'images/','image_edit.gif')"/>
+                            </xsl:attribute>
+                        </img>
+                    </a><xsl:value-of select="'&#160;'"/>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="concat($app,'rest/deleteMultiMedia/',@id)"/>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:call-template name="locstr">
+                                <xsl:with-param name="k">delete.multimedia</xsl:with-param>
+                                <xsl:with-param name="l" select="$lang"/>
+                            </xsl:call-template>
+                        </xsl:attribute>
+                        <img>
+                            <xsl:attribute name="src">
+                                <xsl:value-of select="concat($app,'images/','image_delete.gif')"/>
+                            </xsl:attribute>
+                        </img>
+                    </a>
+                </xsl:if>
+        <!--<img class="expando" width="50px" height="50px">-->
+        <img class="expando" width="40px" height="40px">
                     <xsl:attribute name="src">
                         <xsl:value-of select="concat($app,'images/',@id)"/>
                     </xsl:attribute>
@@ -1248,5 +1151,8 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+
+    <!--<xsl:if test="$userIs!='guest'">
+    </xsl:if>-->
 
 </xsl:stylesheet>

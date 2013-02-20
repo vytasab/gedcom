@@ -85,7 +85,7 @@ object PersonReading extends Loggable {
     //log.debug("getFamDataHtml localeAAE |" + resXml + "|")
 
     val resHtmlFa = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXmlFa), "/xsl/person.xsl",
-        Map(
+        Map( "userIs"->AccessControl.userIs(),
           "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
           "lang"->S.locale.getLanguage.toLowerCase,
           "personId"->personVar.get.get.id.toString,
@@ -128,7 +128,7 @@ object PersonReading extends Loggable {
 
 // http://simply.liftweb.net/index-15.2.html#prev
 object AdjustToNumOfFamilies extends Loggable {
-  val log = Logger("AdjustToNumOfFamilies");
+  val log = Logger("AdjustToNumOfFamilies")
 
   def render = {
     log.debug("AdjustToNumOfFamilies []... ")
@@ -161,7 +161,8 @@ object AdjustToNumOfFamilies extends Loggable {
 class PersonView {
   val log = Logger("PersonView");
 
-  if (!AccessControl.isAuthenticated_?()) S.redirectTo("/")
+  //--v D214-4/vsh an attempt to show Person / Family detail info in ReadOnly
+  // if (!AccessControl.isAuthenticated_?()) S.redirectTo("/")
 
   if (S.get("familyEventId") != Empty) S.unsetSessionAttribute("familyEventId")
 
@@ -220,13 +221,16 @@ class PersonView {
             log.debug("PersonView render1 --1--")
             this.renderPerson()  &
             "#familyinfo1" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(1))) &
-            "#fawiz1" #> <span>
-              <button class="lift:AddFaWizardRunner1.render">
-                <lift:loc>wiz.add.fe</lift:loc>
-                <img src="/images/page_new.gif" />
-              </button>
-              <br/>
-            </span>
+            "#fawiz1" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner1.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            })
           case n =>
             log.error("PersonView render1 --n-- person.id=" + p.id.toString)
             "#filler" #> "filler"
@@ -277,7 +281,7 @@ class PersonView {
         //log.debug("renderPerson Props.get(\"__app\") = " + Props.get("__app").openOr("/__app/") + "|");
         log.debug("renderPerson resXml |" + resXml + "|")
         val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-          Map(
+          Map( "userIs"->AccessControl.userIs(),
             "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
             "lang"->S.locale.getLanguage.toLowerCase,
             "mode"->"noFams",
@@ -287,12 +291,16 @@ class PersonView {
         // <button class="lift:AddPeWizardRunner">
         cssSel =
           "#fullinfo" #> Unparsed(Localizer.tagMsg("Pe", "pe", "_", Localizer.tagMsg("Pa", "pa", "_", resHtml))) &
-          "#pewiz" #> <span>
+          "#pewiz" #> (AccessControl.userIs() match {
+            case "guest" => <span><br/></span>
+            case _ => <span>
               <button class="lift:AddPeWizardRunner.render">
                 <lift:loc>wiz.add.pepa</lift:loc>
               </button>
               <br/>
-            </span> /* <img src="/images/image_new.gif"/>*/
+            </span>
+          })
+ /* <img src="/images/image_new.gif"/>*/
 //          "#pewiz" #> <span>
 //              <button class="lift:PeWizard.ajaxRender">
 //                <lift:loc>wiz.add.pepa</lift:loc>
@@ -303,12 +311,8 @@ class PersonView {
         log.error(msg)
         S.redirectTo("/errorPage", () => {
           ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>
-              PersonView.renderPerson
-            </p>,
-            "message" -> <p>
-              {msg}
-            </p>)))
+            "location" -> <p>PersonView.renderPerson</p>,
+            "message" -> <p>{msg}</p>)))
         }
         )
     }
@@ -324,7 +328,7 @@ class PersonView {
           log.debug("renderSpouseAndChildren resXml |" + resXml + "|")
           var resHtml =
             XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl"/*"/xsl/family.xsl"*/,
-              Map(
+              Map( "userIs"->AccessControl.userIs(),
                 "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
                 "lang"->S.locale.getLanguage.toLowerCase,
                 "personId"->p.id.toString(),
@@ -388,7 +392,7 @@ class PersonView {
                     log.debug("renderParent resXml |" + resXml + "|")
                     val resHtml =
                       XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-                        Map(
+                        Map( "userIs"->AccessControl.userIs(),
                           "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
                           "lang"->S.locale.getLanguage.toLowerCase,
                           "mode"->"mini",
@@ -459,7 +463,7 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("deletePerson resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map(
+      Map( "userIs"->AccessControl.userIs(),
         "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "lang"->S.locale.getLanguage.toLowerCase,
         "mode"->"noFams",
@@ -512,7 +516,7 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("familyChildDelete resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map(
+      Map( "userIs"->AccessControl.userIs(),
         "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "mode"->"parentsChildren",
         "lang"->S.locale.getLanguage.toLowerCase,
@@ -580,7 +584,7 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("familyDelete resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map(
+      Map( "userIs"->AccessControl.userIs(),
         "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "mode"->"spouses",
         "lang"->S.locale.getLanguage.toLowerCase,
@@ -655,7 +659,7 @@ class PersonView {
       val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
       log.debug("deletePe resXml |" + resXml + "|")
       val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-        Map(
+        Map(  "userIs"->AccessControl.userIs(),
           "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
           //"locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
           "lang"->S.locale.getLanguage.toLowerCase,
@@ -751,7 +755,7 @@ class PersonView {
       val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
       log.debug("deletePa resXml |" + resXml + "|")
       val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-        Map(
+        Map(  "userIs"->AccessControl.userIs(),
           "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
           "lang"->S.locale.getLanguage.toLowerCase,
           "paId"->S.getSessionAttribute("personAttribId").get,
@@ -840,7 +844,7 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("deleteFe resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map(
+      Map( "userIs"->AccessControl.userIs(),
         "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "lang"->S.locale.getLanguage.toLowerCase,
         "feId"->S.getSessionAttribute("familyEventId").get,
@@ -917,7 +921,7 @@ class PersonView {
     val resXml = person.toXmlGeneral(Model.getUnderlying, true).toString
     log.debug("deleteMultiMedia resXml |" + resXml + "|")
     val resHtml = XslTransformer(GedcomUtil.i18nizeXmlDateValues(resXml), "/xsl/person.xsl",
-      Map(
+      Map( "userIs"->AccessControl.userIs(),
         "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "lang"->S.locale.getLanguage.toLowerCase,
         //"paId"->S.getSessionAttribute("personAttribId").get,

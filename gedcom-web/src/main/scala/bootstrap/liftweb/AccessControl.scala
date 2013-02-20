@@ -55,4 +55,11 @@ object AccessControl {
 
   def isDeveloper_?() = isAuthenticated_?() && CurrentUser.is.get.emailAddress == "vytasab@gmail.com"
 
+  def userIs(): String =
+    isAuthenticated_?() match {
+      case true if CurrentUser.is.get.emailAddress == "vytasab@gmail.com" => "admin"
+      case true => "loggedIn"
+      case false => "guest"
+    }
+
 }

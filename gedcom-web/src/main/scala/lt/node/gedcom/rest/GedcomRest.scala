@@ -8,7 +8,7 @@ import http._
 import lt.node.gedcom.util.{GedcomUtil, MultiLangText}
 import common._
 import _root_.lt.node.gedcom.model._
-import _root_.bootstrap.liftweb.{PersonIds,FamilyIds}
+import bootstrap.liftweb.{ErrorXmlMsg, PersonIds, FamilyIds}
 
 object GedcomRest extends XMLApiHelper with Loggable {
 
@@ -268,25 +268,40 @@ object GedcomRest extends XMLApiHelper with Loggable {
       /*GedcomRest.*/ getPersonXML(id)
     }
 
-    case Req(List("rest", "addMultiMedia", "Pe", idPe), _, GetRequest) => {
+    /*case Req(List("rest", "addMultiMedia", "Pe", idPe), _, GetRequest) => {
       log.debug("('rest', 'addMultiMedia', 'Pe', idPe)")
       S.setSessionAttribute("role", "Pe")
       S.setSessionAttribute("personId", idPe)
       S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
-    }
-    // TODO CC12-3/vsh not implemented yet
+    }*/
+    /*// TODO CC12-3/vsh not implemented yet
     case Req(List("rest", "addMultiMedia", "Fa", idFa), _, GetRequest) => {
       log.debug("('rest', 'addMultiMedia', 'Fa', idFa)")
       S.setSessionAttribute("role", "Fa")
       S.setSessionAttribute("familyId", idFa)
       S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
-    }
-    case Req(List("rest", "addMultiMedia", role, idMm), _, GetRequest) => {
-      log.debug("('rest', 'addMultiMedia', " + role + ", " + idMm + ")")
+    }*/
+    case Req(List("rest", "addMultiMedia", role, idXx), _, GetRequest) => {
+      log.debug("('rest', 'addMultiMedia', " + role + ", " + idXx + ")")
       S.setSessionAttribute("role", role) // possible values: PE PA FE
-      S.setSessionAttribute("idParentED", idMm) // parent id of future MultiMedia record
+      role match {
+        case "Pe" =>
+          S.setSessionAttribute("personId", idXx) // parent (Person) id of future MultiMedia record
+        //case "Fa" =>
+        case xx  if (List("PE", "PA", "FE").exists(m => m == xx)) =>
+          S.setSessionAttribute("idParentED", idXx) // parent id of future MultiMedia record
+        case _ =>
+          val place = "GedComRest addMultiMedia"
+          val msg = "A role is unexpected |"+ role + "|"
+          log.error(place+": "+msg)
+          S.redirectTo("/errorPage", () => {
+            ErrorXmlMsg.set(Some(Map(
+              "location" -> <p>{place}</p>,
+              "message" -> <p>{msg}</p>)))
+          })
+      }
       S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
     }

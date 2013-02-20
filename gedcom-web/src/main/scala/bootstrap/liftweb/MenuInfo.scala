@@ -64,7 +64,7 @@ object MenuInfo {
       //Menu(Loc("addMultiMediaPe", List("gedcom", "addMultiMedia"), "", Hidden)),
       //Menu(Loc("addMultiMediaFa", List("gedcom", "addMultiMedia"), "", Hidden)),
       Menu(Loc("addMultiMediaED",  List("gedcom", "addMultiMedia"), "", Hidden)),
-      Menu(Loc("addMultiMediaEDi", List("gedcom", "addMultiMediaInt"), "", Hidden)),
+      //Menu(Loc("addMultiMediaEDi", List("gedcom", "addMultiMediaInt"), "", Hidden)),
       Menu(Loc("editMultiMedia",   List("gedcom", "editMultiMedia"), "", Hidden)),
       Menu(Loc("deleteMultiMedia", List("gedcom", "deleteMultiMedia"), "", Hidden))
     /*

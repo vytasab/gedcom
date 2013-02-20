@@ -27,7 +27,6 @@ import js._
 import JsCmds._
 import js.jquery._
 import JqJsCmds._
-import common._
 import util._
 import Helpers._
 
@@ -39,11 +38,8 @@ class JSDialog {
   // template
 
   def button(in: NodeSeq) =
-    ajaxButton(in,
-      () => S.runTemplate(List("_jsdialog_confirm")).
-        //             () => S.runTemplate(List("bandymai/_jsdialog_confirm")).
-        map(ns => ModalDialog(ns)) openOr
-        Alert("Couldn't find _jsdialog_confirm template"))
+    ajaxButton(in, () => S.runTemplate(List("bandymai/_jsdialog_confirm")).
+        map(ns => ModalDialog(ns)) openOr Alert("Couldn't find _jsdialog_confirm template !"))
 
   // the template needs to bind to either server-side behavior
   // and unblock the UI

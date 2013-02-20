@@ -44,28 +44,18 @@ class MultiMediaWizard extends Wizard with Loggable {
   require(AccessControl.isAuthenticated_?())
   object wvInt extends WizardVar[(Box[FileParamHolder], String, MultiLangText)] (Empty, "", new MultiLangText("title", ""))
   object wvDb extends WizardVar[(Box[FileParamHolder], String, String)] (Empty, "", "")
-  //object wvMm extends WizardVar[Box[MultiMedia]] (Empty)
+  object wvMmOld extends WizardVar[Option[MultiMedia]] (None)
 
-  private object /*wvEA*/editCase extends WizardVar[String]("title")
+  private object editCase extends WizardVar[String]("title")
   val mimes: List[String] = List("image/gif", "image/png", "image/jpeg")
   val editCases: List[(String, String)] =
     List(("mm", "wizmm.mm"), ("title", "wizmm.title"), ("mm_title", "wizmm.mmTitle")).map((kv)=>(kv._1, S ? kv._2))
 
-  //log.debug("MultiMediaWizard mmActionCUD = " + S.getSessionAttribute("mmActionCUD").getOrElse("?") )
-  var actionCUD = S.getSessionAttribute("mmActionCUD").getOrElse("?") //--    C add, U update, D delete
-  S.unsetSessionAttribute("mmActionCUD")
-  val optionMm: Option[MultiMedia] = actionCUD match  {
-    case "C" => Empty
-    case "U" =>
-      Model.find(classOf[MultiMedia], S.getSessionAttribute("idMm").get.toLong)
-      // --^ person.xsl <xsl:template match="mm" mode="full"> assures mmId refres to active record
-    case _ => Empty
-  }
 
   override def calcFirstScreen = { //  : Box[Screen]
     log.debug("MultiMediaWizard calcFirstScreen  []...")
-    log.debug("MultiMediaWizard mmActionCUD = " + S.getSessionAttribute("mmActionCUD").getOrElse("?") )
-    //actionCUD = S.getSessionAttribute("mmActionCUD").getOrElse("?") //--    C add, U update, D delete
+    var actionCUD = S.getSessionAttribute("mmActionCUD").getOrElse("?") //--    C add, U update, D delete
+    log.debug("MultiMediaWizard mmActionCUD = |" + actionCUD + "|")
     actionCUD match  {
       case "C" =>
         log.debug("MultiMediaWizard calcFirstScreen C")
@@ -98,8 +88,6 @@ class MultiMediaWizard extends Wizard with Loggable {
 
 
     override def nextScreen = {
-      //wvInt.set(wvInt.get._1, wvInt.get._2, wvInt.get._3)
-      //log.debug("newMmScreen nextScreen mimeType: ==>" + wvInt._2 + "<====")
       wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
       Empty //--> finish  // conf
     }
@@ -129,19 +117,25 @@ class MultiMediaWizard extends Wizard with Loggable {
     val editCaseInit = editCase.get
     val editCaseNew = radio(S ? "wizmm.choose",
       editCases.filter((kv) => kv._1==editCaseInit).head._2, editCases.map( _._2)/*, valMinLen(1, S ? "wiz.click.radio")*/)
-
+    wvMmOld.set(Model.find(classOf[MultiMedia], S.getSessionAttribute("idMm").get.toLong))
+    // --^ person.xsl <xsl:template match="mm" mode="full"> assures mmId refres to active record
     override def nextScreen = {
       editCase.set(editCases.find(_._2 == editCaseNew.get).get._1)
       log.debug("updateOptionScreen editCaseNew.get: " + editCaseNew.get)
       log.debug("updateOptionScreen editCase.get: " + editCase.get)
       editCase.get match {
-        //case xxx if xxx == "" => editTitle
-        //case theRest => editCases.find(_._2 == theRest.toString).get._1 match {
           case "mm" => editMm
           case "title" => editTitle
-          case " mm_title" => editMmTitle
-          case _ => editMmTitle /*Empty*/
-        //}
+          case "mm_title" => editMmTitle
+          case _ =>
+            val place = "MultiMediaWizard.updateOptionScreen.nextScreen"
+            val msg = "An 'editCase.get' is unavailable |"+ editCase.get + "|"
+            log.debug(place+": "+msg)
+            S.redirectTo("/errorPage", () => {
+              ErrorXmlMsg.set(Some(Map(
+                "location" -> <p>{place}</p>,
+                "message" -> <p>{msg}</p>)))
+            })
       }
     }
   }
@@ -158,7 +152,7 @@ class MultiMediaWizard extends Wizard with Loggable {
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
         NothingOtherValueInitializer, isValidMime _ )
     var mm: MultiMedia = null
-    optionMm match {
+    wvMmOld.get match {
       case Some(mmr) =>
         mm = mmr
         log.debug("editMmTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
@@ -201,18 +195,18 @@ class MultiMediaWizard extends Wizard with Loggable {
 
     override protected def hasUploadField = true
 
-    log.debug("editMmTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+    log.debug("editMm: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
     val file = makeField[Array[Byte], Nothing](
       S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
         NothingOtherValueInitializer, isValidMime _ )
     var mm: MultiMedia = null
-    optionMm match {
-      case Some(mmr) =>
+    wvMmOld.get match {
+    case Some(mmr) =>
         mm = mmr
-        log.debug("editMmTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
+        log.debug("editMm  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
-        val place = "MultiMediaWizard.editMmTitle"
+        val place = "MultiMediaWizard.editMm"
         val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () => {
@@ -246,12 +240,12 @@ class MultiMediaWizard extends Wizard with Loggable {
 
     log.debug("editTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
     var mm: MultiMedia = null
-    optionMm match {
-      case Some(mmr) =>
+    wvMmOld.get match {
+    case Some(mmr) =>
         mm = mmr
         log.debug("editTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
-        val place = "MultiMediaWizard.editMmTitle"
+        val place = "MultiMediaWizard.editTitle"
         val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () => {
@@ -289,6 +283,7 @@ class MultiMediaWizard extends Wizard with Loggable {
       log.debug("MIME is |" + wvDb._2 + "|")
       S.notice("title is |" + wvDb._3/*.getLangMsg()*/ + "|")
       log.debug("title is |" + wvDb._3/*.getLangMsg()*/ + "|")*/
+      val actionCUD = S.getSessionAttribute("mmActionCUD").getOrElse("?") //--    C add, U update, D delete
       actionCUD match  {
         case "C" =>
           require(AccessControl.isAuthenticated_?())
@@ -319,10 +314,10 @@ class MultiMediaWizard extends Wizard with Loggable {
               val ed: EventDetail = pa.attribdetails.iterator.next()
               mm.eventdetailmultimedia = ed
               S.unsetSessionAttribute("idParentED")
-            case "Fa" =>
+            /*case "Fa" =>
               val family: Family = Model.find(classOf[Family], S.getSessionAttribute("familyId").get.toLong).get
               mm.familymultimedia = family
-              S.unsetSessionAttribute("familyId")
+              S.unsetSessionAttribute("familyId")*/
             case "FE" =>
               val fe: FamilyEvent = Model.find(classOf[FamilyEvent], S.getSessionAttribute("idParentED").get.toLong).get
               val ed: EventDetail = fe.familydetails.iterator.next()
@@ -337,7 +332,7 @@ class MultiMediaWizard extends Wizard with Loggable {
 
         case "U" =>
           require(AccessControl.isAuthenticated_?())
-          var mmOld = optionMm.get
+          var mmOld = wvMmOld.get.get
           var mmNew = new MultiMedia
           Model.persist(mmNew)
           log.debug("U MultiMedia.id |" + mmNew.id.toString + "|")
@@ -388,11 +383,28 @@ class MultiMediaWizard extends Wizard with Loggable {
               mmOld.setSubmitter(CurrentUser.open_!)
               mmOld = Model.merge(mmOld)
             case _ =>
+              val place = "MultiMediaWizard finish"
+              val msg = "An editCase is unexpected |"+ editCase + "|"
+              log.error(place+": "+msg)
+              S.redirectTo("/errorPage", () => {
+                ErrorXmlMsg.set(Some(Map(
+                  "location" -> <p>{place}</p>,
+                  "message" -> <p>{msg}</p>)))
+              })
           }
           Model.flush()
           entityTransaction.commit()
         case _ =>
+          val place = "MultiMediaWizard finish"
+          val msg = "An actionCUD is unexpected |"+ actionCUD + "|"
+          log.error(place+": "+msg)
+          S.redirectTo("/errorPage", () => {
+            ErrorXmlMsg.set(Some(Map(
+              "location" -> <p>{place}</p>,
+              "message" -> <p>{msg}</p>)))
+          })
       }
+      S.unsetSessionAttribute("mmActionCUD")
     } catch {
       case e: Exception => // TODO D203/vsh išsiaiškinti Transaction veikimą
         entityTransaction.rollback()

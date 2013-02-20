@@ -205,11 +205,15 @@ Raphael.fn.setActions4Sibling = function(personId) { //===S-i-b-l-i-n-g=========
 
     var fId = ('familyId' in p) ? (0+p.familyId) : '0';
     this.setAction4Sibling(personId, 'js_full_info', G.app+'rest/personView/'+personId);  // B217-4/vsh
-    if ('familyId' in p) {
-        this.setAction4Sibling(personId, 'js_add_brother', G.app+'rest/'+personId+'/addBrotherToFamily/'+fId);
-        this.setAction4Sibling(personId, 'js_add_sister', G.app+'rest/'+personId+'/addSisterToFamily/'+fId);
-    }        
-    this.setAction4Sibling(personId, 'js_add_family', G.app+'rest/'+personId+'/addNewFamily/'+p.gender);
+
+
+    if (G.loggedIn && (personId == G.rootId)) { // D207-4/vsh
+        if ('familyId' in p) {
+            this.setAction4Sibling(personId, 'js_add_brother', G.app+'rest/'+personId+'/addBrotherToFamily/'+fId);
+            this.setAction4Sibling(personId, 'js_add_sister', G.app+'rest/'+personId+'/addSisterToFamily/'+fId);
+        }
+        this.setAction4Sibling(personId, 'js_add_family', G.app+'rest/'+personId+'/addNewFamily/'+p.gender);
+    }
     // B215-2/vsh this.setAction4Sibling(personId, 'js_go_home', G.app+'');
     //this.setAction4Sibling(personId, 'js_full_info', G.app+'rest/'+personId+'/fullInfo');  // B215-2/vsh
     this.setAction4Sibling(personId, 'js_cancel', '');
@@ -616,7 +620,8 @@ Raphael.fn.drawPerson = function(personId, relPosition) { //====================
         };
         
         //if (G.loggedIn && (relPosition == 'init')) { // goLeft, goUp icon shape is (p.h X p.h)
-        if (G.loggedIn && (personId == G.rootId)) { // goLeft, goUp icon shape is (p.h X p.h)
+        //if (G.loggedIn && (personId == G.rootId)) { // goLeft, goUp icon shape is (p.h X p.h)
+        if ((personId == G.rootId)) { // D207-4/vsh // goLeft, goUp icon shape is (p.h X p.h)
             // goLeft icon drawing  S-i-b-l-i-n-g  S-i-b-l-i-n-g  S-i-b-l-i-n-g
             var xgli = p.x-p.h-1*G.margin-1;
             var ygli = p.y-1*G.margin;
