@@ -84,7 +84,9 @@ class MultiMediaWizard extends Wizard with Loggable {
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
       NothingOtherValueInitializer, isValidMime _ )
 
-    val titleNew = field(S ? "pe.note", wvInt._3.getLangMsg(), isValidTitle _)
+    //val titleNew = textarea/*field*/(S ? "pe.note", wvInt._3.getLangMsg(), 3, 30, isValidTitle _)
+    val titleNew = textarea/*field*/(S ? "pe.note", wvInt._3.getLangMsg(),
+      isValidTitle _, "class"->"textarea-small")
 
 
     override def nextScreen = {
@@ -115,7 +117,7 @@ class MultiMediaWizard extends Wizard with Loggable {
 
   val updateOptionScreen = new Screen {
     val editCaseInit = editCase.get
-    val editCaseNew = radio(S ? "wizmm.choose",
+    lazy val editCaseNew = radio(S ? "wizmm.choose",
       editCases.filter((kv) => kv._1==editCaseInit).head._2, editCases.map( _._2)/*, valMinLen(1, S ? "wiz.click.radio")*/)
     wvMmOld.set(Model.find(classOf[MultiMedia], S.getSessionAttribute("idMm").get.toLong))
     // --^ person.xsl <xsl:template match="mm" mode="full"> assures mmId refres to active record
@@ -167,7 +169,8 @@ class MultiMediaWizard extends Wizard with Loggable {
         })
     }
 
-    val titleNew = field(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(), isValidTitle _)
+    val titleNew = textarea(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(),
+      isValidTitle _, "class"->"textarea-small")
 
     override def nextScreen = {
       log.debug("editMmTitle screen nextScreen wvInt._2 ==>" + wvInt._2 + "<====")
@@ -255,7 +258,9 @@ class MultiMediaWizard extends Wizard with Loggable {
         } )
     }
 
-    val titleNew = field(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(), isValidTitle _)
+    //val titleNew = textarea/*field*/(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(), isValidTitle _)
+    val titleNew = textarea(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(),
+      isValidTitle _, "class"->"textarea-small")
 
     override def nextScreen = {
       log.debug("editTitle screen nextScreen wvInt._3 ==>" + wvInt._3 + "<====")
@@ -414,9 +419,10 @@ class MultiMediaWizard extends Wizard with Loggable {
       val msge = "MultiMedia: | " + <_>idRoot: ({mmRec.idRoot})</_>.text + " | " +
         <_>MIME: ({mmRec.mimeType})</_>.text + " | " + <_>title: ({mmRec.title})</_>.text + " | " +
         <_>blobas.length: ({mmRec.blobas.length})</_>.text + " | " +
-        <_>person: ({if (mmRec.personmultimedia.isInstanceOf[Person]) mmRec.personmultimedia.id else "-"})</_>.text + " | " +
-        <_>family: ({if (mmRec.familymultimedia.isInstanceOf[Family]) mmRec.familymultimedia.id else "-"})</_>.text + " | " +
-        <_>eventdetail: ({if (mmRec.eventdetailmultimedia.isInstanceOf[EventDetail]) mmRec.eventdetailmultimedia.id else "-"})</_>.text + " | " +
+        // D315-5/vsh cause: org.hibernate.LazyInitializationException: could not initialize proxy - no Session
+        //<_>person: ({if (mmRec.personmultimedia.isInstanceOf[Person]) mmRec.personmultimedia.id else "-"})</_>.text + " | " +
+        //<_>family: ({if (mmRec.familymultimedia.isInstanceOf[Family]) mmRec.familymultimedia.id else "-"})</_>.text + " | " +
+        //<_>eventdetail: ({if (mmRec.eventdetailmultimedia.isInstanceOf[EventDetail]) mmRec.eventdetailmultimedia.id else "-"})</_>.text + " | " +
         <_>submitter: ({if (mmRec.submitter.eq(null)) "-" else mmRec.submitter})</_>.text + " | " +
         <_>modifier: ({if (mmRec.modifier.eq(null)) "-" else mmRec.modifier})</_>.text + " | "
       log.debug(msge)

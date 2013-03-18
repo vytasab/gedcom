@@ -6,6 +6,7 @@ import javax.persistence._
 //import org.slf4j.{LoggerFactory, Logger}
 
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.xml.NodeSeq
 
 import _root_.net.liftweb._
@@ -172,8 +173,9 @@ class Person  {
     this.getPersonAttribs(em)
     <person id={id.toString}>
       <nameGivn>{nameGivn}</nameGivn> <nameSurn>{nameSurn}</nameSurn> <gender>{gender}</gender>
+      {(this.personmultimedias.asScala.toList).map{m: MultiMedia => {m.toXml}}.toSeq}
       {for (e <- this.personevents.toList) yield
-      <event>
+    <event>
         {e.toXml(em)}
       </event>}
       {for (e <- this.personattribs.toList) yield

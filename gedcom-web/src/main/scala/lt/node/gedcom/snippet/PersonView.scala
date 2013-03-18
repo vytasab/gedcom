@@ -296,11 +296,14 @@ class PersonView {
             case _ => <span>
               <button class="lift:AddPeWizardRunner.render">
                 <lift:loc>wiz.add.pepa</lift:loc>
+                <img src="/images/page_new.gif" />
               </button>
-              <br/>
+              <!--<button class="lift:PeWizard"><lift:loc>wiz.add.pepa</lift:loc></button>-->
+              <br/><br/>
             </span>
           })
- /* <img src="/images/image_new.gif"/>*/
+//    <button class="lift:AddPeWizardRunner.render"><lift:loc>wiz.add.pepa</lift:loc></button>
+      /* <img src="/images/image_new.gif"/>*/
 //          "#pewiz" #> <span>
 //              <button class="lift:PeWizard.ajaxRender">
 //                <lift:loc>wiz.add.pepa</lift:loc>

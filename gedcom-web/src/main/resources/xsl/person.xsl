@@ -265,6 +265,9 @@
                         </img>
                     </a>
                 </div>
+                <div class="prepend-7 ">
+                    <xsl:apply-templates select="mm" mode="full"/>
+                </div>
             </div>
         <xsl:apply-templates select="event" mode="PE"/>
         <xsl:apply-templates select="attrib"/>
@@ -1033,8 +1036,11 @@
         <!--<xsl:value-of select="idRoot"/>|-->
         <!--<xsl:value-of select="idRoot='0'"/>-->
         <xsl:if test="idRoot='0'"> <!-- idRoot='0' ==> active record -->
-            <span class="span-2">
+            <span class="span-15">
+                <!--<table style="cellspacing:0px; cellpadding:0px; border-collapse:collapse; width:100%"><tr>-->
+                <table style="border:0px solid black; padding:0px; border-collapse:collapse; width:100%"><tr>
                 <xsl:if test="$userIs!='guest'">
+                    <td style="border:0px solid black; width:10%">
                     <a>
                         <xsl:attribute name="href">
                             <xsl:value-of select="concat($app,'rest/editMultiMedia/',@id)"/>
@@ -1050,7 +1056,7 @@
                                 <xsl:value-of select="concat($app,'images/','image_edit.gif')"/>
                             </xsl:attribute>
                         </img>
-                    </a><xsl:value-of select="'&#160;'"/>
+                    </a>
                     <a>
                         <xsl:attribute name="href">
                             <xsl:value-of select="concat($app,'rest/deleteMultiMedia/',@id)"/>
@@ -1067,19 +1073,19 @@
                             </xsl:attribute>
                         </img>
                     </a>
+                    </td>
                 </xsl:if>
-        <!--<img class="expando" width="50px" height="50px">-->
-        <img class="expando" width="40px" height="40px">
+               <td style="border:1px solid black; width:10%">
+               <img class="expando" height="75px">
                     <xsl:attribute name="src">
                         <xsl:value-of select="concat($app,'images/',@id)"/>
                     </xsl:attribute>
-                    <xsl:attribute name="title">
-                        <xsl:call-template name="MultiLangText">
-                            <xsl:with-param name="mlt" select="title"/>
-                            <xsl:with-param name="language" select="$lang"/>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                </img>
+                </img></td><td style="border:0px solid black;">
+                <xsl:call-template name="MultiLangText">
+                    <xsl:with-param name="mlt" select="title"/>
+                    <xsl:with-param name="language" select="$lang"/>
+                </xsl:call-template>
+                </td></tr></table>
             </span>
         </xsl:if>
     </xsl:template>
@@ -1154,5 +1160,5 @@
 
     <!--<xsl:if test="$userIs!='guest'">
     </xsl:if>-->
-
+    <!--  <xsl:apply-templates select="pe/ed/mm" mode="full"/>  -->
 </xsl:stylesheet>

@@ -4,6 +4,7 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import _root_.net.liftweb._
 import http._
+import js.JE.{JsArray, Str, JsObj}
 import js.jquery.JqJsCmds._
 import wizard._
 import common._
@@ -24,17 +25,20 @@ import _root_.lt.node.gedcom.util._ //{GedcomDateOptions,PeTags,PaTags,ToolTips}
  */
 
 
-class/*object*/ AddPeWizardRunner {
-  def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
-    ModalDialog(<div>
-      <lift:PeWizard ajax="true"/>
-    </div>))
-}
+class /*object*/ AddPeWizardRunner {
 
+  def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
+    ModalDialog((<div><lift:PeWizard ajax="true"/><br/></div>),
+      JsObj(("top","200px"),("left","300px"),("width","600px"),("height","600px"))))
+}
+/*  neveikia: ,("align","middle")
+      JsObj(("top","40px"),("left","40px"),("width","800px"),("height","800px"))))
+    ModalDialog((<div> <lift:PeWizard ajax="true"/></div>), JsObj("width", "800px")))
+ */
 
 class PeWizard extends Wizard with Loggable {
 
-  val log: Logger = LoggerFactory.getLogger("PeWizard");
+  val log: Logger = LoggerFactory.getLogger("PeWizard")
 
   if (!AccessControl.isAuthenticated_?) S.redirectTo("/")
   RequestedURL(Full(S.referer.openOr("gedcom/personView")))
@@ -47,6 +51,7 @@ class PeWizard extends Wizard with Loggable {
   object wvBoxPersonEvent extends WizardVar[Box[PersonEvent]](Empty)
   object wvBoxPersonAttrib extends WizardVar[Box[PersonAttrib]](Empty)
   object wvBoxEventDetail extends WizardVar[Box[EventDetail]](Empty)
+
   val dateFormat = GedcomDateOptions.msg4Date(S.get("locale").getOrElse("en"))
   log.debug("PeWizard S.get(\"locale\").getOrElse(\"en\") |" + S.get("locale").getOrElse("en") + "|")
   log.debug("PeWizard dateFormat |" + dateFormat + "|")
@@ -92,6 +97,8 @@ class PeWizard extends Wizard with Loggable {
 
   // for PersonAttrib.tagValue
   private object wvXXXX extends WizardVar[(String, MultiLangText)]("", new MultiLangText("tagValue", ""))
+
+  private object wvDateLabels extends WizardVar[(String, String)]("", "")
 
   val eaCases: List[(String, String)] =
     List(("event", "wiz.event"), ("attrib", "wiz.attribute")).map((kv)=>(kv._1, S ? kv._2))
@@ -151,20 +158,28 @@ class PeWizard extends Wizard with Loggable {
   }
 
 
-  val selPeTag = new Screen {
+  val selPeTag = new Screen { //-----------------------------------------------
     val tagInit = wvEvenDat4Pe.get._1 match { // PeTags.tags.map(_._2).head
       case "" => PeTags.tags.map(_._2).head
       case _ => wvEvenDat4Pe.get._1
     }
     val tagNew = select(S ? "add.event", tagInit, PeTags.tags.map(_._2)
-      , "size" -> "13"
-      ,  "title"->ToolTips.getMsg("age_at_event")
+      , "size"->"13"
+      , "title"->ToolTips.getMsg("age_at_event")
     )
+    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
+    val dateoptionsNew = select(S ? "pe.dateShape", dateoptionsInit,
+      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"10")
 
     override def nextScreen = {
       log.debug("selPeTag tagNew.is |" + tagNew.get + "|")
       wvEvenDat4Pe.set((PeTags.tags.find(_._2 == tagNew.get).get._1, wvEvenDat4Pe.get._2))
-//      S.notice(wvEvenDat4Pe.get.toString)
+      //S.notice(wvEvenDat4Pe.get._2)
+      //S.notice(dateoptionsNew.get)
+      //wvEvenDat4Pe.set( wvEvenDat4Pe.get._1, dateoptionsNew.get)
+      wvEvenDat4Pe.set( wvEvenDat4Pe.get._1, GedcomDateOptions.getKey(dateoptionsNew.get))
+      //S.notice(wvEvenDat4Pe.get._2)
+
       tagNew.get match {
         //case tagInit if tagInit == "" => selPeTag
         case newVal => PeTags.tags.find(_._2 == newVal).get._1 match {
@@ -178,161 +193,34 @@ class PeWizard extends Wizard with Loggable {
   }
 
 
-  val peTagADOP = new Screen {
-    val adoptInit = S ? adoptCases.find(_._1==wvADOP.get).get._2  //"BOTH"
-    val adoptNew = radio(S ? "pe.adoptedBy", adoptInit, adoptCases.map(_._2),
-      valMinLen(1, S ? "wiz.click.radio"))
-    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
-    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
-      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size" -> "9")
-    val placeInit = wvEDMLT._3.getLangMsg()
-    val placeNew = field(S ? "pe.place", placeInit, "style" -> "display:yes")
-    val ageAtEventInit = wvDPAS.get._3
-    val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
-      "title"->ToolTips.getMsg("age_at_event"),
-      validateAAE _ )
-    val sourceInit = wvEDMLT._5.getLangMsg()
-    val sourceNew = field(S ? "pe.source", sourceInit)
-    val noteInit = wvEDMLT._6.getLangMsg()
-    val noteNew = field(S ? "pe.note", noteInit)
-
-    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
-
-    def validateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
-      AgeAtEvent.validateAgeAtEvent(aae) match {
-        case true => Nil
-        case _ => S.?("aae.is.invalid")
-      }
-    }
-
-    override def nextScreen = {
-      wvEvenDat4Pe.set( wvEvenDat4Pe.get._1, dateoptionsNew.get)
-      wvADOP.set(adoptNew.get)
-      wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
-      nextScreen4Date
-    }
-  }
-
-
-  val peTagEVEN = new Screen {
-    val descriptorInit = wvEVEN.get
-    val descriptorNew = field(S ? "pe.descriptor", descriptorInit, "style" -> "display:yes").toString
-    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
-    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
-      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size" -> "9")
-    val placeInit = wvEDMLT._3.getLangMsg()
-    val placeNew = field(S ? "pe.place", placeInit, "style" -> "display:yes")
-    val ageAtEventInit = wvDPAS.get._3
-    val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
-      "title"->ToolTips.getMsg("age_at_event"), validateAAE _ )
-    val sourceInit = wvEDMLT._5.getLangMsg()
-    val sourceNew = field(S ? "pe.source", sourceInit, "style" -> "display:none")
-    val noteInit = wvEDMLT._6.getLangMsg()
-    val noteNew = field(S ? "pe.note", noteInit)
-
-    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
-
-    def validateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
-      AgeAtEvent.validateAgeAtEvent(aae) match {
-        case true => Nil
-        case _ => S.?("aae.is.invalid")
-      }
-    }
-
-    override def nextScreen = {
-      wvEvenDat4Pe.set( wvEvenDat4Pe.get._1, dateoptionsNew.get)
-      wvEVEN.set(descriptorNew)
-      wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
-      nextScreen4Date
-    }
-  }
-
-
-  val peTagDEAT = new Screen {
-    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
-    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
-      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size" -> "9")
-    val placeInit = wvEDMLT._3.getLangMsg()
-    val placeNew = field(S ? "pe.place", placeInit, "style" -> "display:yes")
-    val ageAtEventInit = wvDPAS.get._3
-    val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
-      "title"->ToolTips.getMsg("age_at_event"),
-      validateAAE _ )
-    val sourceInit = wvEDMLT._5.getLangMsg()
-    val sourceNew = field(S ? "pe.source", sourceInit, "style" -> "display:none")
-    val causeInit = wvEDMLT._5.getLangMsg()
-    val causeNew = field(S ? "pe.cause", causeInit, "style" -> "display:yes")
-    val noteInit = wvEDMLT._6.getLangMsg()
-    val noteNew = field(S ? "pe.note", noteInit)
-
-    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
-
-    def validateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
-      AgeAtEvent.validateAgeAtEvent(aae) match {
-        case true => Nil
-        case _ => S.?("aae.is.invalid")
-      }
-    }
-
-    override def nextScreen = {
-      wvEvenDat4Pe.set(wvEvenDat4Pe.get._1, dateoptionsNew.get)
-      wvDEAT.set(causeNew.get)
-      wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
-      nextScreen4Date
-    }
-  }
-
-
-  val peTagXXXX = new Screen {
-    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
-    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
-      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2)
-      , "size" -> "9"
-      , "title"->ToolTips.getMsg("age_at_event")
-    )
-    val placeInit = wvEDMLT._3.getLangMsg()
-    val placeNew = field(S ? "pe.place", placeInit, "style" -> "display:yes")
-    val ageAtEventInit = wvDPAS.get._3
-    val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
-      "title"->ToolTips.getMsg("age_at_event"), validateAAE _ )
-    val sourceInit = wvEDMLT._5.getLangMsg()
-    val sourceNew = field(S ? "pe.source", sourceInit, "style" -> "display:none")
-    val noteInit = wvEDMLT._6.getLangMsg()
-    val noteNew = field(S ? "pe.note", noteInit)
-
-    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
-
-    def validateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
-      AgeAtEvent.validateAgeAtEvent(aae) match {
-        case true => Nil
-        case _ => S.?("aae.is.invalid")
-      }
-    }
-
-    override def nextScreen = {
-      wvEvenDat4Pe.set(wvEvenDat4Pe.get._1, dateoptionsNew.get)
-      wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
-      nextScreen4Date
-    }
-  }
-
-
-  val selPaTag = new Screen {
-    val tagInit2 = wvAttrDat4Pe.get._1 match { // PeTags.tags.map(_._2).head
-      case "" =>
-        //log.debug("selPaTag 'attrib' ")
+  val selPaTag = new Screen { //-----------------------------------------------
+    val tagInit2 = wvAttrDat4Pe.get._1 match {
+      case "" => //log.debug("selPaTag 'attrib' ")
         PaTags.tags.map(_._2).head
       case _ =>
         log.debug("selPaTag '_' ")
         wvAttrDat4Pe.get._1
     }
     log.debug("selPaTag tagInit2 |" + tagInit2 + "|")
-    val tagNew2 = select(S ? "add.attrib", tagInit2, PaTags.tags.map(_._2), "size" -> "11")
+    val tagNew2 = select(S ? "add.attrib", tagInit2, PaTags.tags.map(_._2),
+      "size"->"11")
+    val dateoptionsInit = GedcomDateOptions.getMsg(wvAttrDat4Pe.get._2)
+    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
+      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"10")
 
     override def nextScreen = {
       log.debug("selPaTag tagNew2.is |" + tagNew2.get + "|")
       wvAttrDat4Pe.set((PaTags.tags.find(_._2 == tagNew2.get).get._1, wvAttrDat4Pe.get._2))
       //S.notice(wvAttrDat4Pe.get.toString)
+
+      //wvAttrDat4Pe.set(wvAttrDat4Pe.get._1, dateoptionsNew.get)
+      wvAttrDat4Pe.set( wvAttrDat4Pe.get._1, GedcomDateOptions.getKey(dateoptionsNew.get))
+      /*
+      log.debug("selPeTag tagNew.is |" + tagNew.get + "|")
+      wvEvenDat4Pe.set((PeTags.tags.find(_._2 == tagNew.get).get._1, wvEvenDat4Pe.get._2))
+//      S.notice(wvEvenDat4Pe.get.toString)
+      wvEvenDat4Pe.set( wvEvenDat4Pe.get._1, dateoptionsNew.get)
+       */
       log.debug("selPaTag wvAttrDat4Pe " + wvAttrDat4Pe.get.toString)
       log.debug("selPaTag PaTags.tags.find(_._2 == newVal2).get._1 " + PaTags.tags.find(_._2 == tagNew2.get).get._1)
       tagNew2.get match {
@@ -342,21 +230,274 @@ class PeWizard extends Wizard with Loggable {
         }
       }
     }
+  }
+
+    val peTagADOP = new Screen {
+    val adoptInit = S ? adoptCases.find(_._1==wvADOP.get).get._2  //"BOTH"
+    val adoptNew = radio(S ? "pe.adoptedBy", adoptInit, adoptCases.map(_._2),
+      valMinLen(1, S ? "wiz.click.radio"))
+//    //--------------------------------------------------
+// D226-2/vsh atidėtas datos veikšmmės formavimo keitimas - viskas viename lauke
+//    //    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
+//    //    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
+//    //      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"9")
+//    val dateInit =  "asasasasasas" //dateInitValue
+    //val dateInit =  GedcomDateOptions.dateInitValue(GedcomDateOptions.getKey(wvEvenDat4Pe.get._2))
+    //val dateInit =  GedcomDateOptions.dateInitValue(GedcomDateOptions.getKey(wvEvenDat4Pe.get._2))(S.locale.getLanguage)
+    //val dateInit =  GedcomDateOptions.dateInitValue(GedcomDateOptions.getKey(wvEvenDat4Pe.get._2))(S.locale.getLanguage)
+
+    //val dateInit = GedcomDateOptions.dateInitValue(wvEvenDat4Pe.get._2)(S.locale.getLanguage)
+    //val dateNew = textarea(S ? "pe.dateValue", dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+    val dateInit = wvDPAS._1
+    val dateNew = textarea((S ? "pe.dateValue")+ ": " + GedcomDateOptions.dateInitValue(wvEvenDat4Pe.get._2)(S.locale.getLanguage),
+      dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+
+    //      case _ => field(/*S ? wvDateLabels.get._1*/"trys", (wvEvenDat4Pe.get._2), "size"->"11", "maxlength"->"11",
+    //        "display"->"yes"  /*isIncompletedate _*/ )
+    //    //println("aaaaaaaaaaaaaaaaaaaaaa "+ wvEvenDat4Pe.get._2)
+////    val dateNew = field(/*S ? wvDateLabels.get._1*/"trys", dateInit, "size"->"11", "maxlength"->"11",
+////        "display"->"yes"  /*isIncompletedate _*/ )
+//    val dateNew = (wvEvenDat4Pe.get._2) match {
+//      case z if z=="be datos" =>  field(/*S ? wvDateLabels.get._1*/"vienas", (wvEvenDat4Pe.get._2), "size"->"11", "maxlength"->"11",
+//        "display"->"none"  /*isIncompletedate _*/ )
+//      case "gdt_no_date" =>  field(/*S ? wvDateLabels.get._1*/"vienas", (wvEvenDat4Pe.get._2), "size"->"11", "maxlength"->"11",
+//        "display"->"none"  /*isIncompletedate _*/ )
+//      case z if z=="gdt_text" => textarea/*field*/("du", "("+(wvEvenDat4Pe.get._2)+")", "style"->"display:yes", "class"->"textarea-small")
+//      case "žodžiais, jei kitaip netinka" => textarea/*field*/("du", (wvEvenDat4Pe.get._2), "style"->"display:yes", "class"->"textarea-small")
+//      case _ => field(/*S ? wvDateLabels.get._1*/"trys", (wvEvenDat4Pe.get._2), "size"->"11", "maxlength"->"11",
+//        "display"->"yes"  /*isIncompletedate _*/ )
+//    }
+////    val dateNew = GedcomDateOptions.getKey(wvEvenDat4Pe.get._2) match {
+////      case "gdt_no_date" =>  field(/*S ? wvDateLabels.get._1*/"vienas", GedcomDateOptions.getKey(wvEvenDat4Pe.get._2), "size"->"11", "maxlength"->"11",
+////        "display"->"none"  /*isIncompletedate _*/ )
+////      case "gdt_text" => textarea/*field*/("du", GedcomDateOptions.getKey(wvEvenDat4Pe.get._2), "style"->"display:yes", "class"->"textarea-small")
+////      case _ => field(/*S ? wvDateLabels.get._1*/"trys", GedcomDateOptions.getKey(wvEvenDat4Pe.get._2), "size"->"11", "maxlength"->"11",
+////        "display"->"yes"  /*isIncompletedate _*/ )
+////    }
+//    //--------------------------------------------------
+    val placeInit = wvEDMLT._3.getLangMsg()
+    val placeNew = textarea/*field*/(S ? "pe.place", placeInit,
+      "style"->"display:yes", "class"->"textarea-small")
+    val ageAtEventInit = wvDPAS.get._3
+    val ageAtEventNew = textarea/*field*/(S ? "pe.ageAtEvent", ageAtEventInit,
+      "title"->ToolTips.getMsg("age_at_event"), "class"->"textarea-small",
+      isValidateAAE _ )
+
+    val sourceInit = wvEDMLT._5.getLangMsg()
+    val sourceNew = textarea/*field*/(S ? "pe.source", sourceInit, "class"->"textarea-small")
+    val noteInit = wvEDMLT._6.getLangMsg()
+    val noteNew = textarea/*field*/(S ? "pe.note", noteInit, "class"->"textarea-small")
+
+    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
+
+    def isValidateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
+      AgeAtEvent.validateAgeAtEvent(aae) match {
+        case true => Nil
+        case _ => S.?("aae.is.invalid")
+      }
+    }
+
+    def isValiDate(s: String): List[FieldError] = {
+      GedcomDateOptions.valiDate(s, wvEvenDat4Pe.get._2) match {
+        case "" =>
+          //S.notice("Nil")
+          Nil
+        case msg if msg.length > 0 =>
+          //S.notice("msg |"+msg+"|")
+          msg  // S.?("date.is.invalid")
+      }
+    }
+
+    override def nextScreen = {
+//      wvEvenDat4Pe.set( wvEvenDat4Pe.get._1, dateoptionsNew.get)
+      wvADOP.set(adoptNew.get)
+      wvDPAS.set(dateNew.get, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
+      conf/*nextScreen4Date*/
+    }
+  }
+
+
+  val peTagEVEN = new Screen {
+    val descriptorInit = wvEVEN.get
+    val descriptorNew = textarea/*field*/(S ? "pe.descriptor", descriptorInit, "style"->"display:yes", "class"->"textarea-small")/*.toString*/
+//    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
+//    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
+//      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"9")
+
+    //val dateInit =  GedcomDateOptions.dateInitValue(wvEvenDat4Pe.get._2)(S.locale.getLanguage)
+    ////val dateNew = textarea(S ? "pe.dateValue", dateInit, "style"->"display:yes", "class"->"textarea-4date")
+    //val dateNew = textarea(S ? "pe.dateValue", dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+    val dateInit = wvDPAS._1
+    val dateNew = textarea((S ? "pe.dateValue")+ ": " + GedcomDateOptions.dateInitValue(wvEvenDat4Pe.get._2)(S.locale.getLanguage),
+      dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+
+    val placeInit = wvEDMLT._3.getLangMsg()
+    val placeNew = textarea/*field*/(S ? "pe.place", placeInit, "style"->"display:yes", "class"->"textarea-small")
+    val ageAtEventInit = wvDPAS.get._3
+    val ageAtEventNew = textarea/*field*/(S ? "pe.ageAtEvent", ageAtEventInit,
+      "title"->ToolTips.getMsg("age_at_event"), "class"->"textarea-small", validateAAE _ )
+    val sourceInit = wvEDMLT._5.getLangMsg()
+    val sourceNew = textarea/*field*/(S ? "pe.source", sourceInit, "style"->"display:none", "class"->"textarea-small")
+    val noteInit = wvEDMLT._6.getLangMsg()
+    val noteNew = textarea/*field*/(S ? "pe.note", noteInit, "class"->"textarea-small")
+
+    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
+
+    def validateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
+      AgeAtEvent.validateAgeAtEvent(aae) match {
+        case true => Nil
+        case _ => S.?("aae.is.invalid")
+      }
+    }
+
+    def isValiDate(s: String): List[FieldError] = {
+      GedcomDateOptions.valiDate(s, wvEvenDat4Pe.get._2) match {
+        case "" =>
+          //S.notice("Nil")
+          Nil
+        case msg if msg.length > 0 =>
+          //S.notice("msg |"+msg+"|")
+          msg  // S.?("date.is.invalid")
+      }
+    }
+
+    override def nextScreen = {
+//      wvEvenDat4Pe.set(dateNew, wvEvenDat4Pe.get._2)
+      wvEVEN.set(descriptorNew)
+      wvDPAS.set( dateNew.get, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
+      conf/*nextScreen4Date*/
+    }
+  }
+
+
+  val peTagDEAT = new Screen {
+//    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
+//    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
+//      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"9")
+
+    //val dateInit =  GedcomDateOptions.dateInitValue(wvEvenDat4Pe.get._2)(S.locale.getLanguage)
+    //val dateNew = textarea(S ? "pe.dateValue", dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+    val dateInit = wvDPAS._1
+    val dateNew = textarea((S ? "pe.dateValue")+ ": " + GedcomDateOptions.dateInitValue(wvEvenDat4Pe.get._2)(S.locale.getLanguage),
+      dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+
+    val placeInit = wvEDMLT._3.getLangMsg()
+    val placeNew = textarea/*field*/(S ? "pe.place", placeInit/*, 2, 30*/,
+      /*"rows"->"3",  "cols"->"30",*/  /*"style"->"width:300px; height:50px; display:yes",*/ "class"->"textarea-small")
+    val ageAtEventInit = wvDPAS.get._3
+    val ageAtEventNew = textarea/*field*/(S ? "pe.ageAtEvent", ageAtEventInit,
+      "title"->ToolTips.getMsg("age_at_event"),
+      validateAAE _ , "class"->"textarea-small")
+    val sourceInit = wvEDMLT._5.getLangMsg()
+    val sourceNew = textarea/*field*/(S ? "pe.source", sourceInit, "style"->"display:none", "class"->"textarea-small")
+    val causeInit = wvEDMLT._5.getLangMsg()
+    val causeNew = textarea/*field*/(S ? "pe.cause", causeInit, "style"->"display:yes", "class"->"textarea-small")
+    val noteInit = wvEDMLT._6.getLangMsg()
+    val noteNew = textarea/*field*/(S ? "pe.note", noteInit, "class"->"textarea-small")
+
+    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
+
+    def validateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
+      AgeAtEvent.validateAgeAtEvent(aae) match {
+        case true => Nil
+        case _ => S.?("aae.is.invalid")
+      }
+    }
+
+    def isValiDate(s: String): List[FieldError] = {
+      GedcomDateOptions.valiDate(s, wvEvenDat4Pe.get._2) match {
+        case "" =>
+          //S.notice("Nil")
+          Nil
+        case msg if msg.length > 0 =>
+          //S.notice("msg |"+msg+"|")
+          msg  // S.?("date.is.invalid")
+      }
+    }
+
+    override def nextScreen = {
+//      wvEvenDat4Pe.set(wvEvenDat4Pe.get._1, dateoptionsNew.get)
+//      wvEvenDat4Pe.set(dateNew, wvEvenDat4Pe.get._2)
+      wvDEAT.set(causeNew.get)
+      wvDPAS.set(dateNew.get, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
+      conf/*nextScreen4Date*/
+    }
+  }
+
+
+  val peTagXXXX = new Screen {
+//    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
+//    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
+//      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2)
+//      , "size"->"9"
+//      , "title"->ToolTips.getMsg("age_at_event")
+//    )
+    val dateInit = wvDPAS._1
+    val dateNew = textarea((S ? "pe.dateValue")+ ": " + GedcomDateOptions.dateInitValue(wvEvenDat4Pe.get._2)(S.locale.getLanguage),
+      dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+    val placeInit = wvEDMLT._3.getLangMsg()
+    val placeNew = textarea/*field*/(S ? "pe.place", placeInit, "style"->"display:yes", "class"->"textarea-small")
+    val ageAtEventInit = wvDPAS.get._3
+    val ageAtEventNew = textarea/*field*/(S ? "pe.ageAtEvent", ageAtEventInit,
+      "title"->ToolTips.getMsg("age_at_event"), validateAAE _ , "class"->"textarea-small")
+    val sourceInit = wvEDMLT._5.getLangMsg()
+    val sourceNew = textarea/*field*/(S ? "pe.source", sourceInit, "style"->"display:none", "class"->"textarea-small")
+    val noteInit = wvEDMLT._6.getLangMsg()
+    val noteNew = textarea/*field*/(S ? "pe.note", noteInit, "class"->"textarea-small")
+
+    override def screenTop = Full(<span><b>{PeTags.getMsg(wvEvenDat4Pe.get._1)}</b></span>)
+
+    def validateAAE(aae: String): List[FieldError] = { //validateAgeAtEvent aae
+      AgeAtEvent.validateAgeAtEvent(aae) match {
+        case true => Nil
+        case _ => S.?("aae.is.invalid")
+      }
+    }
+
+    def isValiDate(s: String): List[FieldError] = {
+      GedcomDateOptions.valiDate(s, wvEvenDat4Pe.get._2) match {
+        case "" =>
+          //S.notice("Nil")
+          Nil
+        case msg if msg.length > 0 =>
+          //S.notice("msg |"+msg+"|")
+          msg  // S.?("date.is.invalid")
+      }
+    }
+
+    override def nextScreen = {
+//      wvEvenDat4Pe.set(dateNew, wvEvenDat4Pe.get._2)
+      wvDPAS.set(dateNew.get.trim.replaceAll("( )+", " "),
+        placeNew.get.trim.replaceAll("( )+", " "),
+        ageAtEventNew.get.trim.replaceAll("( )+", " "),
+        sourceNew.get.trim.replaceAll("( )+", " "),
+        noteNew.get.trim.replaceAll("( )+", " "))
+      conf/*nextScreen4Date*/
+    }
+  }
+
 
 
     val paTagRESI = new Screen {
-      val dateoptionsInit = GedcomDateOptions.getMsg(wvAttrDat4Pe.get._2)
-      val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
-        GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size" -> "9")
+//      val dateoptionsInit = GedcomDateOptions.getMsg(wvAttrDat4Pe.get._2)
+//      val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
+//        GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"9")
+
+      //val dateInit =  GedcomDateOptions.dateInitValue(wvAttrDat4Pe.get._2)(S.locale.getLanguage)
+      //val dateNew = textarea(S ? "pe.dateValue", dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+      val dateInit = wvDPAS._1
+      val dateNew = textarea((S ? "pe.dateValue")+ ": " + GedcomDateOptions.dateInitValue(wvAttrDat4Pe.get._2)(S.locale.getLanguage),
+        dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+
       val placeInit = wvEDMLT._3.getLangMsg()
-      val placeNew = field(S ? "pe.place", placeInit, "style" -> "display:yes")
+      val placeNew = textarea/*field*/(S ? "pe.place", placeInit, "style"->"display:yes", "class"->"textarea-small")
       val ageAtEventInit = wvDPAS.get._3
-      val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
-        "title"->ToolTips.getMsg("age_at_event"), validateAAE _ )
+      val ageAtEventNew = textarea/*field*/(S ? "pe.ageAtEvent", ageAtEventInit,
+        "title"->ToolTips.getMsg("age_at_event"), validateAAE _ , "class"->"textarea-small")
       val sourceInit = wvEDMLT._5.getLangMsg()
-      val sourceNew = field(S ? "pe.source", sourceInit, "style" -> "display:none")
+      val sourceNew = textarea/*field*/(S ? "pe.source", sourceInit, "style"->"display:none", "class"->"textarea-small")
       val noteInit = wvEDMLT._6.getLangMsg()
-      val noteNew = field(S ? "pe.note", noteInit)
+      val noteNew = textarea/*field*/(S ? "pe.note", noteInit, "class"->"textarea-small")
 
       override def screenTop = Full(<span><b>{PaTags.getMsg(wvAttrDat4Pe.get._1)}</b></span>)
 
@@ -367,10 +508,22 @@ class PeWizard extends Wizard with Loggable {
         }
       }
 
+      def isValiDate(s: String): List[FieldError] = {
+        GedcomDateOptions.valiDate(s, wvAttrDat4Pe.get._2) match {
+          case "" =>
+            //S.notice("Nil")
+            Nil
+          case msg if msg.length > 0 =>
+            //S.notice("msg |"+msg+"|")
+            msg  // S.?("date.is.invalid")
+        }
+      }
+
       override def nextScreen = {
-        wvAttrDat4Pe.set(wvAttrDat4Pe.get._1, dateoptionsNew.get)
-        wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
-        nextScreen4Date
+//        wvAttrDat4Pe.set(wvAttrDat4Pe.get._1, dateoptionsNew.get)
+//        wvAttrDat4Pe.set(dateNew, wvAttrDat4Pe.get._2)
+        wvDPAS.set(dateNew.get, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
+        conf/*nextScreen4Date*/
       }
     }
 
@@ -378,19 +531,26 @@ class PeWizard extends Wizard with Loggable {
     val paTagXXXX = new Screen {
       log.debug("paTagXXXX []...")
       val valueInit = wvXXXX.get._1
-      val valueNew = field(S ? "pa.value", valueInit).toString
-      val dateoptionsInit = GedcomDateOptions.getMsg(wvAttrDat4Pe.get._2)
-      val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
-        GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size" -> "9")
+      val valueNew = textarea/*field*/(S ? "pa.value", valueInit, "class"->"textarea-small")/*.toString*/
+//      val dateoptionsInit = GedcomDateOptions.getMsg(wvAttrDat4Pe.get._2)
+//      val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
+//        GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"9")
+
+      //val dateInit =  GedcomDateOptions.dateInitValue(wvAttrDat4Pe.get._2)(S.locale.getLanguage)
+      //val dateNew = textarea(S ? "pe.dateValue", dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+      val dateInit = wvDPAS._1
+      val dateNew = textarea((S ? "pe.dateValue")+ ": " + GedcomDateOptions.dateInitValue(wvAttrDat4Pe.get._2)(S.locale.getLanguage),
+        dateInit, "style"->"display:yes", "class"->"textarea-4date", isValiDate _ )
+
       val placeInit = wvEDMLT._3.getLangMsg()
-      val placeNew = field(S ? "pe.place", placeInit)
+      val placeNew = textarea/*field*/(S ? "pe.place", placeInit, "class"->"textarea-small")
       val ageAtEventInit = wvDPAS.get._3
-      val ageAtEventNew = field(S ? "pe.ageAtEvent", ageAtEventInit,
-        "title"->ToolTips.getMsg("age_at_event"), validateAAE _ )
+      val ageAtEventNew = textarea/*field*/(S ? "pe.ageAtEvent", ageAtEventInit,
+        "title"->ToolTips.getMsg("age_at_event"), validateAAE _ , "class"->"textarea-small")
       val sourceInit = wvEDMLT._5.getLangMsg()
-      val sourceNew = field(S ? "pe.source", sourceInit)
+      val sourceNew = textarea/*field*/(S ? "pe.source", sourceInit, "class"->"textarea-small")
       val noteInit = wvEDMLT._6.getLangMsg()
-      val noteNew = field(S ? "pe.note", noteInit)
+      val noteNew = textarea/*field*/(S ? "pe.note", noteInit, "class"->"textarea-small")
       log.debug("paTagXXXX ...[]")
 
       override def screenTop = Full(<span><b>{PaTags.getMsg(wvAttrDat4Pe.get._1)}</b></span>)
@@ -402,19 +562,31 @@ class PeWizard extends Wizard with Loggable {
         }
       }
 
+      def isValiDate(s: String): List[FieldError] = {
+        GedcomDateOptions.valiDate(s, wvAttrDat4Pe.get._2) match {
+          case "" =>
+            //S.notice("Nil")
+            Nil
+          case msg if msg.length > 0 =>
+            //S.notice("msg |"+msg+"|")
+            msg  // S.?("date.is.invalid")
+        }
+      }
+
       override def nextScreen = {
-        wvAttrDat4Pe.set(wvAttrDat4Pe.get._1, dateoptionsNew.get)
+//        wvAttrDat4Pe.set(wvAttrDat4Pe.get._1, dateoptionsNew.get)
+//        wvAttrDat4Pe.set(dateNew, wvAttrDat4Pe.get._2)
         wvXXXX.set((valueNew, wvXXXX.get._2))
-        wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
-        nextScreen4Date
+        wvDPAS.set(dateNew.get, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
+        conf/*nextScreen4Date*/
       }
     }
-  }
-
-  private object wvDateLabels extends WizardVar[(String, String)]("", "")
+  //}
 
 
-  def nextScreen4Date = {
+  // D226-2/vsh atidėtas datos reikšmmės formavimo keitimas - viskas viename lauke
+  // D316-6/vsh padarytas datos reikšmmės formavimo keitimas - viskas viename lauke
+  /*def nextScreen4Date = {
     wvEA.get match {
       case "event" =>
         log.debug("nextScreen4Date |" + wvEvenDat4Pe.get._2 + "|")
@@ -488,12 +660,12 @@ class PeWizard extends Wizard with Loggable {
             gdt_text
         }
     }
-  }
+  }*/
 
 
-  val ymdDate  = new Screen {
+  /*val ymdDate  = new Screen {
     val dateInit = wvDPAS._1
-    val dateNew = field(S ? wvDateLabels.get._1, dateInit, "size" -> "11", "maxlength" -> "11",
+    val dateNew = field(S ? wvDateLabels.get._1, dateInit, "size"->"11", "maxlength"->"11",
       isIncompletedate _
     )
     override def screenTop = Full(<span>{GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)}: {dateFormat}</span>)
@@ -508,18 +680,19 @@ class PeWizard extends Wizard with Loggable {
         case _ => S.?("date.is.invalid")
       }
     }
-  }
+  }*/
 
 
+/*
   val ymdymdDate = new Screen {
 // TODO CB18-7 wrong LT case date after edition
     val dateLowerInit =  wvDPAS._1
 // TODO B308-2 possibly extract lower date if any
-    val dateLowerNew = field(S ? wvDateLabels.get._1, dateLowerInit, "size" -> "11", "maxlength" -> "11",
+    val dateLowerNew = field(S ? wvDateLabels.get._1, dateLowerInit, "size"->"11", "maxlength"->"11",
       isIncompletedate _)
     val dateUpperInit =  wvDPAS._1
 // TODO B308-2 possibly extract upper date if any
-    val dateUpperNew = field(S ? wvDateLabels.get._2, dateUpperInit, "size" -> "11", "maxlength" -> "11",
+    val dateUpperNew = field(S ? wvDateLabels.get._2, dateUpperInit, "size"->"11", "maxlength"->"11",
       isIncompletedate _, mustRightRelate _ )
     override def screenTop = Full(<span>{GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)}: {dateFormat} - {dateFormat}</span>)
     override def nextScreen = {
@@ -535,7 +708,7 @@ class PeWizard extends Wizard with Loggable {
       }
     }
 
-    /* http://stackoverflow.com/questions/237061/using-regular-expressions-to-extract-a-value-in-java */
+    // http://stackoverflow.com/questions/237061/using-regular-expressions-to-extract-a-value-in-java
     def mustRightRelate(s: String): List[FieldError] = {
       val isoLowerDate = GedcomUtil.iso8601Date(dateLowerNew.get).toInt
       val isoUpperDate = GedcomUtil.iso8601Date(dateUpperNew.get).toInt
@@ -547,13 +720,15 @@ class PeWizard extends Wizard with Loggable {
     }
 
   }
+*/
 
 
+/*
   val gdt_text = new Screen {
     log.debug("Screen=gdt_text: " + GedcomDateOptions.tags.find(_._1 == wvEvenDat4Pe.get._2).get._2)
     val dateInit = ""
     val dateNew = field(S ? "gd_txt", dateInit,
-      "size" -> "10", "maxlength" -> "120", ("style","font:bold,display:none"),
+      "size"->"10", "maxlength"->"120", ("style","font:bold,display:none"),
       valMinLen(1, S ? "no.text")
     )
     override def screenTop = Full(<span>{GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)}</span>)
@@ -562,6 +737,7 @@ class PeWizard extends Wizard with Loggable {
       conf
     }
   }
+*/
 
 
   val conf = new Screen {
@@ -583,8 +759,8 @@ class PeWizard extends Wizard with Loggable {
   def finish() {
     wvEA.get match {
       case "event" =>
-        val msg = <_>wvEvenDat4Pe: ({wvEvenDat4Pe.get.toString})</_>.text + " | " +
-          <_>wvDPAS: ({wvDPAS.get.toString})</_>.text + " | " +
+        val msg = <_>wvEvenDat4Pe: ({wvEvenDat4Pe.get.toString()})</_>.text + " | " +
+          <_>wvDPAS: ({wvDPAS.get.toString()})</_>.text + " | " +
           <_>wvADOP: ({wvADOP.get.toString})</_>.text + " | " +
           <_>wvEVEN: ({wvEVEN.get.toString})</_>.text + " | " +
           <_>wvDEAT: ({wvDEAT.get.toString})</_>.text
@@ -599,8 +775,8 @@ class PeWizard extends Wizard with Loggable {
          wvDPAS.get._3,
          (if (wvEvenDat4Pe.get._1 == "DEAT") wvDEAT.get else ""),
          wvDPAS.get._4, wvDPAS.get._5)
-        val msg2 = <_>wvPE: ({wvPE.get.toString})</_>.text + " | " +
-          <_>wvED: ({wvED.get.toString})</_>.text
+        val msg2 = <_>wvPE: ({wvPE.get.toString()})</_>.text + " | " +
+          <_>wvED: ({wvED.get.toString()})</_>.text
         log.debug(msg2)
         S.notice(msg2)
 
@@ -608,7 +784,7 @@ class PeWizard extends Wizard with Loggable {
           actionCUD match {
             case "C" =>
               var pe: PersonEvent = new PersonEvent
-              log.debug("PeWizard.finish PersonEvent.id |" + pe.id.toString + "|")
+              log.debug("PeWizard.finish.C PersonEvent.id |" + pe.id.toString + "|")
               var peClone: Box[PersonEventClone] = Empty
               var ed: EventDetail = new EventDetail
               var edClone: Box[EventDetailClone] = Empty
@@ -650,14 +826,14 @@ class PeWizard extends Wizard with Loggable {
               var eda = new Audit
               eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "add", ed.getAuditRec(edClone))
               eda = Model.merge(eda)
-              Model.flush
+              Model.flush()
             case "U" => // ----------------------------------------------------
 // TODO B412-2/vsh  ....get.get.id).get ==> ???
               var pe: PersonEvent = Model.find(classOf[PersonEvent], wvBoxPersonEvent.get.get.id).get
-              log.debug("PeWizard.finish PersonEvent.id |" + pe.id.toString + "|")
+              log.debug("PeWizard.finish.U PersonEvent.id |" + pe.id.toString + "|")
               //-- case class PersonEventClone (tag:String, familyId:String, adoptedBy:String,  personevent_id:String)
               val peClone: Box[PersonEventClone] =
-                Full(PersonEventClone(pe.tag, pe.familyId.toString(), pe.adoptedBy, pe.personevent.id.toString()))
+                Full(PersonEventClone(pe.tag, pe.familyId.toString, pe.adoptedBy, pe.personevent.id.toString))
               var ed: EventDetail = Model.find(classOf[EventDetail], wvBoxEventDetail.get.get.id).get
               val edClone: Box[EventDetailClone] = Full(EventDetailClone(
                 ed.descriptor, ed.dateValue, ed.place, ed.ageAtEvent, ed.cause, ed.source, ed.note,
@@ -700,7 +876,7 @@ class PeWizard extends Wizard with Loggable {
               var eda = new Audit
               eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "upd", ed.getAuditRec(edClone))
               eda = Model.merge(eda)
-              Model.flush
+              Model.flush()
             case _ =>
           }
 
@@ -716,8 +892,8 @@ class PeWizard extends Wizard with Loggable {
         }
 
       case "attrib" =>
-        val msg3 = <_>wvAttrDat4Pe: ({wvAttrDat4Pe.get.toString})</_>.text + " | " +
-          <_>wvDPAS: ({wvDPAS.get.toString})</_>.text
+        val msg3 = <_>wvAttrDat4Pe: ({wvAttrDat4Pe.get.toString()})</_>.text + " | " +
+          <_>wvDPAS: ({wvDPAS.get.toString()})</_>.text
         log.debug(msg3)
         S.notice(msg3)
         wvPA.set((wvPA.get._1, wvAttrDat4Pe.get._1, wvXXXX.get._1))
@@ -728,8 +904,8 @@ class PeWizard extends Wizard with Loggable {
          wvDPAS.get._3,
          (if (wvAttrDat4Pe.get._1 == "DEAT") wvDEAT.get else ""),  // NONSENSE a bit
          wvDPAS.get._4, wvDPAS.get._5)
-        val msg4 = <_>wvPA: ({wvPA.get.toString})</_>.text + " | " +
-          <_>wvED: ({wvED.get.toString})</_>.text
+        val msg4 = <_>wvPA: ({wvPA.get.toString()})</_>.text + " | " +
+          <_>wvED: ({wvED.get.toString()})</_>.text
         log.debug(msg4)
         S.notice(msg4)
         if (true/*validResult*/) {
@@ -767,12 +943,12 @@ class PeWizard extends Wizard with Loggable {
               var eda = new Audit
               eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "add", ed.getAuditRec(edClone))
               eda = Model.merge(eda)
-              Model.flush
+              Model.flush()
             case "U" =>
               var pa: PersonAttrib = Model.find(classOf[PersonAttrib], wvBoxPersonAttrib.get.get.id).get
               //-- case class PersonAttribClone (tag:String, tagValue:String, personattrib_id:String)
               val paClone: Box[PersonAttribClone] = //Empty
-                Full(PersonAttribClone(pa.tag, pa.tagValue, pa.personattrib.id.toString()))
+                Full(PersonAttribClone(pa.tag, pa.tagValue, pa.personattrib.id.toString))
               var ed: EventDetail = Model.find(classOf[EventDetail], wvBoxEventDetail.get.get.id).get
               //var edClone: Box[EventDetailClone] = Empty
               val edClone: Box[EventDetailClone] = Full(EventDetailClone(
@@ -809,7 +985,7 @@ class PeWizard extends Wizard with Loggable {
               var eda = new Audit
               eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "upd", ed.getAuditRec(edClone))
               eda = Model.merge(eda)
-              Model.flush
+              Model.flush()
             case _ =>
           }
 
@@ -826,9 +1002,9 @@ class PeWizard extends Wizard with Loggable {
 
       case _ =>
     }
-    wvPE.remove
-    wvPA.remove
-    wvED.remove
+    wvPE.remove()
+    wvPA.remove()
+    wvED.remove()
   }
 
   //def ajaxRender = "* [onclick]" #> SHtml.ajaxInvoke(() =>
@@ -837,7 +1013,7 @@ class PeWizard extends Wizard with Loggable {
   //  </div>))
 
 
-  def getEventAttribData(): Unit = {
+  def getEventAttribData()/*: Unit =*/ {
     S.getSessionAttribute("personEventId") match {
       case Full(personEventId) =>
         log.debug("PeWizard getEventAttribData personEventId case Full")
@@ -845,7 +1021,7 @@ class PeWizard extends Wizard with Loggable {
         personEvent match {
           case Some(x) =>
             log.debug("PeWizard getEventAttribData personEventId case Some(x)")
-            val pe = x.asInstanceOf[PersonEvent]
+            val pe = x
             wvBoxPersonEvent.set(Full(pe))
             pe.getEventDetail(Model.getUnderlying)
             wvBoxPerson.set(Full(pe.personevent))
@@ -871,48 +1047,40 @@ class PeWizard extends Wizard with Loggable {
 
                 wvADOP.set(("BOTH"))
                 val mltDescr = new MultiLangText("descriptor", ped.descriptor)
-                wvEVEN.set(mltDescr.getLangMsg)
-                log.debug("PeWizard getEventAttribData wvEVEN.get "+wvEVEN.get.toString())
+                wvEVEN.set(mltDescr.getLangMsg())
+                log.debug("PeWizard getEventAttribData wvEVEN.get "+wvEVEN.get.toString)
                 val mltCause = new MultiLangText("cause", ped.cause)
-                wvDEAT.set(mltDescr.getLangMsg)
-                log.debug("PeWizard getEventAttribData wvDEAT.get "+wvDEAT.get.toString())
+                wvDEAT.set(mltDescr.getLangMsg())
+                log.debug("PeWizard getEventAttribData wvDEAT.get "+wvDEAT.get.toString)
               case 0 =>
                 val place = "PeWizard getEventAttribData"
                 val msg = ("PeWizard getEventAttribData: There is no EventDetail for PersonEvent id = " + personEventId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
-                  ErrorXmlMsg.set(Some(Map(
-                    "location" -> <p>{place}</p>,
-                    "message" -> <p>{msg}</p>)))
-                })
+                  ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+                )
               case n =>
                 val place = "PeWizard getEventAttribData"
                 val msg = ("PeWizard getEventAttribData: There are more than 1 EventDetail for PersonEvent id = " + personEventId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
-                  ErrorXmlMsg.set(Some(Map(
-                    "location" -> <p>{place}</p>,
-                    "message" -> <p>{msg}</p>)))
-                })
+                  ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+                )
             }
           case None =>
             val place = "PeWizard getEventAttribData"
             val msg = ("PeWizard getEventAttribData: There is no PersonEvent id = " + personEventId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
-              ErrorXmlMsg.set(Some(Map(
-                "location" -> <p>{place}</p>,
-                "message" -> <p>{msg}</p>)))
-            })
+              ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+            )
           case _ =>
             val place = "PeWizard getEventAttribData"
             val msg = ("PeWizard getEventAttribData: Case _  for PersonEvent id = " + personEventId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
-              ErrorXmlMsg.set(Some(Map(
-                "location" -> <p>{place}</p>,
-                "message" -> <p>{msg}</p>)))
-            })
+              ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+            )
         }
       case _ =>
         log.debug("PeWizard getEventAttribData personEventId case _")
@@ -928,7 +1096,7 @@ class PeWizard extends Wizard with Loggable {
         val personAttrib: Option[PersonAttrib] = Model.find(classOf[PersonAttrib], personAttribId.toLong)
         personAttrib match {
           case Some(x) =>
-            val pa = x.asInstanceOf[PersonAttrib]
+            val pa = x
             wvBoxPersonAttrib.set(Full(pa))
             pa.getAttribDetail(Model.getUnderlying)
             wvBoxPerson.set(Full(pa.personattrib))
@@ -952,45 +1120,37 @@ class PeWizard extends Wizard with Loggable {
                   new MultiLangText("source", pad.source),
                   new MultiLangText("note", pad.note) ))
                 val mlt = new MultiLangText("tagValue", pa.tagValue)
-                wvXXXX.set((mlt.getLangMsg, mlt))
+                wvXXXX.set((mlt.getLangMsg(), mlt))
                 log.debug("PeWizard getEventAttribData wvXXXX.get "+wvXXXX.get.toString())
               case 0 =>
                 val place = "PeWizard getEventAttribData"
                 val msg = ("PeWizard getEventAttribData: There is no EventDetail for PersonAttrib id = " + personAttribId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
-                  ErrorXmlMsg.set(Some(Map(
-                    "location" -> <p>{place}</p>,
-                    "message" -> <p>{msg}</p>)))
-                })
+                  ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+                )
               case n =>
                 val place = "PeWizard getEventAttribData"
                 val msg = ("PeWizard getEventAttribData: There are more than 1 EventDetail for PersonAttrib id = " + personAttribId)
                 log.error(place+"; "+msg)
                 S.redirectTo("/errorPage", () => {
-                  ErrorXmlMsg.set(Some(Map(
-                    "location" -> <p>{place}</p>,
-                    "message" -> <p>{msg}</p>)))
-                })
+                  ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+                )
             }
           case None =>
             val place = "PeWizard getEventAttribData"
             val msg = ("PeWizard getEventAttribData: There is no PersonAttrib id = " + personAttribId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
-              ErrorXmlMsg.set(Some(Map(
-                "location" -> <p>{place}</p>,
-                "message" -> <p>{msg}</p>)))
-            })
+              ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+            )
           case _ =>
             val place = "PeWizard getEventAttribData"
             val msg = ("PeWizard getEventAttribData: Case _  for PersonAttrib id = " + personAttribId)
             log.error(place+"; "+msg)
             S.redirectTo("/errorPage", () => {
-              ErrorXmlMsg.set(Some(Map(
-                "location" -> <p>{place}</p>,
-                "message" -> <p>{msg}</p>)))
-            })
+              ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))}
+            )
         }
       case _ =>
         updatePePa = ""
@@ -998,5 +1158,22 @@ class PeWizard extends Wizard with Loggable {
     S.unsetSessionAttribute("personAttribId")
   }
 
+// D228-4/vsh tai negali veikti Screen'e i6 principo !!!
+//  def displayYesNone(): String = {
+//    log.debug("displayYesNone wvEvenDat4Pe.get._2 |" + wvEvenDat4Pe.get._2 + "|")
+//    wvEA.get match {
+//      case "event" =>
+//        wvEvenDat4Pe.get._2 match {
+//          case "gdt_no_date" => log.debug("displayYesNone event \"gdt_no_date\" "); "display:none"
+//          case _ => log.debug("displayYesNone event \"_\" "); "display:yes"
+//        }
+//      case "attrib" =>
+//        wvAttrDat4Pe.get._2 match {
+//          case "gdt_no_date" => "display:none"
+//          case _ => "display:yes"
+//        }
+//      case _ => log.debug("displayYesNone \"_\" \"_\" "); "display:yes"
+//    }
+//  }
 
 }
