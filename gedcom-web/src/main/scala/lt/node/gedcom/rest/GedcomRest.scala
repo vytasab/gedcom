@@ -297,9 +297,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
           val msg = "A role is unexpected |"+ role + "|"
           log.error(place+": "+msg)
           S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>{place}</p>,
-              "message" -> <p>{msg}</p>)))
+            ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
           })
       }
       S.setSessionAttribute("mmActionCUD", "C")

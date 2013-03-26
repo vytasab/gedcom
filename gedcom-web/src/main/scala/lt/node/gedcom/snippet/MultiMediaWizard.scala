@@ -4,6 +4,7 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import _root_.net.liftweb._
 import http._
+import js.JE.JsObj
 import js.jquery.JqJsCmds._
 import util.FieldError
 import wizard._
@@ -27,6 +28,14 @@ import _root_.lt.node.gedcom.util._ //{GedcomDateOptions,PeTags,PaTags,ToolTips}
  * Time: 9:37 PM
  * To change this template use File | Settings | File Templates.
  */
+class /*object*/ AddMultiMediaWizardRunner {
+  /*def render = "#aaa" #> SHtml.ajaxInvoke(() =>
+    ModalDialog((<div><lift:MultiMediaWizard ajax="true"/><br/></div>),
+      JsObj(("top","200px"),("left","300px"),("width","600px"),("height","600px"))))*/
+  def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
+    ModalDialog((<div><lift:MultiMediaWizard ajax="true"/><br/></div>),
+      JsObj(("top","200px"),("left","300px"),("width","600px"),("height","600px"))))
+}
 
 class/*object*/ MultiMediaWizardRunner {
   def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
@@ -51,6 +60,7 @@ class MultiMediaWizard extends Wizard with Loggable {
   val editCases: List[(String, String)] =
     List(("mm", "wizmm.mm"), ("title", "wizmm.title"), ("mm_title", "wizmm.mmTitle")).map((kv)=>(kv._1, S ? kv._2))
 
+  override protected def calcAjaxOnDone = Unblock
 
   override def calcFirstScreen = { //  : Box[Screen]
     log.debug("MultiMediaWizard calcFirstScreen  []...")
@@ -63,11 +73,6 @@ class MultiMediaWizard extends Wizard with Loggable {
       case "U" =>
         log.debug("MultiMediaWizard calcFirstScreen U")
         Full(updateOptionScreen)
-      /*case "U" => updatePePa match {
-        case _ =>
-          log.debug("MultiMediaWizard calcFirstScreen _")
-          Empty
-      }*/
       case _ =>
         log.debug("MultiMediaWizard calcFirstScreen  ...[]")
         Empty
@@ -75,7 +80,7 @@ class MultiMediaWizard extends Wizard with Loggable {
   }
 
 
-  val newMmScreen = new Screen {
+  lazy val newMmScreen = new Screen {
 
     override protected def hasUploadField = true
 
@@ -86,12 +91,13 @@ class MultiMediaWizard extends Wizard with Loggable {
 
     //val titleNew = textarea/*field*/(S ? "pe.note", wvInt._3.getLangMsg(), 3, 30, isValidTitle _)
     val titleNew = textarea/*field*/(S ? "pe.note", wvInt._3.getLangMsg(),
-      isValidTitle _, "class"->"textarea-small")
+      "class"->"textarea-small", isValidTitle _)
 
 
     override def nextScreen = {
       wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-      Empty //--> finish  // conf
+      //Empty //--> finish
+      conf
     }
 
     def isValidMime(s: Array[Byte]): List[FieldError] = {
@@ -101,7 +107,7 @@ class MultiMediaWizard extends Wizard with Loggable {
         /*case Full(x) if x.mimeType == "image/gif" => Nil
         case Full(x) if x.mimeType == "image/png" => Nil
         case Full(x) if x.mimeType == "image/jpeg" => Nil*/
-        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.open_!.mimeType
+        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
       }
     }
     def isValidTitle(s: String): List[FieldError] = {
@@ -115,11 +121,14 @@ class MultiMediaWizard extends Wizard with Loggable {
 
 
 
-  val updateOptionScreen = new Screen {
+  lazy val updateOptionScreen = new Screen {
     val editCaseInit = editCase.get
     lazy val editCaseNew = radio(S ? "wizmm.choose",
       editCases.filter((kv) => kv._1==editCaseInit).head._2, editCases.map( _._2)/*, valMinLen(1, S ? "wiz.click.radio")*/)
-    wvMmOld.set(Model.find(classOf[MultiMedia], S.getSessionAttribute("idMm").get.toLong))
+      S.getSessionAttribute("idMm") match {
+        case mm if mm.isEmpty => None
+        case _ => wvMmOld.set(Model.find(classOf[MultiMedia], S.getSessionAttribute("idMm").get.toLong))
+      }
     // --^ person.xsl <xsl:template match="mm" mode="full"> assures mmId refres to active record
     override def nextScreen = {
       editCase.set(editCases.find(_._2 == editCaseNew.get).get._1)
@@ -133,22 +142,20 @@ class MultiMediaWizard extends Wizard with Loggable {
             val place = "MultiMediaWizard.updateOptionScreen.nextScreen"
             val msg = "An 'editCase.get' is unavailable |"+ editCase.get + "|"
             log.debug(place+": "+msg)
-            S.redirectTo("/errorPage", () => {
-              ErrorXmlMsg.set(Some(Map(
-                "location" -> <p>{place}</p>,
-                "message" -> <p>{msg}</p>)))
-            })
+            S.redirectTo("/errorPage", () =>
+              ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+            )
       }
     }
   }
 
 
 
-  val editMmTitle = new Screen {
+  lazy val editMmTitle = new Screen {
 
     override protected def hasUploadField = true
 
-    log.debug("editMmTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+    log.debug("editMmTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
     val file = makeField[Array[Byte], Nothing](
       S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
@@ -160,13 +167,11 @@ class MultiMediaWizard extends Wizard with Loggable {
         log.debug("editMmTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
         val place = "MultiMediaWizard.editMmTitle"
-        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
         log.debug(place+": "+msg)
-        S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
-        })
+        S.redirectTo("/errorPage", () =>
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+        )
     }
 
     val titleNew = textarea(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(),
@@ -175,14 +180,17 @@ class MultiMediaWizard extends Wizard with Loggable {
     override def nextScreen = {
       log.debug("editMmTitle screen nextScreen wvInt._2 ==>" + wvInt._2 + "<====")
       wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-      Empty // --> finish
+      //Empty //--> finish
+      conf
     }
+
     def isValidMime(s: Array[Byte]): List[FieldError] = {
       wvInt._1 match {
         case Full(x) if (mimes.exists(/*m => m*/_ == x.mimeType)) => Nil
-        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.open_!.mimeType
+        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
       }
     }
+
     def isValidTitle(s: String): List[FieldError] = {
       s match {
         case s if s.length > 0  => Nil
@@ -194,11 +202,11 @@ class MultiMediaWizard extends Wizard with Loggable {
 
 
 
-  val editMm = new Screen {
+  lazy val editMm = new Screen {
 
     override protected def hasUploadField = true
 
-    log.debug("editMm: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+    log.debug("editMm: MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
     val file = makeField[Array[Byte], Nothing](
       S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
@@ -210,26 +218,31 @@ class MultiMediaWizard extends Wizard with Loggable {
         log.debug("editMm  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
         val place = "MultiMediaWizard.editMm"
-        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
         log.debug(place+": "+msg)
-        S.redirectTo("/errorPage", () => {
+        S.redirectTo("/errorPage", () =>
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+        )
+        /*S.redirectTo("/errorPage", () => {
           ErrorXmlMsg.set(Some(Map(
             "location" -> <p>{place}</p>,
             "message" -> <p>{msg}</p>)))
-        })
+        })*/
     }
 
     override def nextScreen = {
       log.debug("editMm screen nextScreen  wvInt._2 ==>" + wvInt._2 + "<====")
       wvDb.set(wvInt.get._1, wvInt.get._2, ""/*wvInt.get._3.*//*.addupdLangMsg(titleNew.get)*/)
-      Empty // --> finish
+      //Empty //--> finish
+      conf
     }
+
     def isValidMime(s: Array[Byte]): List[FieldError] = {
       // !!! there is some strange validation implementation
       wvInt._1 match {
         //case Full(x) if (mimes.exists(m => m == x.mimeType)) => Nil
         case Full(x) if (mimes.exists(_ == x.mimeType)) => Nil
-        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.open_!.mimeType
+        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
       }
     }
 
@@ -237,11 +250,11 @@ class MultiMediaWizard extends Wizard with Loggable {
 
 
 
-  val editTitle = new Screen {
+  lazy val editTitle = new Screen {
 
     override protected def hasUploadField = true
 
-    log.debug("editTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+    log.debug("editTitle: MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
     var mm: MultiMedia = null
     wvMmOld.get match {
     case Some(mmr) =>
@@ -249,13 +262,11 @@ class MultiMediaWizard extends Wizard with Loggable {
         log.debug("editTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
         val place = "MultiMediaWizard.editTitle"
-        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").get)
+        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
         log.debug(place+": "+msg)
-        S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
-        } )
+        S.redirectTo("/errorPage", () =>
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+        )
     }
 
     //val titleNew = textarea/*field*/(S ? "pe.note", new MultiLangText("title", mm.title).getLangMsg(), isValidTitle _)
@@ -265,8 +276,10 @@ class MultiMediaWizard extends Wizard with Loggable {
     override def nextScreen = {
       log.debug("editTitle screen nextScreen wvInt._3 ==>" + wvInt._3 + "<====")
       wvDb.set(wvInt.get._1, wvInt.get._2, wvInt.get._3.addupdLangMsg(titleNew.get))
-      Empty // --> finish
+      //Empty //--> finish
+      conf
     }
+
     def isValidTitle(s: String): List[FieldError] = {
       s match {
         case s if s.length > 0 => Nil
@@ -391,11 +404,9 @@ class MultiMediaWizard extends Wizard with Loggable {
               val place = "MultiMediaWizard finish"
               val msg = "An editCase is unexpected |"+ editCase + "|"
               log.error(place+": "+msg)
-              S.redirectTo("/errorPage", () => {
-                ErrorXmlMsg.set(Some(Map(
-                  "location" -> <p>{place}</p>,
-                  "message" -> <p>{msg}</p>)))
-              })
+              S.redirectTo("/errorPage", () =>
+                ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+              )
           }
           Model.flush()
           entityTransaction.commit()
@@ -403,11 +414,9 @@ class MultiMediaWizard extends Wizard with Loggable {
           val place = "MultiMediaWizard finish"
           val msg = "An actionCUD is unexpected |"+ actionCUD + "|"
           log.error(place+": "+msg)
-          S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>{place}</p>,
-              "message" -> <p>{msg}</p>)))
-          })
+          S.redirectTo("/errorPage", () =>
+            ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+          )
       }
       S.unsetSessionAttribute("mmActionCUD")
     } catch {
@@ -436,7 +445,7 @@ class MultiMediaWizard extends Wizard with Loggable {
     log.debug("MIME is |" + wvDb._2 + "|")
     log.debug("title is |" + wvDb._3 + "|")
     log.debug("...[conf]")
-    override def confirmScreen_? = false //true
+    override def confirmScreen_? = true
     override def nextScreen = Empty
   }
 

@@ -20,7 +20,7 @@
     <style type="text/css">
         .textarea-small {width:400px; height:45px}
         .textarea-4date {width:400px; height:25px}
-        div.screen {border:solid 0px; color:#000; background:#ffc}
+        div.screen {border:groove 1px; color:#000; background:#ffc}
     </style>
 
     <style>
@@ -34,17 +34,26 @@
         .sidebar ul li a:hover { background-color: #eee; }
         .M-style { background-color:#cff;text-align:center }
         .F-style { background-color:#fcf;text-align:center }
-        .ed_tag { background-color:#cf9;text-align:left }
-        .ed_descriptor { background-color:#fc9;text-align:left }
-        .ed_dateValue { background-color:#ff9;text-align:left }
-        .ed_place { background-color:#9cf;text-align:left }
-        .ed_ageAtEvent { background-color:#fcc;text-align:left }
-        .ed_cause { background-color:#999;text-align:left }
-        .ed_source { background-color:#cf0;text-align:left }
-        .ed_note { background-color:#c3c;text-align:left }
-    <!-- #ff9    #9cf    #fcc    #999    -->
-    <!-- #dedeef #e9fceb #ffe1e1 #ffffdb    -->
-    <!--  -->
+        .ed_tag { background-color:#FFD700;text-align:left }
+        .ed_descriptor { background-color:#FFD700;text-align:left }
+        .ed_dateValue { background-color:#ADFF2F;text-align:left }
+        .ed_place { background-color:#E6E6FA;text-align:left }
+        .ed_ageAtEvent { background-color:#FDF5E6;text-align:left }
+        .ed_cause { background-color:#FAEBD7;text-align:left }
+        .ed_source { background-color:#FFDAB9;text-align:left }
+        .ed_note { background-color:#D3D3D3;text-align:left }
+        <!-- http://instant-eyedropper.com/info/html_color_code/
+        FFD700	Gold             tag, descriptor
+        9ACD32	YellowGreen      ___dateValue___
+        ADFF2F	GreenYellow         dateValue
+        FFFAF0	FloralWhite      ___place___
+        E6E6FA	lavender            place
+        FDF5E6	OldLace          ageAtEvent
+        FAEBD7	AntiqueWhite     cause
+        FFDAB9	PeachPuff        source
+        FFDEAD	NavajoWhite   ___note___
+        D3D3D3	LightGrey        note
+        -->
     </style>
     <script type="text/javascript" src="/scripts/jquery.blockUI.js"></script>
     <script type="text/javascript">
@@ -104,10 +113,10 @@
 
                 <tr>
                     <td colspan="6"><lift:loc>parents</lift:loc>:&nbsp;&nbsp;&nbsp;
-                        <span class="lift:PersonView.renderFather " >
+                        <span class="lift:PersonView.renderFather" >
                             <span id="fatherinfo">father</span>
                         </span>&nbsp;&nbsp;&nbsp;
-                        <span class="lift:PersonView.renderMother ">
+                        <span class="lift:PersonView.renderMother">
                             <span id="motherinfo">mother</span>
                         </span>
                     </td>

@@ -942,11 +942,9 @@ class PersonView {
         val place = "PersonView.deleteMultiMedia"
         val msg = ("No MultiMedia for id="+ S.getSessionAttribute("mmId").get)
         log.debug(place+": "+msg)
-        S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
-        })
+        S.redirectTo("/errorPage", () =>
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+        )
     }
 
     def doDelete(): Unit = {
@@ -964,9 +962,7 @@ class PersonView {
         val msg = ("You are not logged in")
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
         })
       }
     }

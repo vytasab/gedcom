@@ -329,6 +329,30 @@
                                     </xsl:attribute>
                                 </img>
                             </a>
+                            <!--case _ => <span>
+                              <button class="lift:AddPeWizardRunner.render">
+                                <lift:loc>wiz.add.pepa</lift:loc>
+                                <img src="/images/page_new.gif" />
+                              </button>
+                              <br/><br/>
+                            </span>-->
+                            <!--<span>
+                                <button>
+                                    <xsl:attribute name="class">
+                                        <xsl:value-of select="concat('','lift:AddMultiMediaWizardRunner.render')"/>
+                                    </xsl:attribute>
+                                    <img>
+                                        <xsl:attribute name="src">
+                                            <xsl:value-of select="concat($app,'images/image_new.gif')"/>
+                                        </xsl:attribute>
+                                    </img>
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">wiz.add.pepa</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </button>
+                                <br/><br/>
+                            </span>-->
                         </div>
                     </xsl:if>
                 </xsl:if>
@@ -336,41 +360,56 @@
                     <!--<span class="span-4 colborder ed_tag" title="loc_tag;  Įvykio tipas">-->
                     <span class="span-4 colborder ed_tag">
                         <xsl:value-of select="concat('pe',pe/@tag,'_ ')"/>
-                        <xsl:if test="(pe/@tag = 'EVEN')">
-                            <xsl:variable name="text">
-                                <xsl:call-template name="MultiLangText">
-                                    <xsl:with-param name="mlt" select="pe/ed/descriptor"/>
-                                    <xsl:with-param name="language" select="$lang"/>
+                    </span>
+                    <br/>
+                    <xsl:if test="(pe/@tag = 'EVEN')">
+                        <span class="span-4 colborder ed_tag">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.type</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
                                 </xsl:call-template>
+                            </xsl:attribute>
+                            <xsl:variable name="text">
+                                    <xsl:call-template name="MultiLangText">
+                                        <xsl:with-param name="mlt" select="pe/ed/descriptor"/>
+                                        <xsl:with-param name="language" select="$lang"/>
+                                    </xsl:call-template>
                             </xsl:variable>
                             <xsl:value-of select="concat(': ',$text,' ')"/>
                             <!--<xsl:value-of select="concat(': ',pe/ed/descriptor,' ')"/>-->
-                        </xsl:if>
                         <!--<xsl:attribute name="title">   D119-6/vsh: Attribute 'title' outside of element.
                             <xsl:call-template name="locstr">
                                 <xsl:with-param name="k">event.type</xsl:with-param>
                                 <xsl:with-param name="l" select="$lang"/>
                             </xsl:call-template>
                         </xsl:attribute>-->
-                    </span>
+                        </span>
+                    </xsl:if>
                     <xsl:if test="string-length(pe/ed/dateValue) > 0">
                         <!--<span class="span-4 colborder ed_dateValue" title="loc_dateVale;  Įvykio data">-->
                         <span class="span-4 colborder ed_dateValue">
-                            <xsl:value-of select="concat(pe/ed/dateValue,' ')"/>
-                            <!--<xsl:attribute name="title">  D119-6/vsh: Attribute 'title' outside of element.
+                            <xsl:attribute name="title">
                                 <xsl:call-template name="locstr">
                                     <xsl:with-param name="k">event.date</xsl:with-param>
                                     <xsl:with-param name="l" select="$lang"/>
                                 </xsl:call-template>
-                            </xsl:attribute>-->
+                            </xsl:attribute>
+                            <xsl:value-of select="concat(pe/ed/dateValue,' ')"/>
                         </span>
                         <br/>
                     </xsl:if>
-                    </div>
+                </div>
                     <div class="span-15">
                         <xsl:if test="(pe/@tag != 'EVEN')">
                             <xsl:if test="string-length(pe/ed/descriptor) > 0">
                                 <span class="span-15 ed_descriptor">
+                                    <xsl:attribute name="title">
+                                        <xsl:call-template name="locstr">
+                                            <xsl:with-param name="k">event.type</xsl:with-param>
+                                            <xsl:with-param name="l" select="$lang"/>
+                                        </xsl:call-template>
+                                    </xsl:attribute>
                                     <xsl:variable name="text">
                                         <xsl:call-template name="MultiLangText">
                                             <xsl:with-param name="mlt" select="pe/ed/descriptor"/>
@@ -384,6 +423,12 @@
                         </xsl:if>
                         <xsl:if test="string-length(pe/ed/place) > 0">
                             <span class="span-15 ed_place">
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">event.place</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
                                 <xsl:variable name="text">
                                     <xsl:call-template name="MultiLangText">
                                         <xsl:with-param name="mlt" select="pe/ed/place"/>
@@ -397,12 +442,24 @@
                         </xsl:if>
                         <xsl:if test="string-length(pe/ed/ageAtEvent) > 0">
                             <span class="span-15 ed_ageAtEvent">
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">event.atAge</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
                                 <xsl:value-of select="concat(pe/ed/ageAtEvent,' ')"/>
                             </span>
                             <br/>
                         </xsl:if>
                         <xsl:if test="string-length(pe/ed/cause) > 0">
                             <span class="span-15 ed_cause">
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">event.cause</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
                                 <xsl:variable name="text">
                                     <xsl:call-template name="MultiLangText">
                                         <xsl:with-param name="mlt" select="pe/ed/cause"/>
@@ -416,6 +473,12 @@
                         </xsl:if>
                         <xsl:if test="string-length(pe/ed/source) > 0">
                             <span class="span-15 ed_source">
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">event.source</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
                                 <xsl:variable name="text">
                                     <xsl:call-template name="MultiLangText">
                                         <xsl:with-param name="mlt" select="pe/ed/source"/>
@@ -429,6 +492,12 @@
                         </xsl:if>
                         <xsl:if test="string-length(pe/ed/note) > 0">
                             <span class="span-15 ed_note">
+                                <xsl:attribute name="title">
+                                    <xsl:call-template name="locstr">
+                                        <xsl:with-param name="k">event.note</xsl:with-param>
+                                        <xsl:with-param name="l" select="$lang"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
                                 <xsl:variable name="text">
                                     <xsl:call-template name="MultiLangText">
                                         <xsl:with-param name="mlt" select="pe/ed/note"/>
@@ -506,12 +575,31 @@
                         </div>
                     </xsl:if>
                 </xsl:if>
-                <div class="span-4 colborder ed_tag">
-                    <xsl:value-of select="concat('pa',pa/@tag,'_ ')"/>
+                <div class="span-4 colborder">
+                    <span class="ed_tag">
+                        <xsl:value-of select="concat('pa',pa/@tag,'_ ')"/>
+                    </span>
+                    <xsl:if test="string-length(pa/ed/dateValue) > 0">
+                        <br/>
+                        <span class="ed_dateValue">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.date</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
+                            <xsl:value-of select="concat(pa/ed/dateValue,' ')"/>
+                        </span>
+                    </xsl:if>
                 </div>
                 <div class="span-15">
-                    <!--<xsl:if test="string-length(pa/ed/descriptor) > 0">-->
                     <span class="span-15 ed_descriptor">
+                        <xsl:attribute name="title">
+                            <xsl:call-template name="locstr">
+                                <xsl:with-param name="k">attrib.value</xsl:with-param>
+                                <xsl:with-param name="l" select="$lang"/>
+                            </xsl:call-template>
+                        </xsl:attribute>
                         <xsl:variable name="text">
                             <xsl:call-template name="MultiLangText">
                                 <xsl:with-param name="mlt" select="pa/tagValue"/>
@@ -519,12 +607,16 @@
                             </xsl:call-template>
                         </xsl:variable>
                         <xsl:value-of select="concat($text,' ')"/>
-                        <!--<xsl:value-of select="concat(pa/tagValue,'  ')"/>-->
                     </span>
                     <br/>
-                    <!--</xsl:if>-->
                     <xsl:if test="string-length(pa/ed/descriptor) > 0">
                         <span class="span-15 ed_descriptor">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.type</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="pa/ed/descriptor"/>
@@ -532,18 +624,25 @@
                                 </xsl:call-template>
                             </xsl:variable>
                             <xsl:value-of select="concat($text,' ')"/>
-                            <!--<xsl:value-of select="concat(pa/ed/descriptor,'  ')"/>-->
                         </span>
                         <br/>
                     </xsl:if>
+<!--
                     <xsl:if test="string-length(pa/ed/dateValue) > 0">
                         <span class="span-15 ed_dateValue">
                             <xsl:value-of select="concat(pa/ed/dateValue,' ')"/>
                         </span>
                         <br/>
                     </xsl:if>
+-->
                     <xsl:if test="string-length(pa/ed/place) > 0">
                         <span class="span-15 ed_place">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.place</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="pa/ed/place"/>
@@ -557,12 +656,24 @@
                     </xsl:if>
                     <xsl:if test="string-length(pa/ed/ageAtEvent) > 0">
                         <span class="span-15 ed_ageAtEvent">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.atAge</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:value-of select="concat(pa/ed/ageAtEvent,' ')"/>
                         </span>
                         <br/>
                     </xsl:if>
                     <xsl:if test="string-length(pa/ed/cause) > 0">
                         <span class="span-15 ed_cause">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.cause</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="pa/ed/cause"/>
@@ -576,6 +687,12 @@
                     </xsl:if>
                     <xsl:if test="string-length(pa/ed/source) > 0">
                         <span class="span-15 ed_source">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.source</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="pa/ed/source"/>
@@ -589,6 +706,12 @@
                     </xsl:if>
                     <xsl:if test="string-length(pa/ed/note) > 0">
                         <span class="span-15 ed_note">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.note</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="pa/ed/note"/>
@@ -907,6 +1030,12 @@
                     </span>
                     <xsl:if test="string-length(fe/ed/dateValue) > 0">
                         <span class="span-4 colborder ed_dateValue" title="loc_dateVale;  Įvykio data">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.date</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:value-of select="concat(fe/ed/dateValue,' ')"/>
                         </span>
                         <br/>
@@ -915,6 +1044,12 @@
                 <div class="span-15">
                     <xsl:if test="string-length(fe/ed/descriptor) > 0">
                         <span class="span-15 ed_descriptor">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.type</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="fe/ed/descriptor"/>
@@ -927,6 +1062,12 @@
                     </xsl:if>
                     <xsl:if test="string-length(fe/ed/place) > 0">
                         <span class="span-15 ed_place">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.place</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="fe/ed/place"/>
@@ -940,12 +1081,24 @@
                     </xsl:if>
                     <xsl:if test="string-length(fe/ed/ageAtEvent) > 0">
                         <span class="span-15 ed_ageAtEvent">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.atAge</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:value-of select="concat(fe/ed/ageAtEvent,' ')"/>
                         </span>
                         <br/>
                     </xsl:if>
                     <xsl:if test="string-length(fe/ed/cause) > 0">
                         <span class="span-15 ed_cause">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.cause</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="fe/ed/cause"/>
@@ -959,6 +1112,12 @@
                     </xsl:if>
                     <xsl:if test="string-length(fe/ed/source) > 0">
                         <span class="span-15 ed_source">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.source</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="fe/ed/source"/>
@@ -972,6 +1131,12 @@
                     </xsl:if>
                     <xsl:if test="string-length(fe/ed/note) > 0">
                         <span class="span-15 ed_note">
+                            <xsl:attribute name="title">
+                                <xsl:call-template name="locstr">
+                                    <xsl:with-param name="k">event.note</xsl:with-param>
+                                    <xsl:with-param name="l" select="$lang"/>
+                                </xsl:call-template>
+                            </xsl:attribute>
                             <xsl:variable name="text">
                                 <xsl:call-template name="MultiLangText">
                                     <xsl:with-param name="mlt" select="fe/ed/note"/>
@@ -1075,17 +1240,20 @@
                     </a>
                     </td>
                 </xsl:if>
-               <td style="border:1px solid black; width:10%">
+               <td style="border:1px groove #cff; width:1%">
                <img class="expando" height="75px">
                     <xsl:attribute name="src">
                         <xsl:value-of select="concat($app,'images/',@id)"/>
                     </xsl:attribute>
-                </img></td><td style="border:0px solid black;">
+                </img>
+               </td>
+                <td> <!--<td style="border:0px groove black;">-->
                 <xsl:call-template name="MultiLangText">
                     <xsl:with-param name="mlt" select="title"/>
                     <xsl:with-param name="language" select="$lang"/>
                 </xsl:call-template>
-                </td></tr></table>
+                </td>
+                </tr></table>
             </span>
         </xsl:if>
     </xsl:template>

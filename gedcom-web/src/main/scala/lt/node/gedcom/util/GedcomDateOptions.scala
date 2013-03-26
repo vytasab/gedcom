@@ -77,6 +77,20 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
   )
   // GEDCOM: The date range differs from the date period in that the date range
   //    is an estimate that an event happened on a single date somewhere in the date range specified.
+  //lazy val DatePtrnValid = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
+
+  //    lazy val DatePtrnExactWsValid = """^(((((0[1-9])|(1\d)|(2[0-8]))\/((0[1-9])|(1[0-2])))|((31\/((0[13578])|(1[02])))|((29|30)\/((0[1,3-9])|(1[0-2])))))\/((20[0-9][0-9])|(19[0-9][0-9])))|((29\/02\/(19|20)(([02468][048])|([13579][26]))))$""".r
+  //    //-- dd/mm/yyyy  => http://forums.asp.net/t/1410702.aspx/1
+
+  lazy val DatePtrnExactGedcomValid = """^((31(?! (FEB|APR|JUN|SEP|NOV)))|((30|29)(?! FEB))|(29(?= FEB (((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))|(0?[1-9])|1\d|2[0-8]) (JAN|FEB|MAR|MAY|APR|JUL|JUN|AUG|OCT|SEP|NOV|DEC) ((1[6-9]|[2-9]\d)\d{2})$""".r
+  //-- dd MMM yyyy (Gedcom format) => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
+
+  //  //lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1[[0-9]])|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
+  //    //-- yyyy-mm-dd  => http://datacleaner.org/regex/ISO%20date%20(yyyy-mm-dd)
+  lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
+  //-- yyyy-mm-dd  => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
+  // Based on some of the other patterns on RegExpLib. This is the ISO way of writing dates.
+
 
 
   def dateInitValue: Map[String, Map[String, String]] = Map(
@@ -120,20 +134,20 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
       "07"->"JUL", "08"->"AUG", "09"->"SEP",
       "10"->"OCT", "11"->"NOV", "12"->"DEC" )
 
-    //lazy val DatePtrnValid = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
-
-//    lazy val DatePtrnExactWsValid = """^(((((0[1-9])|(1\d)|(2[0-8]))\/((0[1-9])|(1[0-2])))|((31\/((0[13578])|(1[02])))|((29|30)\/((0[1,3-9])|(1[0-2])))))\/((20[0-9][0-9])|(19[0-9][0-9])))|((29\/02\/(19|20)(([02468][048])|([13579][26]))))$""".r
-//    //-- dd/mm/yyyy  => http://forums.asp.net/t/1410702.aspx/1
-
-    lazy val DatePtrnExactGedcomValid = """^((31(?! (FEB|APR|JUN|SEP|NOV)))|((30|29)(?! FEB))|(29(?= FEB (((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))|(0?[1-9])|1\d|2[0-8]) (JAN|FEB|MAR|MAY|APR|JUL|JUN|AUG|OCT|SEP|NOV|DEC) ((1[6-9]|[2-9]\d)\d{2})$""".r
-    //-- dd MMM yyyy (Gedcom format) => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
-
-//  //lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1[[0-9]])|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
-//    //-- yyyy-mm-dd  => http://datacleaner.org/regex/ISO%20date%20(yyyy-mm-dd)
-    lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
-    //-- yyyy-mm-dd  => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
-    // Based on some of the other patterns on RegExpLib. This is the ISO way of writing dates.
-
+//    //lazy val DatePtrnValid = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
+//
+////    lazy val DatePtrnExactWsValid = """^(((((0[1-9])|(1\d)|(2[0-8]))\/((0[1-9])|(1[0-2])))|((31\/((0[13578])|(1[02])))|((29|30)\/((0[1,3-9])|(1[0-2])))))\/((20[0-9][0-9])|(19[0-9][0-9])))|((29\/02\/(19|20)(([02468][048])|([13579][26]))))$""".r
+////    //-- dd/mm/yyyy  => http://forums.asp.net/t/1410702.aspx/1
+//
+//    lazy val DatePtrnExactGedcomValid = """^((31(?! (FEB|APR|JUN|SEP|NOV)))|((30|29)(?! FEB))|(29(?= FEB (((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))|(0?[1-9])|1\d|2[0-8]) (JAN|FEB|MAR|MAY|APR|JUL|JUN|AUG|OCT|SEP|NOV|DEC) ((1[6-9]|[2-9]\d)\d{2})$""".r
+//    //-- dd MMM yyyy (Gedcom format) => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
+//
+////  //lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1[[0-9]])|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
+////    //-- yyyy-mm-dd  => http://datacleaner.org/regex/ISO%20date%20(yyyy-mm-dd)
+//    lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
+//    //-- yyyy-mm-dd  => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
+//    // Based on some of the other patterns on RegExpLib. This is the ISO way of writing dates.
+//
     def isGdtExact(i18nDateValue: String): String = {
       val i18nDatVal = i18nDateValue //.trim.replaceAll("( )+", " ")
       log.debug("isGdtExact S.locale.getLanguage i18nDateValue i18nDatVal |" + S.locale.getLanguage + "| |"  + i18nDateValue + "| |" + i18nDatVal + "|")
@@ -342,6 +356,37 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
     }
 
   }
+
+
+  def defineDateShape(gcDate: String): String = {
+    //lazy val ptrn_gdt_no_date = """xxx""".r
+    lazy val ptrn_gdt_exact = DatePtrnExactGedcomValid
+    lazy val ptrn_MMMmb_yyyy = """^(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)$""".r
+    lazy val ptrn_gdt_between = """^BET\s.*?\sAND\s.*?$""".r
+    lazy val ptrn_gdt_before = """^BEF\s.*?$""".r
+    lazy val ptrn_gdt_after = """^AFT\s.*?$""".r
+    lazy val ptrn_gdt_about = """^ABT\s.*?$""".r
+    lazy val ptrn_gdt_from_to = """^FROM\s.*?\sTO\s.*?$""".r
+    lazy val ptrn_gdt_from = """^FROM\s.*?$""".r
+    lazy val ptrn_gdt_to = """^TO\s.*?$""".r
+    lazy val ptrn_gdt_text = """^\(.*?\S+.*?\)$""".r    // """^\(([a-z]{2}):\|(.+)\|\)$""".r
+    gcDate match {
+      case gcd if gcd.size==0 => "gdt_no_date"
+      case gcd if ptrn_gdt_exact.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_exact"
+      case gcd if ptrn_MMMmb_yyyy.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_about"
+      case gcd if ptrn_gdt_between.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_between"
+      case gcd if ptrn_gdt_before.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_before"
+      case gcd if ptrn_gdt_after.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_after"
+      case gcd if ptrn_gdt_about.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_about"
+      case gcd if ptrn_gdt_from_to.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_from_to"
+      case gcd if ptrn_gdt_from.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_from"
+      case gcd if ptrn_gdt_to.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_to"
+      case gcd if ptrn_gdt_text.findPrefixOf(gcd).isEmpty.unary_!  => "gdt_text"
+      case _ => "gdt_text"
+    }
+
+  }
+
 
 }
 
