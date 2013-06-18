@@ -1,12 +1,9 @@
 package lt.node.gedcom.snippet
 
-import _root_.scala.xml.{NodeSeq}
+import _root_.scala.xml.NodeSeq
 
 import _root_.net.liftweb._
-import /*net.liftweb.*/util._
-import Helpers._
 import common._
-import http.S
 import _root_.net.liftweb.util.Helpers._
 import bootstrap.liftweb.InfoXmlMsg
 

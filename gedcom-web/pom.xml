@@ -60,17 +60,7 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.scala-libs</groupId>-->
-        <!--<artifactId>scalajpa</artifactId>-->
-        <!--<version>1.2-SNAPSHOT</version>-->
-        <!--&lt;!&ndash;<version>[1.2-SNAPSHOT,)</version>&ndash;&gt;-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.scala-libs</groupId>-->
-        <!--<artifactId>scalajpa_2.9.1</artifactId>-->
-        <!--<version>1.4</version>-->
-        <!--</dependency>-->
+
         <dependency>
             <groupId>org.scala-tools.testing</groupId>
             <artifactId>specs_2.8.1</artifactId>
@@ -105,14 +95,17 @@
         <dependency>
             <groupId>net.liftweb</groupId>
             <artifactId>lift-jpa_${lift.jar.scala.version}</artifactId>
+            <!--<artifactId>lift-jpa_2.9.1</artifactId>-->
         </dependency>
         <dependency>
             <groupId>net.liftweb</groupId>
-            <artifactId>lift-widgets_${lift.jar.scala.version}</artifactId>
+            <!--<artifactId>lift-widgets_${lift.jar.scala.version}</artifactId>-->
+            <artifactId>lift-widgets_2.9.1</artifactId>
         </dependency>
         <dependency>
             <groupId>net.liftweb</groupId>
-            <artifactId>lift-textile_${lift.jar.scala.version}</artifactId>
+            <!--<artifactId>lift-textile_${lift.jar.scala.version}</artifactId>-->
+            <artifactId>lift-textile_2.9.1</artifactId>
         </dependency>
         <dependency>
             <groupId>net.liftweb</groupId>
@@ -178,6 +171,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
         </dependency>
         <!--<dependency>
             // https://groups.google.com/forum/#!msg/liftweb/fvayO0t8t4o/u4cNVO_4y8MJ%5B1-25%5D
@@ -625,8 +622,7 @@
                         <directory>src/main/resources/prod-resources</directory>
                         <targetPath>./props</targetPath>
                         <!--<targetPath>./filtered</targetPath>-->
-                        <filtering>false</filtering>
-                        <!--<filtering>true</filtering>-->
+                        <filtering>true</filtering>
                         <includes>
                             <include>default.props</include>
                             <include>default.log4j.xml</include>
@@ -667,7 +663,7 @@
                                             <directory>src/main/resources</directory>
                                             <filtering>true</filtering>
                                             <includes>
-                                                <include>props/default.props</include>
+                                                <include>props/lift.props</include>
                                             </includes>
                                         </resource>
                                         <resource>

@@ -32,14 +32,22 @@ trait GedcomMsgsI18n {
 
   val msgs: Map[String, Map[String, String]]
 
-  val dateFormatExact: Map[String, String]
+  val dateFormatExact: Map[String, String] = Map(
+    "en" -> "dd MMM yyyy",
+    "lt" -> "yyyy-MM-dd"
+  )
 
   def getDateFormatExact: String = dateFormatExact(S.locale.getLanguage)
 
-  val dateFormatApprox: Map[String, String]
+  val dateFormatApprox: Map[String, String] = Map(
+    "en" -> "[[dd] MMM] yyyy",
+    "lt" -> "yyyy[-MM[-dd]]"
+  )
 
   def getDateFormatApprox: String = dateFormatApprox(S.locale.getLanguage)
 
   //val dateInitValue: Map[String, Map[String, String]]
 
 }
+
+

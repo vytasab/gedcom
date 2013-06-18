@@ -2,7 +2,7 @@ package lt.node.gedcom {
 package model {
 
 import _root_.javax.persistence._
-import java.text.{SimpleDateFormat, ParsePosition}
+import java.text.SimpleDateFormat
 
 import _root_.java.util.Date
 
@@ -92,8 +92,11 @@ class User /*extends BaseEntity*/ {
   /*create a SHA hash from a String */
 
   def hash(in: String): String = {
-    new String((new Base64) encode
-      (MessageDigest.getInstance("SHA")).digest(in.getBytes("UTF-8")))
+    //println ("User hash in=" + in + "| ")
+    //val x: String = new String((new Base64) encode (MessageDigest.getInstance("SHA")).digest(in.getBytes("UTF-8")))
+    //println ("User hash=" + x + "| ")
+    //x
+    new String((new Base64) encode (MessageDigest.getInstance("SHA")).digest(in.getBytes("UTF-8")))
   }
 
   def password: String = this.passwordHash
@@ -106,7 +109,7 @@ class User /*extends BaseEntity*/ {
   }
 
   def authenticate(pw: String) = {
-    (hash(pw + this.passwordSalt) == this.passwordHash) && validated /*isActive*/
+    (hash(pw + this.passwordSalt) == this.passwordHash) && (this.validated)
     //hash(pw + this.passwordSalt) == this.passwordHash && isActive
   }
 

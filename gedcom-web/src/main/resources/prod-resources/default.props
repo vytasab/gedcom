@@ -1,26 +1,28 @@
-db.driver=com.mysql.jdbc.Driver
-db.url=jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom
-db.user=shaknisgedcom
-db.password=123123
-#
+_____=prod-resources.default.props
+db.driver=${db_driver}
+db.url=${db_url}
+db.user=${db_user}
+db.password=${db_password}
+#db.driver=com.mysql.jdbc.Driver
+#db.url=jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom
+#db.user=shaknisgedcom
+#db.password=123123
+
 #host.port.app=localhost:8080/gedcom-web/
-host__=gedcom-web.vytastax.staxapps.net
-_port_=
-__app=/
+host__=${host__}
+_port_=${_port_}
+__app=${__app}
+#host__=gedcom-web.vytastax.staxapps.net
+#_port_=
+#__app=/
 
 regex.password=^[A-Za-z0-9_]{6,12}
 
-#regex.password=[A-Za-z0-9_]{6,12}
-#regex.password=^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,12}
-
-admin.mailhost=mail.node.lt
-admin.mail=vsh@node.lt
+mail.smtp.host=${mail.smtp.host}
+mail.smtp.port=${mail.smtp.port}
+mail.smtp.starttls.enable=${mail.smtp.starttls.enable}
+mail.smtp.auth=${mail.smtp.auth}
+admin.mail=${admin.mail}
 
 # CB12-7 loc.texts.4XSL=./webapps/WEB-INF/classes/xsl/locTexts4XSL.xml
-
-#admin.mailhost=smtp.gmail.com:465
-#admin.mailhost=smtp.gmail.com
-#admin.mail=vytasab@gmail.com
-
-
 

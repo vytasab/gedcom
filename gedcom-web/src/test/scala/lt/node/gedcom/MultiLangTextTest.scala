@@ -205,9 +205,9 @@ Specification /*WithJUnit*/ ("MultiLangText functionality testing") /*with Scala
       println("")
       println("'addupdLangMsg' adds 'lt' text to empty MultiLangText")
       println("|"+iniText+"|")
-      println("|"+mlt.addupdLangMsg(iniText, ltTxt, "lt")+"|")
+      println("|"+mlt.addupdLangMsg(iniText/*, ltTxt, "lt"*/)+"|")
       println("      addupdLangMsg audit " + mlt.audit)
-      mlt.addupdLangMsg(iniText, ltTxt, "lt") must equalIgnoreSpace (<_ d="lt"><lt>plynas tekstas</lt></_>.toString)
+      mlt.addupdLangMsg(iniText/*, ltTxt, "lt"*/) must equalIgnoreSpace (<_ d="lt"><lt>plynas tekstas</lt></_>.toString)
     }
 
     "'addupdLangMsg' update 'lt' text to MultiLangText" >> {
@@ -218,9 +218,9 @@ Specification /*WithJUnit*/ ("MultiLangText functionality testing") /*with Scala
       println("")
       println("'addupdLangMsg' update 'lt' text to MultiLangText")
       println("|"+iniText+"|")
-      println("|"+mlt.addupdLangMsg(iniText, ltTxt, "lt").toString()+"|")
+      println("|"+mlt.addupdLangMsg(iniText/*, ltTxt, "lt"*/).toString()+"|")
       println("      addupdLangMsg audit " + mlt.audit)
-      mlt.addupdLangMsg(iniText, ltTxt, "lt") must equalIgnoreSpace (<_ d="lt"><en>some plain text</en><lt>pataisytas plynas tekstas</lt></_>.toString)
+      mlt.addupdLangMsg(iniText/*, ltTxt, "lt"*/) must equalIgnoreSpace (<_ d="lt"><en>some plain text</en><lt>pataisytas plynas tekstas</lt></_>.toString)
     }
 
     "'addupdLangMsg' adds 'en' text to non-empty MultiLangText" >> {
@@ -232,9 +232,9 @@ Specification /*WithJUnit*/ ("MultiLangText functionality testing") /*with Scala
       println("")
       println("'addupdLangMsg' adds 'en' text to empty MultiLangText")
       println("|"+iniText+"|")
-      println("|"+mlt.addupdLangMsg(iniText, ltTxt, "en")+"|")
+      println("|"+mlt.addupdLangMsg(iniText/*, ltTxt, "en"*/)+"|")
       println("      addupdLangMsg audit " + mlt.audit)
-      mlt.addupdLangMsg(iniText, ltTxt, "en") must equalIgnoreSpace (<_ d="lt"><lt>plynas tekstas</lt><en>some plain text</en></_>.toString)
+      mlt.addupdLangMsg(iniText/*, ltTxt, "en"*/) must equalIgnoreSpace (<_ d="lt"><lt>plynas tekstas</lt><en>some plain text</en></_>.toString)
     }
 
     "'addupdLangMsg' adds 'pl' text to non-empty MultiLangText" >> {
@@ -247,8 +247,8 @@ Specification /*WithJUnit*/ ("MultiLangText functionality testing") /*with Scala
       println("'addupdLangMsg' adds 'pl' text to non-empty MultiLangText")
       println("|"+iniText+"|")
       println("      addupdLangMsg audit " + mlt.audit)
-      println("|"+mlt.addupdLangMsg(/*iniText, */plTxt, "pl")+"|")
-      mlt.addupdLangMsg(/*iniText, */plTxt, "pl") must equalIgnoreSpace (<_ d="lt"><lt>plynas tekstas</lt><pl>polski wariant tekstu</pl></_>.toString)
+      println("|"+mlt.addupdLangMsg(/*iniText, */plTxt/*, "pl"*/)+"|")
+      mlt.addupdLangMsg(/*iniText, */plTxt/*, "pl"*/) must equalIgnoreSpace (<_ d="lt"><lt>plynas tekstas</lt><pl>polski wariant tekstu</pl></_>.toString)
     }
 
   }

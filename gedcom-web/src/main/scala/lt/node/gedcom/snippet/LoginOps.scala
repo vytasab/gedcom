@@ -4,26 +4,25 @@ import _root_.java.sql.Date
 import _root_.java.util.regex.Pattern
 import _root_.java.text.{ParsePosition, SimpleDateFormat}
 import _root_.javax.persistence.NoResultException
-import _root_.javax.mail.{Authenticator, PasswordAuthentication}
 
-import _root_.scala.xml.{Unparsed, Text, NodeSeq, Group}
 
 import bootstrap.liftweb._
 
 import _root_.net.liftweb._
-import common.{Logger, Box, Empty, Full}
-import http.js.JsCmds.{RedirectTo, FocusOnLoad}
-import xml.{Group, NodeSeq}
+import common.{Logger, Empty, Full}
+import http.js.JsCmds.FocusOnLoad
 import util._
 import mapper._
 import util.Mailer
 import util.Mailer._
 import util.Helpers._
-import http.{RequestVar, SHtml, S}
+import http.{SHtml, S}
 
 import _root_.lt.node.gedcom._
 import model.{Model, User, Person}
-import _root_.lt.node.gedcom.util.{UberScreen, Utilits, LongMsgs}
+import _root_.lt.node.gedcom.util.{UberScreen, LongMsgs}
+import java.security.MessageDigest
+import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64
 
 
 class LoginOps {
@@ -34,14 +33,23 @@ class LoginOps {
   def login = {
 
     def logUserIn() = {
-      try
-      {
+      try {
+        log.debug("logUserIn: Props.fileName |" + Props.fileName + "|")
+        log.debug("logUserIn: Props.propFileName |" + Props.propFileName + "|")
+        log.debug("logUserIn: Props.modeName |" + Props.modeName + "|")
+        log.debug("logUserIn: Props.mode |" + Props.mode.toString + "|")
         RequestedURL(Empty)
         Model.createNamedQuery[User]("findUserByEmailAddress",
           "emailAddress" -> S.param("emailAddress").openOr("")).findOne match {
           case Some(user) =>
-            log.debug("logUserIn: rasta db")
+            log.debug("logUserIn: rasta db; password=" + S.param("password").openOr(""))
+            log.debug("logUserIn: user.passwordHash=" +  user.passwordHash )
+            log.debug("logUserIn: user.passwordSalt=" +  user.passwordSalt )
+            log.debug("logUserIn: hash(pw)=" + hashx(S.param("password").openOr("")))
+            log.debug("logUserIn: hash(pw + this.passwordSalt)=" + hashx(S.param("password").openOr("") + user.passwordSalt))
+
             if (user.authenticate(S.param("password").openOr(""))) {
+              log.debug("logUserIn: user is authenticated")
               CurrentUser(Full(user))
               CurrentUserId(Full(user.id))
               val persons: List[Person] = Model.createNamedQuery[Person]("findPersonByGivnSurn",
@@ -55,11 +63,14 @@ class LoginOps {
                   RequestedURL(Full("/gedcom/personsSublist"))
                 case _ => // go to decision making page
                   log.debug("logUserIn:  case _")
+                  /* D618-2/vsh: netinka mnotetims, nes dažnai pamaišo mergautinė pavardė
                   S.unsetSessionAttribute("role")
                   S.setSessionAttribute("aNameGivn", user.firstName)
                   S.setSessionAttribute("aNameSurn", user.lastName)
                   S.unsetSessionAttribute("aGender")
                   RequestedURL(Full("/gedcom/addeditPerson"))
+                  */
+                  RequestedURL(Full("/gedcom/personsSublist"))
               }
             } else {
               val msg = S.?("invalid.user.authent")
@@ -89,6 +100,7 @@ class LoginOps {
         RequestedURL(Empty)
         //}
       }
+
     }
 
     "#emailAddress *" #> (FocusOnLoad(
@@ -101,6 +113,17 @@ class LoginOps {
     //      "#password *" #> <input id="login_form_password" type="password" name="password" size="16" value=" "/> &
     //      "#submit" #> SHtml.submit(S.?("log.in"), logUserIn)
 
+  }
+
+  def hashx(in: String): String = {
+    //new String((new Base64) encode (MessageDigest.getInstance("SHA")).digest(in.getBytes("UTF-8")))
+    println (" 1 ")
+    val aaa: Array[Byte] = (MessageDigest.getInstance("SHA")).digest(in.getBytes("UTF-8"))
+    println(" 2 |" + aaa.toString + "|")
+    val bbb: String = new String((new Base64) encode aaa)
+    println(" 3 |" + bbb + "|")
+    bbb
+    //new String((new Base64) encode (MessageDigest.getInstance("SHA")).digest(in.getBytes("UTF-8")))
   }
 
 
@@ -123,7 +146,7 @@ class LoginOps {
           S.notice(S.?("success.user.create"))
           S.redirectTo("/infoPage", () => {
             InfoXmlMsg.set(Full(LongMsgs.getMsg("endup.validation")))
-            log.debug("InfoXmlMsg: " + InfoXmlMsg.is.open_!.toString)
+            log.debug("InfoXmlMsg: " + InfoXmlMsg.is/*.open_!*/.toString)
           })
         } else {
           S.warning(S ? "psw.validation.expired")
@@ -274,13 +297,11 @@ object UserAdd extends UberScreen {
 
   val plainPsw = password(S ? "plainPsw", "sanimda", notNull, trim,
     valRegex(Pattern.compile(Props.get("regex.password").openOr(".")), S ? "bad.password.quality"))
-//  val plainPsw = password(S ? "plainPsw", "sanimda")
 
   val plainPsw2 = password(S ? "plainPsw2", "sanimda", notNull, trim,
     valRegex(Pattern.compile(Props.get("regex.password").openOr(".")), S ? "bad.password.quality"))
-//  val plainPsw2 = password(S ? "plainPsw2", "sanimda")
 
-  val emailAddress = field(S ? "emailAddress", "vsh@node.lt", notNull, trim,
+  val emailAddress = field(S ? "emailAddress", "mailbox@somemail.xx", notNull, trim,
     valRegex(MappedEmail.emailPattern, S ? "wrong.email.format")
   )
 
@@ -310,17 +331,16 @@ object UserAdd extends UberScreen {
     S.notice("firstName " + lastName.is)
     S.notice("plainPsw " + plainPsw.is)
     S.notice("emailAddress " + emailAddress.is)
-    S.notice("lokale " + lokale.is.open_!)
-    S.notice("tinezona " + tinezona.is.open_!)
+    S.notice("lokale " + lokale.is.openOr("lt") /*.open_!*/)
+    S.notice("tinezona " + tinezona.is.openOr("Europe/Vilnius") /*.open_!*/)
     val newuser = new User
     newuser.firstName = firstName.is
     newuser.lastName = lastName.is
     newuser.birthDate = new SimpleDateFormat("yyyy-MM-dd").parse(birthDate.is, new ParsePosition(0))
-    newuser.locale = lokale.is.open_!
-    newuser.timezone = tinezona.is.open_!
+    newuser.locale = lokale.is.openOr("lt") //.toString/*.open_!*/
+    newuser.timezone = tinezona.is.openOr("Europe/Vilnius") //toString/*.open_!*/
     newuser.emailAddress = emailAddress.is
-    //log.debug("UserAdd " + newuser.firstName )
-    newuser.password_=(plainPsw.is)
+    newuser.password_=(plainPsw.is) // !!! the "password_=" method generates passwordSalt, passwordHash, uniqueid
     newuser.setValidation
 // TODO B417-7/vsh  check for email uniqueness and maybe firstName, firstName
     Model.mergeAndFlush(newuser)
@@ -341,7 +361,7 @@ object UserEdit extends UberScreen {
   val log = Logger("UserEdit");
   log.debug("[]...")
 
-  val user: User = Model.find(classOf[User], CurrentUserId.is.open_!).get
+  val user: User = Model.find(classOf[User], CurrentUserId.is/*.open_!*/).get
   val firstName = field(S ? "firstName", user.firstName,
     notNull, trim,
     valMinLen(2, S ? "flName.too.short"),
@@ -385,14 +405,14 @@ object UserEdit extends UberScreen {
     S.notice("firstName " + firstName.is)
     S.notice("lastName " + lastName.is)
     S.notice("emailAddress " + emailAddress.is)
-    S.notice("lokale " + lokale.is.open_!)
-    S.notice("tinezona " + tinezona.is.open_!)
+    S.notice("lokale " + lokale.is/*.open_!*/)
+    S.notice("tinezona " + tinezona.is/*.open_!*/)
     user.firstName = firstName.is
     log.debug("UserEdit " + user.firstName)
     user.lastName = lastName.is
     user.birthDate = new SimpleDateFormat("yyyy-MM-dd").parse(birthDate.is, new ParsePosition(0))
-    user.locale = lokale.is.open_!
-    user.timezone = tinezona.is.open_!
+    user.locale = lokale.is.openOr("lt")
+    user.timezone = tinezona.is.openOr("Europe/Vilnius")
     user.emailAddress = emailAddress.is
     Model.mergeAndFlush(user)
     S.redirectTo(RequestedURL.openOr("/"))
@@ -404,41 +424,105 @@ object SendMail /*extends UberScreen*/ {
   // B204-5/vsh init
   // google-group:Lift: [how do you set system properties in lift]
   // http://java.sun.com/products/javamail/javadocs/com/sun/mail/smtp/package-summary.html
-  val log = Logger("SendMail");
+  val log = Logger("SendMail")
   //  log.debug("[]...")
 
-  def sendMail2User(reason: String, user: User): Unit = {
-    log.debug("sendMail hostFunc |" + Props.get("admin.mailhost").open_! + "|")
-    log.debug("sendMail reason |" + reason + "|")
+  def sendMail2User(reason: java.lang.String, user: User): Unit = {
+    //log.debug("sendMail hostFunc |" + Props.get("admin.mailhost").open_! + "|")
+    //log.debug("sendMail admin.mail |" + Props.get("admin.mail")/*.open_!*/ + "|")
+    log.debug("sendMail Mailer.properties.toString |" + Mailer.properties.toString + "|")
 
-    val props = Map[String, String](
-      "mail.smtp.host" -> Props.get("admin.mailhost").open_! //,
-      //"mail.smtp.starttls.enable" -> "true",
-      //  "mail.smtp.port" -> "21",
-      //  "mail.smtp.auth" -> "true"
+    /*var props = Map[String, String](
+      "mail.smtp.host" -> Props.get("mail.smtp.host").open_!,
+      "mail.smtp.port" -> Props.get("mail.smtp.port").open_!,
+      "mail.smtp.starttls.enable" -> Props.get("mail.smtp.starttls.enable").open_!,
+      "mail.smtp.auth" -> Props.get("mail.smtp.auth").open_!
     )
-    Mailer.customProperties = props
-    /*    Mailer.authenticator = Full(new Authenticator() {
-          override def getPasswordAuthentication = new
-              PasswordAuthentication("vsh@node.lt", "av...a")
-        })
-    */
+    props = Map[String, String](
+      "mail.smtp.host" -> "smtp.gmail.com",
+      "mail.smtp.port" ->  "587",
+      "mail.smtp.auth" -> "true",
+      "mail.smtp.starttls.enable" -> "true"
+    )*/
 
-   val getHostPortApp = Props.get("host__").openOr("localhost") +
-     Props.get("_port_").openOr(":8080") + Props.get("__app").openOr("/gedcom-web/")
+//    //Mailer.customProperties = props
+//    /*    Mailer.authenticator = Full(new Authenticator() {
+//          override def getPasswordAuthentication = new
+//              PasswordAuthentication("vsh@node.lt", "av...a")
+//        })
+//    */
+//    var isAuth = Props.get("mail.smtp.auth", "false").toBoolean
+//
+//    Mailer.customProperties = Props.get("mail.smtp.host", "localhost") match {
+//      case "smtp.gmail.com" =>
+//        log.debug("sendMail mail.smtp.host |" + Props.get("mail.smtp.host", "localhost") + "|")
+//        isAuth = true
+//        Map(
+//          "mail.transport.protocol" -> "smtp",
+//          "mail.smtp.host" -> "smtp.gmail.com",
+//          "mail.smtp.port" -> "587",
+//          //"mail.smtp.port" -> "465",
+//          "mail.smtp.auth" -> "true",
+//          "mail.smtp.starttls.enable" -> "true")
+//      case host =>
+//        log.debug("sendMail mail.smtp.host |" + Props.get("mail.smtp.host", "localhost") + "|")
+//        Map(
+//        "mail.smtp.host" -> host,
+//        "mail.smtp.port" -> Props.get("mail.smtp.port", "25"),
+//        "mail.smtp.auth" -> isAuth.toString
+//      )
+//    }
+//
+//    if (isAuth) {
+//      //(Props.get("mail.user"), Props.get("mail.password")) match {
+//      //(Full("vytasab"), Full("paratunka")) match {
+//      (Full("vytasab__@gmail.com"), Full("paratunka__")) match {
+//        case (Full(username), Full(password)) =>
+//          Mailer.authenticator = Full(new Authenticator() {
+//            override def getPasswordAuthentication = new
+//                PasswordAuthentication(username, password)
+//          }
+////          /*Mailer.authenticator = Full(new Authenticator() {
+////            override def getPasswordAuthentication = new
+////                PasswordAuthentication(username, password)
+////          }*/
+////          authenticator = new Authenticator()
+//////          {
+//////            override def getPasswordAuthentication = new
+//////                PasswordAuthentication(username, password)
+//////          }
+////          Full(authenticator)
+//          )
+//        case _ => new Exception("Username/password not supplied for Mailer.")
+//      }
+//    }
+
+
+    log.debug("sendMail reason |" + reason + "|")
+    val getHostPortApp = Props.get("host__").openOr("localhost") +
+      Props.get("_port_").openOr(":8080") + Props.get("__app").openOr("/gedcom-web/")
+    log.debug("sendMail getHostPortApp |" + getHostPortApp + "|")
+    reason match {
+    case "test" =>
+    case _ =>
+      log.debug("sendMail user.emailAddress |" + user.emailAddress + "|")
+  }
 
     reason match {
-    // host.port.app
       case "new-user" => {
+        log.debug("-----|new-user|")
         //val code = "http://" + Props.get("host.port.app").openOr("localhost:8080/gedcom-web/")
         val code = "http://" + getHostPortApp/*Props.get("host.port.app").openOr("localhost:8080/gedcom-web/")*/ +
           "addendup/" + user.validationCode
-        Mailer.sendMail(
-          From(Props.get("admin.mail").openOr("admin.mail")),
+
+        /*Thread.currentThread().setContextClassLoader(getClass().getClassLoader())
+        // https://groups.google.com/forum/?fromgroups=#!topic/liftweb/FW6E0MSEYzs*/
+
+        Mailer.blockingSendMail/*sendMail*/(
+          From(Props.get("admin.mail").openOr("vytasab@gmail.com")),
           Subject(LongMsgs.getMsgText("new.user.subj")),
           List(
-            To(user.emailAddress),
-            xmlToMailBodyType(
+            xmlToMailBodyType( //XHTMLMailBodyType(
               <html>
                 <head>
                   <title>LongMsgs.getMsgText("new.user.subj")</title>
@@ -454,7 +538,8 @@ object SendMail /*extends UberScreen*/ {
                     {new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(user.validationExpiry))}
                   </p>
                 </body>
-              </html>)
+              </html>),
+              To(/*"dalia.sabaniene@gmail.com"*/user.emailAddress)
           ): _*
         )
       }
@@ -514,38 +599,50 @@ object SendMail /*extends UberScreen*/ {
         )
       }
 
-      case "test" => {
-        val code = "http://" + getHostPortApp/*Props.get("host.port.app").openOr("localhost:8080/gedcom-web/")*/ + "validation/" + "aaAAbbBBccCCddDD"
-        Mailer.sendMail(
-          From(<_>{Props.get("admin.mail").openOr("admin.mail")}</_>.text),
-          Subject("Test message: " + LongMsgs.getMsgText("password.reset.subj")),
+      case "test" =>
+        //val code = "http://" + getHostPortApp /*Props.get("host.port.app").openOr("localhost:8080/gedcom-web/")*/ + "validation/" + "aaAAbbBBccCCddDD"
+        /*Mailer.sendMail(
+          From("vytasab@gmail.com"),
+          Subject("Text!!!"),
           List(
-            To(user.emailAddress),
-            xmlToMailBodyType(
-              <html>
-                <head>
-                  <title>Test message / Tiesiog žinutė</title>
-                </head>
-                <body>
-                  <p>Testas, panaudota: password-reset</p>
-                  <p>Test message for  {Props.get("admin.mail").open_!}.</p>
-                  <p>
-                    { /*Unparsed*/ (LongMsgs.getMsg("password.reset.p1"))}
-                    {getHostPortApp/*Props.get("host.port.app").openOr("localhost:8080/gedcom-web/")*/}
-                    { /*Unparsed*/ (LongMsgs.getMsg("password.reset.p2"))}
-                  </p>
-                  <p>
-                    <a href={code}>{code}</a>
-                  </p>
-                  { /*Unparsed*/ (LongMsgs.getMsg("new.user.p2"))}
-                  <p>
-                    {new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())}
-                  </p>
-                </body>
-              </html>)
-          ): _*
-        )
-      }
+            To("vytasab@gmail.com"),
+            PlainMailBodyType("Woo! I can text :-)") ): _*)
+        */
+        Mailer./*blockingSendMail*/sendMail(
+            //From(<_>{Props.get("admin.mail").openOr("admin.mail")}</_>.text),
+            From("vytasab@gmail.com"),
+            //Subject("Test message: " + LongMsgs.getMsgText("password.reset.subj")),
+            Subject("Text!!!"),
+            List(
+              //To(user.emailAddress),
+              To("vytasab@gmail.com"),
+              //To("dalia.sabaniene@gmail.com"),
+              PlainMailBodyType("Woo! I can text :-)")
+              /*xmlToMailBodyType(
+                <html>
+                  <head>
+                    <title>Test message / Tiesiog žinutė</title>
+                  </head>
+                  <body>
+                    <p>Testas, panaudota: password-reset</p>
+                    <p>Test message for  {Props.get("admin.mail")/*.open_!*/.toString}.</p>
+                    <p>
+                      { /*Unparsed*/ (LongMsgs.getMsg("password.reset.p1"))}
+                      {getHostPortApp/*Props.get("host.port.app").openOr("localhost:8080/gedcom-web/")*/}
+                      { /*Unparsed*/ (LongMsgs.getMsg("password.reset.p2"))}
+                    </p>
+                    <p>
+                      <a href={code}>{code}</a>
+                    </p>
+                    { /*Unparsed*/ (LongMsgs.getMsg("new.user.p2"))}
+                    <p>
+                      {new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())}
+                    </p>
+                  </body>
+                </html>)*/
+            ): _*
+          )
+
       case _ =>
     }
   }

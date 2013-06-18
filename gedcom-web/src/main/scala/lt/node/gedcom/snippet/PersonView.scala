@@ -6,11 +6,6 @@ import xml._
 import _root_.net.liftweb._
 import http._
 import provider.servlet.HTTPServletContext
-import SHtml._
-import js._
-import JsCmds._
-import js.jquery._
-import JqJsCmds._
 import common._
 import _root_.net.liftweb.util.Props
 import _root_.net.liftweb.util.Helpers._
@@ -34,9 +29,7 @@ object locTexts4XSLfilePathReqVar extends RequestVar[String](LiftRules.getResour
       val msg = "PersonView.renderPerson: /xsl/locTexts4XSL.xml: the resource protocol is not 'file'"
       Logger("PersonReading").error(msg)
       S.redirectTo("/errorPage", () => {
-        ErrorXmlMsg.set(Some(Map(
-          "location" -> <p>PersonView.renderPerson</p>,
-          "message" -> <p>{msg}</p>)))
+        ErrorXmlMsg.set(Some(Map("location" -> <p>PersonView.renderPerson</p>, "message" -> <p>{msg}</p>)))
       })
       url.toString
   }
@@ -44,9 +37,7 @@ object locTexts4XSLfilePathReqVar extends RequestVar[String](LiftRules.getResour
     val msg = "PersonView.renderPerson: /xsl/locTexts4XSL.xml: the resource is missing"
     Logger("PersonReading").error(msg)
     S.redirectTo("/errorPage", () => {
-      ErrorXmlMsg.set(Some(Map(
-        "location" -> <p>PersonView.renderPerson</p>,
-        "message" -> <p>{msg}</p>)))
+      ErrorXmlMsg.set(Some(Map("location" -> <p>PersonView.renderPerson</p>, "message" -> <p>{msg}</p>)))
     })
     "loc_texts_4XSL_unresolved"
 }
@@ -313,9 +304,7 @@ class PersonView {
         val msg = "PersonView.renderPerson: wrong precondition: the Person is missing"
         log.error(msg)
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>PersonView.renderPerson</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>PersonView.renderPerson</p>, "message" -> <p>{msg}</p>)))
         }
         )
     }
@@ -341,9 +330,7 @@ class PersonView {
         case _ =>
           val msg = "PersonView.renderSpouseAndChildren: wrong precondition: the Person is missing"
           S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>PersonView.renderSpouseAndChildren</p>,
-              "message" -> <p>{msg}</p>)))
+            ErrorXmlMsg.set(Some(Map("location" -> <p>PersonView.renderSpouseAndChildren</p>, "message" -> <p>{msg}</p>)))
           })
       }
     }
@@ -406,9 +393,8 @@ class PersonView {
                   case _ =>
                     val msg = "PersonView.renderParent: No person for " + p.id
                     S.redirectTo("/errorPage", () => {
-                      ErrorXmlMsg.set(Some(Map(
-                        "location" -> <p>PersonView.renderParent</p>,
-                        "message" -> <p>{msg}</p>)))
+                      ErrorXmlMsg.set(Some(Map("location" -> <p>PersonView.renderParent</p>, "message" -> <p> {msg}
+                      </p>)))
                     })
                 }
             }
@@ -422,9 +408,7 @@ class PersonView {
       case _ =>
         val msg = "PersonView.renderParent: wrong precondition: the Person is missing"
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>PersonView.renderParent</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>PersonView.renderParent</p>, "message" -> <p>{msg}</p>)))
         })
     }
   }
@@ -442,9 +426,7 @@ class PersonView {
         case _ =>
           val msg = "PersonView.goUpdate: wrong precondition: the Person is already read"
           S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>PersonView.goUpdate</p>,
-              "message" -> <p>{msg}</p>)))
+            ErrorXmlMsg.set(Some(Map("location" -> <p>PersonView.goUpdate</p>, "message" -> <p>{msg}</p>)))
           })
       }
     }
@@ -493,9 +475,7 @@ class PersonView {
         val msg = ("You are not logged in")
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
         })
       }
     }
@@ -550,9 +530,7 @@ class PersonView {
             val msg = <_>The person (id={S.getSessionAttribute("childId")}) is not found !</_>.text
             log.debug(place+": "+msg)
             S.redirectTo("/errorPage", () => {
-              ErrorXmlMsg.set(Some(Map(
-                "location" -> <p>{place}</p>,
-                "message" -> <p>{msg}</p>)))
+              ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
             })
         }
       } else {
@@ -560,9 +538,7 @@ class PersonView {
         val msg = ("You are not logged in")
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
         })
       }
     }
@@ -681,9 +657,7 @@ class PersonView {
           val msg = ("No PersonEvent for id="+ S.getSessionAttribute("personEventId").get)
           log.debug(place+": "+msg)
           S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>{place}</p>,
-              "message" -> <p>{msg}</p>)))
+            ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
           })
       }
       def doDelete(): Unit = {
@@ -719,9 +693,7 @@ class PersonView {
           val msg = ("You are not logged in")
           log.debug(place+": "+msg)
           S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>{place}</p>,
-              "message" -> <p>{msg}</p>)))
+            ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
           })
         }
       }
@@ -776,9 +748,7 @@ class PersonView {
           val msg = ("No PersonAttrib for id="+ S.getSessionAttribute("personAttribId").get)
           log.debug(place+": "+msg)
           S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>{place}</p>,
-              "message" -> <p>{msg}</p>)))
+            ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
           })
       }
       def doDelete(): Unit = {
@@ -809,9 +779,7 @@ class PersonView {
           val msg = ("You are not logged in")
           log.debug(place+": "+msg)
           S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>{place}</p>,
-              "message" -> <p>{msg}</p>)))
+            ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
           })
         }
       }
@@ -865,9 +833,7 @@ class PersonView {
         val msg = ("No FamilyEvent for id="+ S.getSessionAttribute("familyEventId").get)
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
         })
     }
     def doDelete(): Unit = {
@@ -898,9 +864,7 @@ class PersonView {
         val msg = ("You are not logged in")
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>{place}</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
         })
       }
     }

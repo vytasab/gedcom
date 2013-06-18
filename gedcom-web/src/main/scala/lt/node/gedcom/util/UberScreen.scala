@@ -7,8 +7,8 @@ package lt.node.gedcom.util
 
 //trait UberScreen
 
-import net.liftweb.http.{LiftScreen, S, SHtml}
-import net.liftweb.common.{Box, Full, Empty}
+import net.liftweb.http.{LiftScreen, SHtml}
+import net.liftweb.common.{Box, Full}
 import scala.xml._
 
 trait UberScreen extends LiftScreen {
@@ -16,7 +16,7 @@ trait UberScreen extends LiftScreen {
   override def finish: Unit = println("UberScreen.finish method is called")
 
   def makeField[T](a_name: String, a_default: T, theToForm: (Field {type ValueType = T} => Box[NodeSeq])) = {
-    Console println ("inside makeField")
+    //Console println ("inside makeField")
     new Field {
       type ValueType = T
 

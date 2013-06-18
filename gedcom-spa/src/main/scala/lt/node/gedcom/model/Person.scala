@@ -1,6 +1,5 @@
 package lt.node.gedcom.model
 
-import java.util.Date
 import javax.persistence._
 
 //import org.slf4j.{LoggerFactory, Logger}
@@ -14,7 +13,6 @@ import http.S
 
 import common._
 
-import _root_.lt.node.gedcom._
 //import model._
 
 /**

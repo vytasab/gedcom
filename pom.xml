@@ -44,20 +44,22 @@ mvn clean install -Dmaven.test.skip=true
         <!-- Common plugin settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
-        <scala.version>2.9.1</scala.version>
-        <!-- 2.9.1  2.8.1  2.8.0  -->
-        <lift.version>2.4</lift.version>
-        <!-- 2.4-RC1  2.3 -->
+        <scala.version>2.10.0</scala.version>
+        <!-- ne-2.10 ne-2.10.0 ne-2.9.2  2.9.1  2.8.1  2.8.0  -->
+        <lift.version>2.5</lift.version>
+        <!--  2.5-RC2  2.4  2.4-RC1  2.3 -->
         <!--  error: 2.8.1-2.2  buvo: 2.3-RC3 2.3-M1 2.2-M1 2.2-RC5 2.1 2.0 2.0-M5 2.0-M2 1.1-M8 1.1-SNAPSHOT 1.1-M5 buvo:1.1-M7 1.0 -->
         <!--  buvo: [2.8.0 2.2-RC5] -->
         <!--  klaida: [2.8.1 2.3-M1] Forest.render JsRaw perdavime browseriui  -->
-        <lift.jar.scala.version>${scala.version}</lift.jar.scala.version>
+        <lift.jar.scala.version>2.10</lift.jar.scala.version>
         <!-- error: 2.8.1-2.2  buvo: 2.8.0 -->
 
         <lift.jpa.version>${lift.version}</lift.jpa.version>
         <!-- buvo:  2.2  2.2-M1  2.1-SNAPSHOT 2.0  2.0-SNAPSHOT 1.1-M8  -->
         <lift.jpa.scala.version>${scala.version}</lift.jpa.scala.version>
         <!-- buvo:  2.2-M1  2.1-SNAPSHOT 2.0  2.0-SNAPSHOT 1.1-M8  -->
+        <scalajpa.scala.version>2.9.2</scalajpa.scala.version>
+        <!-- 2.10  2.9.2  2.9.1  -->
 
         <lift.wizard.version>${lift.version}</lift.wizard.version>
         <!-- buvo-bet-netinka:  2.2   -->
@@ -179,16 +181,6 @@ mvn clean install -Dmaven.test.skip=true
         </repository> -->
 
     </repositories>
-    <!-- Set up repo for ScalaJPA -->
-    <!--
-        <repositories>
-        <repository>
-        <id>scala-tools.releases</id>
-        <name>Scala-Tools Dependencies Repository for Releases</name>
-        <url>http://scala-tools.org/repo-releases</url>
-        </repository>
-        </repositories>
-    -->
 
     <pluginRepositories>
         <pluginRepository>
@@ -323,11 +315,13 @@ mvn clean install -Dmaven.test.skip=true
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-library</artifactId>
                 <version>${scala.version}</version>
+                <!--<version>2.10.0</version>-->
             </dependency>
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-compiler</artifactId>
                 <version>${scala.version}</version>
+                <!--<version>2.10.0</version>-->
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -378,18 +372,24 @@ mvn clean install -Dmaven.test.skip=true
             </dependency>
             <dependency>
                 <groupId>net.liftweb</groupId>
-                <artifactId>lift-widgets_${lift.jar.scala.version}</artifactId>
-                <version>${lift.version}</version>
+                <artifactId>lift-widgets_2.9.1</artifactId>
+                <!--<artifactId>lift-widgets_${lift.jar.scala.version}</artifactId>-->
+                <!--<version>${lift.version}</version>-->
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>net.liftweb</groupId>
-                <artifactId>lift-jpa_${lift.jpa.scala.version}</artifactId>
+                <!--<artifactId>lift-jpa_2.9.1</artifactId>-->
+                <!--<artifactId>lift-jpa_${lift.jpa.scala.version}</artifactId>-->
+                <artifactId>lift-jpa_${lift.jar.scala.version}</artifactId>
                 <version>${lift.jpa.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.liftweb</groupId>
-                <artifactId>lift-textile_${lift.jar.scala.version}</artifactId>
-                <version>${lift.version}</version>
+                <artifactId>lift-textile_2.9.1</artifactId>
+                <!--<artifactId>lift-textile_${lift.jar.scala.version}</artifactId>-->
+                <!--<version>${lift.version}</version>-->
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>net.liftweb</groupId>
@@ -462,8 +462,8 @@ mvn clean install -Dmaven.test.skip=true
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
-                <version>1.4.1</version>
-                <!--	[1.4,1.4.3) -->
+                <version>1.4.4</version>
+                <!--	[1.4, 1.4.1, 1.4.3) -->
             </dependency>
             <!-- Hibernate Geronimo -->
             <dependency>
@@ -494,6 +494,11 @@ mvn clean install -Dmaven.test.skip=true
                 <artifactId>cloning</artifactId>
                 <version>1.7.4</version>
             </dependency>-->
+            <dependency>
+                <groupId>org.jasypt</groupId>
+                <artifactId>jasypt</artifactId>
+                <version>1.7</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -719,7 +724,7 @@ mvn clean install -Dmaven.test.skip=true
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
-                <!--<version>2.14.3</version>-->
+                <version>2.14.3</version>
                 <configuration>
                     <charset>${project.build.sourceEncoding}</charset>
                     <jvmArgs>

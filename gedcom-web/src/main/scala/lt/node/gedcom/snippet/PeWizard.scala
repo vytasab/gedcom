@@ -4,7 +4,7 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import _root_.net.liftweb._
 import http._
-import js.JE.{JsArray, Str, JsObj}
+import js.JE.JsObj
 import js.jquery.JqJsCmds._
 import wizard._
 import common._

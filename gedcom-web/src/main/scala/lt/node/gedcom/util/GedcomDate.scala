@@ -1,10 +1,8 @@
 package lt.node.gedcom.util
 
 import _root_.net.liftweb.http.S
-import java.text.{ParsePosition, SimpleDateFormat}
+import java.text.SimpleDateFormat
 import org.slf4j.{LoggerFactory, Logger}
-import lt.node.gedcom.model.{EventDetail, PersonEvent, Person}
-import net.liftweb.util.FieldError
 import java.util.Locale
 
 abstract class GedcomDate
@@ -177,7 +175,7 @@ object GedcomUtil {
           yy
         case (null, mm, yy) =>
           log.debug("DatePtrnOpt(null, mm, yy)")
-          new SimpleDateFormat( """yyyy-MM""").format(new SimpleDateFormat( """MMM yyyy""").parse(gedcomDateValue))
+          new SimpleDateFormat( """yyyy-MM""").format(new SimpleDateFormat( """MMM yyyy""", Locale.ENGLISH).parse(gedcomDateValue))
         case (dd, null, yy) =>
           log.debug("DatePtrnOpt(dd, null, yy)")
           "Err: |" + gedcomDateValue + "|"
@@ -187,6 +185,10 @@ object GedcomUtil {
          //-- http://stackoverflow.com/questions/6154772/java-unparseable-date?rq=1
       }
     }
+
+    def dateDe(gedcomDateValue: String): String = { " " }
+    def datePl(gedcomDateValue: String): String = { " " }
+    def dateRu(gedcomDateValue: String): String = { " " }
 
     lang match {
       case "lt" =>
@@ -200,7 +202,7 @@ object GedcomUtil {
             } catch {
               case ex: Exception =>
                 log.debug("DatePtrnOpt(null, null, null): " + ex.toString)
-                lazy val DatePeriodPtrnOpt = """(FROM .+?)?( )?(TO .+?)?""".r
+                lazy val DatePeriodPtrnOpt = """^(FROM .+?)?( )?(TO .+?)?$""".r
                 try {
                   log.debug("|" + gedcomDateValue + "|==>")
                   val DatePeriodPtrnOpt(from, s, to) = gedcomDateValue
@@ -221,7 +223,7 @@ object GedcomUtil {
                 } catch {
                   case ex: Exception =>
                     log.debug("DatePeriodPtrnOpt(null, null, null): " + ex.toString)
-                    lazy val DateRangeBAPtrn = """(BET .+?)( AND .+?)?""".r
+                    lazy val DateRangeBAPtrn = """^(BET .+?)( AND .+?)?$""".r
                     try {
                       log.debug("|" + gedcomDateValue + "|==>")
                       val DateRangeBAPtrn(bet, and) = gedcomDateValue
@@ -237,7 +239,7 @@ object GedcomUtil {
                     } catch {
                       case ex: Exception =>
                         log.debug("DateRangeBAPtrn(null, null): " + ex.toString)
-                        lazy val DateOtherPtrn = """(BEF .+?)?(AFT .+?)?(ABT .+?)?""".r
+                        lazy val DateOtherPtrn = """^(BEF .+?)?(AFT .+?)?(ABT .+?)?$""".r
                         try {
                           log.debug("|" + gedcomDateValue + "|==>")
                           val DateOtherPtrn(bef, aft, abt) = gedcomDateValue
@@ -256,6 +258,9 @@ object GedcomUtil {
                 }
             }
         }
+      //case "de" => gedcomDateValue
+      //case "pl" => gedcomDateValue
+      //case "ru" => gedcomDateValue
       case "en" =>
         log.debug("en: gedcomDateValue: " + gedcomDateValue)
         val en2gedcom: Map[String, String] = Map("ABOUT" -> "ABT", "AFTER" -> "AFT ", "BEFORE" -> "BEF ", "BETWEEN" -> "BET")
@@ -263,10 +268,6 @@ object GedcomUtil {
         en2gedcom.keySet.foreach(k => dv = dv.replaceFirst(en2gedcom(k), k))
         log.debug("en: gedcomDateValue: " + dv)
         dv
-      //case "en" => gedcomDateValue
-      //case "de" => gedcomDateValue
-      //case "pl" => gedcomDateValue
-      //case "ru" => gedcomDateValue
       case _ =>
         log.debug("===|" + "_ or |" + lang + "|")
         gedcomDateValue //  default case "en"

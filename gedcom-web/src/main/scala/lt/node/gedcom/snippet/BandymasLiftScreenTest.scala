@@ -5,14 +5,11 @@ package lt.node.gedcom.snippet
 //import _root_.lt.node.gedcom.model.{ModelMovedTospaSpa, User}
 
 import _root_.lt.node.gedcom.util.UberScreen
+import net.liftweb.http._
 
 //import _root_.lt.node.gedcom.util.UberScreen
 
-import _root_.net.liftweb._
-import common._
-import mapper._
-import http.S
-import http.LiftScreen
+//import http.S
 import _root_.net.liftweb.wizard.Wizard
 //import _root_.net.liftweb.wizard.Wizard.{Screen,WizardVar}
 
@@ -52,7 +49,7 @@ object BandymasUberScreenTest extends /*Application with*/ UberScreen {
       }
       // ---------------------------------------------------------------------------------------------------------------------
     }
-    MyWizard.currentScreen.open_!// must_== MyWizard.nameAndAge
+    MyWizard.currentScreen.open_! // must_== MyWizard.nameAndAge
     // validate that we don't go forward unless we've got a name and age
     MyWizard.nextScreen
     MyWizard.currentScreen.open_! //must_== MyWizard.nameAndAge
@@ -72,7 +69,7 @@ object BandymasUberScreenTest extends /*Application with*/ UberScreen {
     MyWizard.favoritePet.petName.set("Elwood")
     MyWizard.nextScreen
     MyWizard.currentScreen //must_== Empty
-    MyWizard.completeInfo.is //must_== true
+    //MyWizard.completeInfo.is //must_== true
   }
 
 

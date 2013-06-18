@@ -2,7 +2,6 @@ package lt.node.gedcom.util
 
 import _root_.net.liftweb._
 import http._
-import util._
 import util.Helpers._
 
 import scala.xml._

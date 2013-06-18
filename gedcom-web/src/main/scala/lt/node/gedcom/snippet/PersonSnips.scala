@@ -2,19 +2,14 @@ package lt.node.gedcom.snippet
 
 //import _root_.scala.util._
 import _root_.scala._
-import xml.{Elem, NodeSeq, Group, Text}
 
 import _root_.net.liftweb._
 import http._
-import SHtml._
 import js._
 import JsCmds._
-import js.jquery._
-import JqJsCmds._
 import common._
-import widgets.autocomplete.{AutoComplete}
+import widgets.autocomplete.AutoComplete
 
-import _root_.net.liftweb.util._
 import _root_.net.liftweb.util.Helpers._
 
 //import http.js.JsCmds.{RedirectTo, FocusOnLoad}

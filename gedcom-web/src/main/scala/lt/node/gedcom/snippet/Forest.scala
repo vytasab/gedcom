@@ -1,23 +1,21 @@
 package lt.node.gedcom.snippet
 
-import _root_.scala.xml._
 
 import _root_.net.liftweb._
-import common.{Logger, Loggable}
+import common.Logger
 import http._
 import net.liftweb.util._
 import Helpers._
 import http.js.JE.JsRaw
 
 import lt.node.gedcom.rest._
-import bootstrap.liftweb.{AccessControl, CurrentUserId, CurrentUser}
+import bootstrap.liftweb.AccessControl
 
 class Forest /*extends Loggable*/ {
 
   val log = Logger("Forest");
 
   def render = {
-    import lt.node.gedcom.model.Model
     GedcomRest.emptyPids
     GedcomRest.emptyFids
     val sb: StringBuffer = new StringBuffer("");

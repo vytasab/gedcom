@@ -1,17 +1,13 @@
 package lt.node.gedcom.snippet
 
-import _root_.scala.xml.{Unparsed, Text, NodeSeq, Group}
+import _root_.scala.xml.NodeSeq
 
 import _root_.net.liftweb._
-import /*net.liftweb.*/ util._
-import Helpers._
 import common._
-import http.S
 import bootstrap.liftweb.ErrorXmlMsg
 
 //import textile.TextileParser
 
-import util.Props
 import _root_.net.liftweb.util.Helpers._
 
 class ErrorPageSnips {

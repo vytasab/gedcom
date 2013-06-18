@@ -1,7 +1,6 @@
 package lt.node.gedcom.util
 
 import net.liftweb.http.S
-import java.text.SimpleDateFormat
 import org.slf4j.{LoggerFactory, Logger}
 
 object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n {
@@ -13,14 +12,7 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
     "en" -> """(\d\d )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""",
     "lt" -> """(\d\d\d\d)(-\d\d)?(-\d\d)?"""
   )
-  val dateFormatApprox: Map[String, String] = Map(
-    "en" -> "[[dd] MMM] yyyy",
-    "lt" -> "yyyy[-MM[-dd]]"
-  )
-  val dateFormatExact: Map[String, String] = Map(
-    "en" -> "dd MMM yyyy",
-    "lt" -> "yyyy-MM-dd"
-  )
+
   val msgs: Map[String, Map[String, String]] = Map(
     "01gdt_no_date" -> Map(
       "xx" -> "",

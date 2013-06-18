@@ -23,6 +23,8 @@ object MenuInfo {
 
   val entries: List[Menu] = List(
     Menu(Loc("Home", List("index"), S ? "Home"),
+      //Menu(Loc("sendMailTest2", List("sendMailTest"), "Send Mail Test")),
+      Menu(Loc("sendMailTest2", List("bandymai", "sendMailTest"),S.?("Send Mail Test"))),
       Menu(Loc("errorPage", List("errorPage"), "", Hidden)),
       Menu(Loc("infoPage", List("infoPage"), "", Hidden))
     ),
@@ -154,7 +156,7 @@ object MenuInfo {
       //Menu(Loc("restStatic", List("bandymai", "raphaelworkshop"), "Raphael Workshop")),
       Menu(Loc("LiftScreen", List("bandymai", "liftField"), S.?("LiftField"))),
       Menu(Loc("popupwindow", List("bandymai", "popupwindow"),S.?("PopupWindow"))),
-      Menu(Loc("sendMailTest", List("bandymai", "sendMailTest"),S.?("Send Mail Test"))),
+      //--Menu(Loc("sendMailTest", List("bandymai", "sendMailTest"),S.?("Send Mail Test"))),
       Menu(Loc("autoCompleteSample", List("bandymai", "autoCompleteSample"),S.?("AutoComplete"))),
       Menu(Loc("recursive", List("bandymai", "recursive"),S.?("Recursive"))),
       Menu(Loc("one", List("bandymai", "one"),S.?("Recursive-one"))),

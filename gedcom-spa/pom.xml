@@ -35,17 +35,11 @@
             <!--<scope>test</scope>-->
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.scala-libs</groupId>-->
-            <!--<artifactId>scalajpa</artifactId>-->
-            <!--<version>1.2-SNAPSHOT</version>-->
-            <!--&lt;!&ndash;<version>[1.2-SNAPSHOT,)</version>&ndash;&gt;-->
-            <!--&lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.scala-libs</groupId>
-            <!--<artifactId>scalajpa_2.9.1</artifactId>-->
-            <artifactId>scalajpa_${scala.version}</artifactId>
+            <!--<artifactId>scalajpa_2.9.2</artifactId>-->
+            <!-- d613-4/vsh <artifactId>scalajpa_${scala.version}</artifactId>-->
+            <artifactId>scalajpa_${scalajpa.scala.version}</artifactId>
             <version>1.4</version>
         </dependency>
 
@@ -56,8 +50,8 @@
         </dependency>
         <dependency>
             <groupId>net.liftweb</groupId>
-            <artifactId>lift-jpa_${lift.jpa.scala.version}</artifactId>
-            <!--<artifactId>lift-jpa_${lift.jar.scala.version}</artifactId>-->
+            <artifactId>lift-jpa_${lift.jar.scala.version}</artifactId>
+            <!--<artifactId>lift-jpa_2.9.1</artifactId>-->
         </dependency>
         <!--  D_B  d_r_i_v_e_r_s  -->
         <dependency>

@@ -1,7 +1,6 @@
 package lt.node.gedcom.model
 
 import _root_.javax.persistence._
-import _root_.java.util.Date
 
 /**
 This class represents a user with login privileges on the website.

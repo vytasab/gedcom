@@ -1,8 +1,5 @@
 package lt.node.gedcom.snippet
 
-import _root_.java.sql.Date
-import _root_.java.util.regex.Pattern
-import _root_.java.text.SimpleDateFormat
 
 import _root_.scala.xml._
 
@@ -12,18 +9,12 @@ import _root_.scala.xml._
 //import _root_.lt.node.gedcom.util.{UberScreen,Utilits}
 //import _root_.lt.node.gedcom.util.UberScreen
 
-import _root_.javax.persistence.NoResultException
-import _root_.net.liftweb.http.js.JsCmds._
 
 import _root_.net.liftweb._
-import common.{Logger, Box, Empty, Full}
+import common.Logger
 import xml.{Group, NodeSeq}
-import mapper._
-import util.Mailer
-import util.Mailer._
 import util.Helpers._
-import http.{RequestVar, SHtml, S}
-import http.LiftScreen
+import http.SHtml
 
 /**
  * Created by IntelliJ IDEA.

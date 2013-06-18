@@ -4,7 +4,6 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import _root_.net.liftweb._
 import http._
-import js.JE.JsObj
 import js.jquery.JqJsCmds._
 import wizard._
 import common._
@@ -13,7 +12,7 @@ import _root_.net.liftweb.util.FieldError
 
 // B302-3/vsh
 
-import _root_.bootstrap.liftweb.{AccessControl,RequestedURL,ErrorXmlMsg, InfoXmlMsg,CurrentUser}
+import _root_.bootstrap.liftweb.{AccessControl,RequestedURL,ErrorXmlMsg,CurrentUser}
 import _root_.lt.node.gedcom.model._
 import _root_.lt.node.gedcom.util._
 

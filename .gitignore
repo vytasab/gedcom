@@ -39,3 +39,6 @@ test-output
 *.iml
 *.ipr
 *.iws
+
+# gedcom-web project specific
+gedcom-spa/src/main/resources/filters/*

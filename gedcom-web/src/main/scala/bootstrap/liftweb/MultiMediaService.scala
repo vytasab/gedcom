@@ -2,7 +2,6 @@ package bootstrap.liftweb
 
 import lt.node.gedcom.model.{Model, MultiMedia, MultiLang}
 import net.liftweb.http._
-import net.liftweb.mapper.By
 import net.liftweb.common.{Full, Box}
 import org.slf4j.{LoggerFactory, Logger}
 import net.liftweb.util.{Helpers, TimeHelpers}

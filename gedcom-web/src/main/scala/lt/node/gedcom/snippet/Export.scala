@@ -8,7 +8,6 @@ import lt.node.gedcom.util.Utilits
 import _root_.net.liftweb.util.Helpers._
 import lt.node.gedcom.rest.GedcomRest
 import java.lang.StringBuffer
-import bootstrap.liftweb.{FamilyIds, PersonIds}
 import org.slf4j.{LoggerFactory,Logger}
 //import org.apache.log4j.Level
 

@@ -15,15 +15,18 @@
  */
 package bootstrap.liftweb
 
-import java.util.{ResourceBundle, Locale}
+import java.util.Locale
 import _root_.java.text.MessageFormat
 import org.slf4j.{LoggerFactory, Logger}
 
 import _root_.scala.xml.NodeSeq
 
 import _root_.net.liftweb._
+import common.Full
 import http._
+import http.ParsePath
 import http.provider._
+import http.RewriteRequest
 import sitemap._
 import util.Helpers._
 import widgets.menu.MenuWidget
@@ -33,6 +36,9 @@ import common._
 import _root_.lt.node.gedcom._
 import model._
 import _root_.lt.node.gedcom.rest.GedcomRest
+import net.liftweb.util.{Mailer, Props}
+import javax.mail.{PasswordAuthentication, Authenticator}
+import scala.Some
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -46,6 +52,8 @@ class Boot extends Loggable {
     //deprec Slf4jLogBoot.enable
     val log: Logger = LoggerFactory.getLogger("Boot")
     log.debug("=====================================================================")
+    println("LiftRules.resourceServerPath = " + LiftRules.resourceServerPath)
+    println("ResourceServer.baseResourceLocation = " + ResourceServer.baseResourceLocation)
     log.debug("====== ===== ==== === == = Boot gedcom-web = == === ==== ===== ======")
     //log.debug("GedCom ab24-3"); //log.info("GedCom ab24-3"); log.warn("GedCom ab24-3");
     //    //---------------------------------------
@@ -95,20 +103,19 @@ class Boot extends Loggable {
 //        tryo { ResourceBundle.getBundle(/*"text." + */name, locale) } openOr null
 //    }
 
-
-
     ResourceServer.allow{
-      // AA26-2/vsh no need this line ?!
-      case "menu" :: _ => true
+      //case "menu" :: _ => true    // AA26-2/vsh no need this line ?!
       //case "raphael" :: _ => true // does not work AC17/vsh
-      //      case "ui" :: _ => true
-      //      //case "ui" :: "css" :: "smoothness" :: "jquery-ui-1.7.1.custom.css" :: Nil => true
-      //      //case "ui" :: "js" :: "jquery-ui-1.7.1.custom.min.js" :: Nil => true
+      //case "ui" :: _ => true
+            //case "ui" :: "css" :: "smoothness" :: "jquery-ui-1.7.1.custom.css" :: Nil => true
+            //case "ui" :: "js" :: "jquery-ui-1.7.1.custom.min.js" :: Nil => true
       //      //case "wymeditor" :: "jquery.wymeditor.pack.js" :: Nil => true
       //      //case "wymeditor" :: "lang" :: "en.js" :: Nil => true
       //      //case "wymeditor" :: "skins" :: "default" :: "skin.js" :: Nil => true
       //      case "wymeditor" :: _ => true
-    }
+      case _ => true                // D615-6/vsh this line is necessary !!!
+     }
+
     // Force the request to be UTF-8
     LiftRules.early.append((req: HTTPRequest) => {
       req.setCharacterEncoding("UTF-8")
@@ -155,48 +162,12 @@ class Boot extends Loggable {
     // B321-1=============================================
 
     //LiftRules.statelessDispatchTable.append(ImageInfo.serveImage)
-    LiftRules.statelessDispatchTable.append(MultiMediaService.serveImage)
-
-    //-- Locale calculation
-    //-- http://www.assembla.com/wiki/show/liftweb/Internationalization
-    //log.debug(MessageFormat.format("Locale.getDefault() - {0}", Locale.getDefault().toString))
-    def localeCalculator(request: Box[HTTPRequest]): Locale =
-      request.flatMap(r => {
-        val cookieName = "vsh.gedcom"; //  "your.cookie.name"
-        def localeCookie(in: String): HTTPCookie =
-          HTTPCookie(cookieName, Full(in),
-            Full(S.hostName), Full(S.contextPath), Full(2629743), Empty, Empty)
-        def localeFromString(in: String): Locale = {
-          val x = in.split("_").toList
-          //log.debug(MessageFormat.format("localeCalculator localeFromString - |{0}|", new Locale(x.head, x.last).toString))
-          new Locale(x.head, x.last)
-        }
-        def calcLocale: Box[Locale] =
-          S.findCookie(cookieName).map(
-            _.value.map(localeFromString)
-          ).openOr(Full(LiftRules.defaultLocaleCalculator(request)))
-        S.get("locale") match {
-          case f@Full(selectedLocale) =>
-            //log.debug(MessageFormat.format("localeCalculator f@Full(selectedLocale) - |{0}|", selectedLocale.toString))
-            S.addCookie(localeCookie(selectedLocale))
-            tryo(localeFromString(selectedLocale))
-          case _ =>
-            //log.debug(MessageFormat.format("localeCalculator _ "))
-            S.param("locale") match {
-              case Full(null) =>
-                //log.debug(MessageFormat.format("localeCalculator  _ Full(null) - |{0}|", calcLocale.toString))
-                calcLocale
-              case f@Full(selectedLocale) =>
-                //log.debug(MessageFormat.format("localeCalculator _ f@Full(selectedLocale) - |{0}|", selectedLocale.toString))
-                S.addCookie(localeCookie(selectedLocale))
-                tryo(localeFromString(selectedLocale))
-              case _ => calcLocale
-            }
-        }
-      }).openOr(Locale.getDefault())
+    LiftRules.statelessDispatchTable.append(MultiMediaService.serveImage)  // // D605-6/vsh  uncommented
+    // D605-6/vsh  no such method:  LiftRules.statelessDispatch.append(MultiMediaService.serveImage)
 
     LiftRules.localeCalculator = localeCalculator _
 
+    LiftSession
 
     //-- Charles F. Munat: Encrypting user passwords with Jasypt and JPA []... ====================
     LiftRules.dispatch.prepend{
@@ -290,6 +261,7 @@ class Boot extends Loggable {
         RequestedURL(Full(S.uri))
         () => Full(RedirectResponse("/login"))
     }
+
   }
 
   // ...[] ===================================================================================
@@ -309,8 +281,6 @@ class Boot extends Loggable {
   AutoComplete.init
 
 
-  //}
-
   LiftRules.noticesAutoFadeOut.default.set((notices: NoticeType.Value) => {
     notices match {
       case NoticeType.Notice => Full((5 seconds, 5 seconds))
@@ -320,9 +290,110 @@ class Boot extends Loggable {
     }
   })
 
-}
+  configureMailer()
+  //SendMailTestTLS.render
+  //SendGridTest.render
 
-// ...[] ===================================================================================
+  //-- Locale calculation
+  //-- http://www.assembla.com/wiki/show/liftweb/Internationalization
+  //log.debug(MessageFormat.format("Locale.getDefault() - {0}", Locale.getDefault().toString))
+  def localeCalculator(request: Box[HTTPRequest]): Locale =
+    request.flatMap(r => {
+      val cookieName = "vsh.gedcom"; //  "your.cookie.name"
+      def localeCookie(in: String): HTTPCookie =
+        HTTPCookie(cookieName, Full(in),
+          Full(S.hostName), Full(S.contextPath), Full(2629743), Empty, Empty)
+      def localeFromString(in: String): Locale = {
+        val x = in.split("_").toList
+        //log.debug(MessageFormat.format("localeCalculator localeFromString - |{0}|", new Locale(x.head, x.last).toString))
+        new Locale(x.head, x.last)
+      }
+      def calcLocale: Box[Locale] =
+        S.findCookie(cookieName).map(
+          _.value.map(localeFromString)
+        ).openOr(Full(LiftRules.defaultLocaleCalculator(request)))
+      S.get("locale") match {
+        case f@Full(selectedLocale) =>
+          //log.debug(MessageFormat.format("localeCalculator f@Full(selectedLocale) - |{0}|", selectedLocale.toString))
+          S.addCookie(localeCookie(selectedLocale))
+          tryo(localeFromString(selectedLocale))
+        case _ =>
+          //log.debug(MessageFormat.format("localeCalculator _ "))
+          S.param("locale") match {
+            case Full(null) =>
+              //log.debug(MessageFormat.format("localeCalculator  _ Full(null) - |{0}|", calcLocale.toString))
+              calcLocale
+            case f@Full(selectedLocale) =>
+              //log.debug(MessageFormat.format("localeCalculator _ f@Full(selectedLocale) - |{0}|", selectedLocale.toString))
+              S.addCookie(localeCookie(selectedLocale))
+              tryo(localeFromString(selectedLocale))
+            case _ => calcLocale
+          }
+      }
+    }).openOr(Locale.getDefault())
+
+
+  private def configureMailer() {
+    val log: Logger = LoggerFactory.getLogger("configureMailer")
+    log.debug("[]... ... ...")
+    log.debug("TEST: Props.fileName |" + Props.fileName + "|")
+    log.debug("TEST: Props.propFileName |" + Props.propFileName + "|")
+    log.debug("TEST: Props.modeName |" + Props.modeName + "|")
+    log.debug("TEST: Props.mode |" + Props.mode.toString + "|")
+    log.debug("TEST: Props.props |" + Props.props.toString + "|")
+//    log.debug("mail.smtp.auth |" + Props.get("mail.smtp.auth", "false") + "|")
+
+    var isAuth =  Props.get("mail.smtp.auth", "false").toBoolean
+
+    /*Mailer.customProperties =*/
+    Props.get("mail.smtp.host", "localhost") match {
+      case "smtp.gmail.com" =>
+        log.debug("smtp.gmail.com |" + Props.get("mail.smtp.host", "localhost") + "|")
+        isAuth = true
+        /*Map(
+          "mail.debug" -> "true",
+          "mail.smtp.ssl.trust" -> "smtp.gmail.com", //  !!! http://stackoverflow.com/questions/16632334/could-not-convert-socket-to-tls
+          "mail.transport.protocol" -> "smtp",
+          "mail.smtp.host" -> "smtp.gmail.com",
+          "mail.smtp.port" -> "587",
+          "mail.smtp.auth" -> "true" //,
+                                                     // http://stackoverflow.com/questions/13918374/java-email-exception-server-is-not-trusted
+          //"mail.smtp.ssl.enable" -> "true",        // Bypass the SSL authentication
+          //"mail.smtp.starttls.enable" -> "true",   // Bypass the SSL authentication
+          //"mail.smtp.ssl.socketFactory" -> sf
+          )*/
+      case host =>
+        log.debug("host |" + Props.get("mail.smtp.host", "localhost") + "|")
+        /*Map(
+          "mail.smtp.host" -> host,
+          "mail.smtp.port" -> Props.get("mail.smtp.port", "25"),
+          "mail.smtp.auth" -> isAuth.toString
+        )*/
+        val msg = ("completeQuery: \"mail.smtp.host\" is not \"smtp.gmail.com\"")
+        log.debug(msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map(
+            "location" -> <p>Boot.configureMailer</p>,
+            "message" -> <p>{msg}</p>)))
+        })
+    }
+
+    if (isAuth) {
+      log.debug("isAuth |" + isAuth.toString + "|")
+      //(Props.get("mail.smtp.user"), Props.get("mail.smtp.pass")) match {
+      //(Full("vytasab@gmail.com"), Full("paratunka")) match {
+      (Full("vytasab@gmail.com"), Full("paratunka")) match {
+      case (Full(username), Full(password)) =>
+          Mailer.authenticator = Full(new Authenticator() {
+            override def getPasswordAuthentication = new PasswordAuthentication(username, password)
+          })
+        case _ => logger.error("Username/password not supplied for Mailer.")
+      }
+    }
+    log.debug("... ... ...[] Mailer.authenticator =|" + Mailer.authenticator.get.toString + "|")
+  }
+
+}
 
 object Locales {
   val langs = List(/*"--", */"lt_LT", "en_EN"/*, "de", "pl", "ru"*/)

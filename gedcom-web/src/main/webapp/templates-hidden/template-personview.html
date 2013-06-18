@@ -4,8 +4,10 @@
     <meta name="description" content=""/>
     <meta name="keywords" content=""/>
 
-    <lift:CSS.blueprint/>
-    <lift:CSS.fancyType/>
+    <!--<lift:CSS.blueprint/>-->
+    <!--<lift:CSS.fancyType/>-->
+    <style class="lift:CSS.blueprint" />
+    <style class="lift:CSS.fancyType" />
     <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
     <script id="json" src="/classpath/json.js" type="text/javascript"/>
 
@@ -23,6 +25,7 @@
         div.screen {border:groove 1px; color:#000; background:#ffc}
     </style>
 
+    <!-- http://instant-eyedropper.com/info/html_color_code/ -->
     <style>
         .edit_error_class { display:block; color:red; }
         .lift_error { color:red; }
@@ -87,11 +90,6 @@
     <div>
         <span class="column span-24">
 		  	<lift:CmsMenu.render/>
-<!--
-            <span class="lift:SettingSnips.flag">
-                <span id="lokale" style=""/>
-            </span>
--->
             <form action="POST">
                 <span class="lift:SettingSnips.flag" style="vertical-align:top">
                     <span id="lokale" style="display:yes" onclick="showWhenFlagClick();" />
@@ -130,54 +128,6 @@
                         <lift:bind name="person-content"/>
                     </td>
                 </tr>
-                <!--<tr>
-                    <td>
-                        <lift:loc>person</lift:loc>
-
-                        &lt;!&ndash;
-                        <span class="lift:PersonView.goUpdate">
-                            <span id="goUpdate" style="">goUpdate</span>
-                        </span>
-                        &ndash;&gt;
-
-                        &lt;!&ndash;<span>&ndash;&gt;
-                            &lt;!&ndash;<button class="lift:AddPeWizardRunner"><lift:loc>wiz.add</lift:loc></button>&ndash;&gt;
-                        &lt;!&ndash;</span>&ndash;&gt;
-                        &lt;!&ndash;<div style="margin:10px; border:solid 1px blue">&ndash;&gt;
-	                        &lt;!&ndash;<div class="lift:PeWizard"></div>&ndash;&gt;
-                        &lt;!&ndash;</div>&ndash;&gt;
-                    </td>
-                    <td colspan="4">
-                        <lift:bind name="person-content"/>
-                        &lt;!&ndash;<span>&ndash;&gt;
-                            &lt;!&ndash;<button class="lift:AddPeWizardRunner"><lift:loc>wiz.add.pepa</lift:loc></button>&ndash;&gt;
-                        &lt;!&ndash;</span>&ndash;&gt;
-                        &lt;!&ndash;
-                        <div style="margin:10px; border:solid 1px blue">
-	                        <div class="lift:PeWizard"></div>
-                        </div>
-                        &ndash;&gt;
-                    </td>
-                    <td>&nbsp;</td>
-                </tr>-->
-                <!--<tr>
-                    <td><lift:loc>spouse.n.children</lift:loc></td>
-                    <td colspan="4">
-                        &lt;!&ndash;<lift:bind name="family-content"/>&ndash;&gt;
-                        <span class="lift:PersonView.renderSpouseAndChildren">
-                            <span id="childreninfo" style="">spouse and children</span>
-                        </span>
-                        <span>
-                            <button class="lift:AddFaWizardRunner"><lift:loc>wiz.add.fe</lift:loc></button>
-                        </span>
-                        &lt;!&ndash;
-                        <div style="margin:10px; border:solid 1px blue">
-	                        <div class="lift:FaWizard"></div>
-                        </div>
-                        &ndash;&gt;
-                    </td>
-                    <td>&nbsp;</td>
-                </tr>-->
             </table>
 
         </span>

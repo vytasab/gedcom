@@ -2,7 +2,7 @@ package lt.node.gedcom.model
 
 import javax.persistence._
 import javax.persistence.Column
-import xml.{Node, Unparsed, NodeSeq}
+import xml.{Unparsed, NodeSeq}
 
 // http://www.javacodegeeks.com/2012/05/load-or-save-image-using-hibernate.html
 

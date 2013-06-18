@@ -625,7 +625,6 @@ mysql> SHOW VARIABLES LIKE 'character_set%';
 +--------------------------+---------------------------------------------------------+
 8 rows in set (0.00 sec)
 
-
 ==========> AFTER CHANGE
 
 +----------------------+-----------------+
@@ -654,10 +653,190 @@ mysql> SHOW VARIABLES LIKE 'character_set%';
 
 mysql>
 
-ymdd-x/vsh ==============================================================================
-ymdd-x/vsh ==============================================================================
+
+D405-5/vsh ==============================================================================
+        I18N related locations in source code:
+GedcomDate.i18nizeGedcomDate:  gedcom date format transformation to specified locale
+
+
+D612-3/vsh ==============================================================================
+        Email siuntimas iš gedcom-web'o
+Paėmiau  InstallCert.java iš
+    http://www.cs.ucsb.edu/~pconrad/cs56/examples/ldap/SimpleQuery/InstallCert.java
+    į c:\Program Files\Java\InstallCert\java\
+
+Sukompiliavau source'ą ten pat.
+
+Tolesnius veiksmus vykdžiau pagal // http://felipeferreira.net/?p=974:
+    -----------
+C:\Program Files\Java\InstallCert\java>java InstallCert www.experianmarketing.com.br
+Loading KeyStore c:\Program Files\Java\jre7\lib\security\cacerts...
+Opening connection to www.experianmarketing.com.br:443...
+Starting SSL handshake...
+
+javax.net.ssl.SSLException: java.lang.UnsupportedOperationException
+        at sun.security.ssl.Alerts.getSSLException(Unknown Source)
+        at sun.security.ssl.SSLSocketImpl.fatal(Unknown Source)
+        at sun.security.ssl.SSLSocketImpl.fatal(Unknown Source)
+        at sun.security.ssl.SSLSocketImpl.handleException(Unknown Source)
+        at sun.security.ssl.SSLSocketImpl.startHandshake(Unknown Source)
+        at sun.security.ssl.SSLSocketImpl.startHandshake(Unknown Source)
+        at InstallCert.main(InstallCert.java:91)
+Caused by: java.lang.UnsupportedOperationException
+        at InstallCert$SavingTrustManager.getAcceptedIssuers(InstallCert.java:17
+5)
+        at sun.security.ssl.AbstractTrustManagerWrapper.checkAlgorithmConstraint
+s(Unknown Source)
+        at sun.security.ssl.AbstractTrustManagerWrapper.checkAdditionalTrust(Unk
+nown Source)
+        at sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(Unkno
+wn Source)
+        at sun.security.ssl.ClientHandshaker.serverCertificate(Unknown Source)
+        at sun.security.ssl.ClientHandshaker.processMessage(Unknown Source)
+        at sun.security.ssl.Handshaker.processLoop(Unknown Source)
+        at sun.security.ssl.Handshaker.process_record(Unknown Source)
+        at sun.security.ssl.SSLSocketImpl.readRecord(Unknown Source)
+        at sun.security.ssl.SSLSocketImpl.performInitialHandshake(Unknown Source
+)
+        ... 3 more
+
+Server sent 3 certificate(s):
+
+ 1 Subject CN=www.experianmarketing.com.br, OU=Serasa S.A., O=Serasa S.A., L=Sao
+ Paulo, ST=SP, C=BR
+   Issuer  CN=SerasaACGlobal, OU=Serasa Autoridade Certificadora Global, O=Seras
+a, C=BR
+   sha1    2c 21 f4 f3 03 7a 00 65 b0 a9 6c 83 dd d6 8c 06 8d 1d dd ca
+   md5     6c 60 7e 3c 6f 98 dd 59 4a 92 9e b2 42 72 07 3b
+
+ 2 Subject CN=SerasaACGlobal, OU=Serasa Autoridade Certificadora Global, O=Seras
+a, C=BR
+   Issuer  C=BE, O=GlobalSign nv-sa, OU=RootSign Partners CA, CN=GlobalSign Root
+Sign Partners CA
+   sha1    73 67 74 c2 ed 1d e0 31 a3 cf f8 1d d5 bb 26 4f cd d1 08 6e
+   md5     f7 36 92 e4 b0 23 cb 5c f2 fd ed fb 26 3c 49 74
+
+ 3 Subject C=BE, O=GlobalSign nv-sa, OU=RootSign Partners CA, CN=GlobalSign Root
+Sign Partners CA
+   Issuer  CN=GlobalSign Root CA, OU=Root CA, O=GlobalSign nv-sa, C=BE
+   sha1    c0 3c dc 3f c0 03 c3 08 75 25 bc 00 64 50 8b 2d d5 7d 74 bb
+   md5     30 95 30 54 4f 55 bf a4 21 a4 b4 70 c0 14 e2 aa
+
+Enter certificate to add to trusted keystore or 'q' to quit: [1]
+
+[
+[
+  Version: V3
+  Subject: CN=www.experianmarketing.com.br, OU=Serasa S.A., O=Serasa S.A., L=Sao
+ Paulo, ST=SP, C=BR
+  Signature Algorithm: SHA1withRSA, OID = 1.2.840.113549.1.1.5
+
+  Key:  Sun RSA public key, 1024 bits
+  modulus: 101290620165199054944563044380689095117861928131406817067546090770649
+79396707473391346350980065644310960221001256711028709843580378738069473336899417
+27498871183323382149301465957996766522900227541203258068347743618186130858671539
+26904741434774386176792920775252572549627104931249255450192040524796930452819757
+
+  public exponent: 65537
+  Validity: [From: Sat Jan 15 00:40:00 EET 2011,
+               To: Tue Jan 14 00:40:00 EET 2014]
+  Issuer: CN=SerasaACGlobal, OU=Serasa Autoridade Certificadora Global, O=Serasa
+, C=BR
+  SerialNumber: [    49aae23b 278dca87]
+
+Certificate Extensions: 5
+[1]: ObjectId: 2.5.29.35 Criticality=false
+AuthorityKeyIdentifier [
+KeyIdentifier [
+0000: 22 29 F4 D5 E8 15 5B B2   5E 67 EA 30 A7 F5 71 41  ")....[.^g.0..qA
+0010: 2D 8C 2F 69                                        -./i
+]
+]
+
+[2]: ObjectId: 2.5.29.31 Criticality=false
+CRLDistributionPoints [
+  [DistributionPoint:
+     [URIName: http://www.certificadodigital.com.br/repositorioglobal/lcr/Serasa
+ACGlobal2008.crl]
+]]
+
+[3]: ObjectId: 2.5.29.32 Criticality=false
+CertificatePolicies [
+  [CertificatePolicyId: [0.0]
+[PolicyQualifierInfo: [
+  qualifierID: 1.3.6.1.5.5.7.2.1
+  qualifier: 0000: 16 4A 68 74 74 70 3A 2F   2F 77 77 77 2E 63 65 72  .Jhttp://w
+ww.cer
+0010: 74 69 66 69 63 61 64 6F   64 69 67 69 74 61 6C 2E  tificadodigital.
+0020: 63 6F 6D 2E 62 72 2F 72   65 70 6F 73 69 74 6F 72  com.br/repositor
+0030: 69 6F 2F 70 63 2F 50 43   5F 53 45 52 41 53 41 5F  io/pc/PC_SERASA_
+0040: 41 43 47 6C 6F 62 61 6C   2E 70 64 66              ACGlobal.pdf
+
+]]  ]
+]
+
+[4]: ObjectId: 2.5.29.37 Criticality=false
+ExtendedKeyUsages [
+  serverAuth
+]
+
+[5]: ObjectId: 2.5.29.15 Criticality=true
+KeyUsage [
+  DigitalSignature
+  Non_repudiation
+  Key_Encipherment
+]
+
+]
+  Algorithm: [SHA1withRSA]
+  Signature:
+0000: 2D 53 D3 80 A8 A9 59 49   F2 E0 C4 FF C7 58 D1 3E  -S....YI.....X.>
+0010: E6 7B 1F 87 EE 34 69 01   35 A1 06 98 99 C1 72 1F  .....4i.5.....r.
+0020: 2D EC D7 B8 20 9B 54 5E   BC BE A8 71 28 D6 31 DD  -... .T^...q(.1.
+0030: 22 E7 23 52 E0 74 CD 91   78 2A D7 B9 60 34 0F E2  ".#R.t..x*..`4..
+0040: 78 BB 48 0D B4 AE 37 A3   11 50 17 1E D8 BD B3 F9  x.H...7..P......
+0050: 0E B8 77 65 02 D1 B2 F6   4F 54 9F 3E EA ED 14 41  ..we....OT.>...A
+0060: 60 27 F8 2D D3 4A 76 DA   CB FE 35 C5 35 B6 4F 4E  `'.-.Jv...5.5.ON
+0070: 35 0B 69 72 D7 F9 50 6D   99 80 FF 75 C3 49 41 0B  5.ir..Pm...u.IA.
+0080: BE 8E AE C1 1A 04 CA 58   49 72 C9 8E E4 E1 7F 89  .......XIr......
+0090: 3B 3B 0C 83 25 BB 2A D8   45 ED 97 26 59 B0 D8 FD  ;;..%.*.E..&Y...
+00A0: 9D E2 36 C1 AE A4 EC C5   0C DC 6E BA FC 69 53 E9  ..6.......n..iS.
+00B0: F9 C6 72 5E 69 1F C6 A3   65 4F F4 8A AD 03 A9 BD  ..r^i...eO......
+00C0: 20 80 35 B9 04 9E B3 0C   C9 E2 49 5E 7A AE 4F ED   .5.......I^z.O.
+00D0: CC 91 74 1D E3 0C 94 F2   29 16 A5 EF 27 71 DA 06  ..t.....)...'q..
+00E0: DC E3 7B 58 B7 AA DD 09   1E C5 D0 BE 88 BF 49 8B  ...X..........I.
+00F0: 6C DF 74 40 04 E2 33 7A   67 CF 33 20 34 8D A7 8C  l.t@..3zg.3 4...
+
+]
+
+Added certificate to keystore 'jssecacerts' using alias 'www.experianmarketing.c
+om.br-1'
+C:\Program Files\Java\InstallCert\java>
+    -----------
+--> buvo sukutras failas       C:\Program Files\Java\InstallCert\java/jssecacerts
+
+Nukopijavau: C:\Program Files\Java\InstallCert\java/jssecacerts  -> %JAVA_HOME%\\lib\security\
+
+Kitas esminis atradimas buvo
+    http://stackoverflow.com/questions/16632334/could-not-convert-socket-to-tls
+pastaba apie
+   props.put("mail.smtp.ssl.trust", "smtpserver");
+   pakeisti į
+   props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+   Boot.scala configureMailer() metode
+
+PANAŠU, kad viskas koncentruočiau paaiškinta:  http://miteff.com/install-cert
+Šiek tiek apie SMTP EHLO:  http://cr.yp.to/smtp/ehlo.html
+
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
 
+http-apr-8080-exec-5 DEBUG 16:10:22,593 [LoginOps] [debug 174] - logUserIn: rasta db; password=123123
+http-apr-8080-exec-5 DEBUG 16:10:22,609 [LoginOps] [debug 174] - logUserIn: user.passwordHash=IuQWK9DSHzm8JG0JQkBSYq7QXgk=
+http-apr-8080-exec-5 DEBUG 16:10:22,609 [LoginOps] [debug 174] - logUserIn: user.passwordSalt=SMXRaJIAMdMGfKAZ
+User hash in=123123SMXRaJIAMdMGfKAZ|
+User hash=IuQWK9DSHzm8JG0JQkBSYq7QXgk=|
+          IuQWK9DSHzm8JG0JQkBSYq7QXgk=
+http-apr-8080-exec-5 WARN 16:10:22,671 [LoginOps] [warn 216] - logUserIn: User authentication is invalid

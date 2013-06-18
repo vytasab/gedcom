@@ -5,7 +5,6 @@ import http._
 import util._
 import util.Helpers._
 
-import _root_.scala._
 import xml.NodeSeq
 
 object LongMsgs {

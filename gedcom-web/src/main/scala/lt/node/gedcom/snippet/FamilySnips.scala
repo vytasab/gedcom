@@ -1,12 +1,9 @@
 package lt.node.gedcom.snippet
 
-import _root_.scala._
-import xml._
 
 //{Elem, NodeSeq, Group, Text}
 
 import _root_.net.liftweb._
-import widgets.autocomplete.{AutoComplete}
 
 //import http.{RequestVar, S, SHtml}
 
@@ -15,7 +12,6 @@ import common._
 import net.liftweb.util._
 import Helpers._
 
-import _root_.lt.node.gedcom.model._
 
 class FamilySnips {
   val log = Logger("FamilySnips");
