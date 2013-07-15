@@ -311,7 +311,7 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+            <!--<plugin>
                 <groupId>org.zeroturnaround</groupId>
                 <artifactId>javarebel-maven-plugin</artifactId>
                 <version>1.0.5</version>
@@ -324,7 +324,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -337,8 +337,6 @@
                         <!-- specific configurations -->
                         <configuration>
                             <encoding>UTF8</encoding>
-                            <!--<src>${basedir}/src/main/resources</src>-->
-                            <!--<dest>target/classes</dest>-->
                             <!--<includes>**/*.properties</includes>-->
                         </configuration>
                     </execution>
@@ -397,7 +395,6 @@
 
         </plugins>
     </build>
-
     <profiles>
         <!-- mvn -Ddb-init-load generate-sources  ================================================================== -->
         <profile>
@@ -459,20 +456,6 @@
             <!--<activation><property><name>dev-on</name></property></activation>-->
             <!-- http://www.manydesigns.com/en/portofino/portofino3/tutorials/using-maven-profiles-and-resource-filtering -->
             <properties>
-                <!--
-                db_driver=com.mysql.jdbc.Driver
-                db_url=jdbc:mysql://localhost:3306/datasource-gedcom
-                db_user=shaknisgedcom
-                db_password=123123
-                # host.port.app=localhost:8080/gedcom-web/
-                host__=localhost
-                _port_=:8080
-                __app=/gedcom-web/
-                admin_mailhost=mail.node.lt
-                admin_mail=vsh@node.lt
-                loc_texts_4XSL=./webapps/gedcom-web/WEB-INF/classes/xsl/locTexts4XSL.xml
-                regex.password=^[A-Za-z0-9_]{6,12}
-                -->
                 <db_driver>com.mysql.jdbc.Driver</db_driver>
                 <db_url>jdbc:mysql://localhost:3306/datasource-gedcom</db_url>
                 <db_user>shaknisgedcom</db_user>
@@ -480,54 +463,46 @@
                 <host__>localhost</host__>
                 <_port_>:8080</_port_>
                 <__app>/gedcom-web/</__app>
-                <admin_mailhost>mail.node.lt</admin_mailhost>
-                <admin_mail>vsh@node.lt</admin_mail>
                 <loc_texts_4XSL>./webapps/gedcom-web/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>
             </properties>
             <build>
                 <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
                 <filters>
-                    <filter>src/main/resources/dev-resources/default.properties</filter>
+                    <filter>src/main/resources/dev-resources/nexus.properties</filter>  <!--  default  nexus  -->
+                    <!--<filter>src/main/resources/nexus.properties</filter>  &lt;!&ndash;  default  nexus  &ndash;&gt;-->
                 </filters>
                 <resources>
                     <resource>
                         <directory>src/main/resources/dev-resources</directory>
                         <targetPath>./props</targetPath>
-                        <!--<targetPath>./filtered</targetPath>-->
-                        <filtering>false</filtering>
-                        <!--<filtering>true</filtering>-->
+                        <filtering>true</filtering>   <!-- true false -->
                         <includes>
-                            <include>default.props</include>
+                            <include>nexus.props</include>
                             <include>default.log4j.xml</include>
                         </includes>
                         <excludes>
+                            <exclude>nexus.properties</exclude>
                         </excludes>
                     </resource>
                 </resources>
                 <plugins>
-                    <!-- <plugin>
+                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
-                        <version>2.1.1</version>
                         <configuration>
-                            <filters>
-                                <filter>src/main/resources/filters/dev.properties</filter>
-                            </filters>
-                            <webResources>
-                                <resource>
-                                    <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-                                    <filtering>true</filtering>
-                                    <targetPath>WEB-INF</targetPath>
-                                    <includes>
-                                        <include>src/main/resources/props/dev.props</include>
-                                    </includes>
-                                </resource>
-                            </webResources>
+                            <packagingExcludes>
+                                WEB-INF/classes/dev-resources/,WEB-INF/classes/prod-resources/,
+                                WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
+                                WEB-INF/lib/lift-common_2.9.1-2.4.jar,
+                                WEB-INF/lib/lift-json_2.9.1-2.4.jar,
+                                WEB-INF/lib/lift-util_2.9.1-2.4.jar,
+                                WEB-INF/lib/lift-webkit_2.9.1-2.4.jar
+                            </packagingExcludes>
+                            <!--<packagingExcludes>
+                                WEB-INF/classes/dev-resources/,WEB-INF/classes/prod-resources/
+                            </packagingExcludes>-->
                         </configuration>
-                    </plugin> -->
-
-                    <!-- ====================================== -->
-
+                    </plugin>
                     <plugin>
                         <!-- http://code.google.com/p/specs/wiki/RunningSpecs#Run_your_specifications_with_JUnit4_and_Maven -->
                         <groupId>org.apache.maven.plugins</groupId>
@@ -543,8 +518,7 @@
                             </includes>
                         </configuration>
                     </plugin>
-
-                    <plugin>
+                    <!--<plugin>
                         <groupId>org.zeroturnaround</groupId>
                         <artifactId>jrebel-maven-plugin</artifactId>
                         <executions>
@@ -554,6 +528,20 @@
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>-->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>native2ascii-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>native2ascii</goal>
+                                </goals>
+                                <configuration>
+                                    <encoding>UTF8</encoding>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -572,35 +560,6 @@
                 </property>
             </activation>
             <properties>
-                <!--
-                db_driver=com.mysql.jdbc.Driver
-                db_url=jdbc:mysql://localhost:3306/datasource-gedcom
-                db_user=shaknisgedcom
-                db_password=123123
-                # host.port.app=localhost:8080/gedcom-web/
-                host__=localhost
-                _port_=:8080
-                __app=/gedcom-web/
-                admin_mailhost=mail.node.lt
-                admin_mail=vsh@node.lt
-                loc_texts_4XSL=./webapps/gedcom-web/WEB-INF/classes/xsl/locTexts4XSL.xml
-                regex.password=^[A-Za-z0-9_]{6,12}
-
-                db.driver=com.mysql.jdbc.Driver
-                db.url=jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom
-                db.user=shaknisgedcom
-                db.password=123123
-                host__=gedcom-web.vytastax.staxapps.net
-                _port_=
-                __app=/
-                regex.password=^[A-Za-z0-9_]{6,12}
-                admin.mailhost=mail.node.lt
-                admin.mail=vsh@node.lt
-
-                #admin.mailhost=smtp.gmail.com:465
-                #admin.mailhost=smtp.gmail.com
-                #admin.mail=vytasab@gmail.com
-                -->
                 <db_driver>com.mysql.jdbc.Driver</db_driver>
                 <db_url>jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom</db_url>
                 <db_user>shaknisgedcom</db_user>
@@ -608,32 +567,38 @@
                 <host__>gedcom-web.vytastax.staxapps.net</host__>
                 <_port_></_port_>
                 <__app>/</__app>
-                <admin_mailhost>mail.node.lt</admin_mailhost>
-                <admin_mail>vsh@node.lt</admin_mail>
+                <!--<admin_mailhost>mail.node.lt</admin_mailhost>-->
+                <!--<admin_mail>vsh@node.lt</admin_mail>-->
                 <loc_texts_4XSL>./webapps/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>
             </properties>
             <build>
                 <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
                 <filters>
-                    <filter>src/main/resources/prod-resources/default.properties</filter>
+                    <filter>src/main/resources/prod-resources/production.properties</filter>
                 </filters>
                 <resources>
                     <resource>
                         <directory>src/main/resources/prod-resources</directory>
                         <targetPath>./props</targetPath>
-                        <!--<targetPath>./filtered</targetPath>-->
                         <filtering>true</filtering>
                         <includes>
-                            <include>default.props</include>
-                            <include>default.log4j.xml</include>
+                            <include>production.props</include>
+                            <include>production.log4j.xml</include>
                         </includes>
                         <excludes>
+                            <exclude>production.properties</exclude>
                         </excludes>
                     </resource>
                 </resources>
 
                 <plugins>
-
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <packagingExcludes>WEB-INF/classes/dev-resources/,WEB-INF/classes/prod-resources/</packagingExcludes>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>com.cloudbees</groupId>
                         <artifactId>bees-maven-plugin</artifactId>
@@ -641,7 +606,6 @@
                             <port>8085</port>
                         </configuration>
                     </plugin>
-
                     <!--<plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
@@ -709,8 +673,7 @@
                             </includes>
                         </configuration>
                     </plugin>
-
-                    <plugin>
+                    <!--<plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-eclipse-plugin</artifactId>
                         <version>2.7</version>
@@ -727,7 +690,7 @@
                                 <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
                             </classpathContainers>
                         </configuration>
-                    </plugin>
+                    </plugin>-->
                     <!--<plugin>
                         <groupId>org.zeroturnaround</groupId>
                         <artifactId>jrebel-maven-plugin</artifactId>
@@ -752,9 +715,6 @@
                                 <!-- specific configurations -->
                                 <configuration>
                                     <encoding>UTF8</encoding>
-                                    <!--<src>${basedir}/src/main/resources</src>
-                                    <dest>target/classes</dest>
-                                    <includes>**/*.properties</includes>-->
                                 </configuration>
                             </execution>
                         </executions>

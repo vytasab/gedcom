@@ -6,7 +6,7 @@
  an Entity contains box params: x - horiz coord, y - vert coord, w - width, h - height 
 */
 // Global parameters
-// G.loggedIn = the value is set in serev Lift side (Forest.scala)
+// G.loggedIn = the value is set in server Lift side (Forest.scala)
 G.globWidth =  0*640 + 0*720 + 0*800 + 0 + 1*1280;
 G.globHeight = 0*480 + 0*576 + 0*600 + 0 + 1*720;
 G.locale = 'lt'; // actual value must be generated in Lift
@@ -204,8 +204,7 @@ Raphael.fn.setActions4Sibling = function(personId) { //===S-i-b-l-i-n-g=========
     //p.r[p.r.length] = rectActs;
 
     var fId = ('familyId' in p) ? (0+p.familyId) : '0';
-    this.setAction4Sibling(personId, 'js_full_info', G.app+'rest/personView/'+personId);  // B217-4/vsh
-
+    // D704-4/vsh this.setAction4Sibling(personId, 'js_full_info', G.app+'rest/personView/'+personId);  // B217-4/vsh
 
     if (G.loggedIn && (personId == G.rootId)) { // D207-4/vsh
         if ('familyId' in p) {
@@ -608,20 +607,38 @@ Raphael.fn.drawPerson = function(personId, relPosition) { //====================
 
         rect1.node.onclick = function() { //logD("rect1.node.onclick");
             rect1.attr("fill", "#fff");
-            location.assign ( G.app+"rest/person/" + p.id);
+            if (personId == G.rootId) {
+                location.assign ( G.app+"rest/personView/" + p.id);
+                //if (G.loggedIn) { location.assign ( G.app+"rest/person/" + p.id); }
+                //else { location.assign ( G.app+"rest/personView/" + p.id); }
+            } else
+                location.assign ( G.app+"rest/person/" + p.id);
+            // location.assign ( G.app+"rest/person/" + p.id);
         };
         
         rect1.node.onmouseover = function() { //logD("rect1.node.onmouseover");
             rect1.attr(/*CSS.genderOver*/((p.gender=='M') ?  CSS.maleOver : CSS.femaleOver)) //.attr({fill: '90-#f6f-#fff', opacity: 0.5});
-            rect1.attr("title", "click mouse to change current person");
+            if (personId == G.rootId) {
+                rect1.attr("title", "click mouse to see all the person data");
+                //if (G.loggedIn) { }
+                //else { rect1.attr("title", "click mouse to see all the person data"); }
+            } else {
+                rect1.attr("title", "click mouse to change current person");
+                //if (G.loggedIn == true)  rect1.attr("title", "click mouse to change current person");
+                //else { rect1.attr("title", "click mouse to change current person");
+             }
+            //rect1.attr("title", "click mouse to change current person");
         };
+
         rect1.node.onmouseout = function() { //logD("rect1.node.onmouseout");
             rect1.attr(/*CSS.gender*/((p.gender=='M') ?  CSS.male : CSS.female)) //.attr({fill: '270-#fcf-#fff', opacity: 0.5});
         };
         
         //if (G.loggedIn && (relPosition == 'init')) { // goLeft, goUp icon shape is (p.h X p.h)
         //if (G.loggedIn && (personId == G.rootId)) { // goLeft, goUp icon shape is (p.h X p.h)
-        if ((personId == G.rootId)) { // D207-4/vsh // goLeft, goUp icon shape is (p.h X p.h)
+        if ((G.loggedIn && (personId == G.rootId))) {
+            // D7004-4/vsh start using  (G.loggedIn
+            // D207-4/vsh // goLeft, goUp icon shape is (p.h X p.h)
             // goLeft icon drawing  S-i-b-l-i-n-g  S-i-b-l-i-n-g  S-i-b-l-i-n-g
             var xgli = p.x-p.h-1*G.margin-1;
             var ygli = p.y-1*G.margin;
@@ -634,22 +651,27 @@ Raphael.fn.drawPerson = function(personId, relPosition) { //====================
 //            rect2.attr({fill: "ff3", "fill-opacity":"0", stroke: "#fff", "stroke-width":"1"});
 //            p.r[p.r.length] = rect2;
             
-            arrowLeft.node.onclick = function() { ///*logD*/alert("arrowLeft.node.onclick");
+            /* D704-4/vsh arrowLeft.node.onclick = function() { //*//*logD*//*alert("arrowLeft.node.onclick");
                  arrowLeft.hide();
-                 if ('arrowUp' in p) p.arrowUp.hide(); 
+                 if ('arrowUp' in p) p.arrowUp.hide();
+                 //if (G.loggedIn *//*&& (personId == G.rootId)*//*) {
                  paper.setActions4Sibling(p.id);
-            };
+                 //} else { }
+            };*/
             
             arrowLeft.node.onmouseover = function() {  //logD("arrowLeft.node.onmouseover");
                 //arrowLeft.show()
                 //rect2.attr({fill: "#ff0", opacity: 1});
-                arrowLeft.attr("title", "click mouse to show available actions for the person sibling");
+                // D704-4/vsh   arrowLeft.attr("title", "click mouse to show available actions for the person sibling");
+                paper.setActions4Sibling(p.id);
                 //rect2.attr({fill: "#111", "fill-opacity":0, stroke: "#0ff", "stroke-width": 2});
             };
-            arrowLeft.node.onmouseout = function() {  //logD("arrowLeft.node.onmouseout");
-                //arrowLeft.hide();
+
+            arrowLeft.node.onmouseout = function() {  logD("arrowLeft.node.onmouseout");
+                arrowLeft.hide();
+                if ('arrowUp' in p) p.arrowUp.hide();
                 //rect2.attr({fill: "#fff", opacity: 0.5});
-                 //rect2.attr('display', 'none');
+                //rect2.attr('display', 'none');
                 //rect2.attr({fill: "#000", "fill-opacity": 0, stroke: "#fff", "stroke-width": 2});
             };
             
@@ -668,15 +690,20 @@ Raphael.fn.drawPerson = function(personId, relPosition) { //====================
 //                //recta.attr({"fill":"ff3",   "fill-opacity":"1", "stroke":"#fff", "stroke-width":"0"});
 //                p.r[p.r.length] = recta;
                 
-                arrowUp.node.onclick = function() { ///*logD*/alert("arrowUp.node.onclick");
-                    arrowLeft.hide();
-                    arrowUp.hide();
-                    paper.setActions4Ancestor(p.id);
-                };
+                /* D704-4/vsh arrowUp.node.onclick = function() { //*//*logD*//*alert("arrowUp.node.onclick");
+                   arrowLeft.hide();
+                   arrowUp.hide();
+                   paper.setActions4Ancestor(p.id);
+                };*/
                 arrowUp.node.onmouseover = function() { ///*logD*/alert("arrowUp.node.onmouseover");
-                    //arrowUp.show()
+                   if ('arrowLeft' in p) p.arrowLeft.hide();
+                   arrowUp.hide();
+                   paper.setActions4Ancestor(p.id);
+                   //arrowUp.show()
                     //recta.attr({fill: "#ff0", opacity: 1});
-                    arrowUp.attr("title", "click mouse to show available actions for the person ancestor");
+
+                    // D704-4/vsh  arrowUp.attr("title", "click mouse to show available actions for the person ancestor");
+
                     //recta.attr({fill: "#111", "fill-opacity":"0", stroke: "#0ff", "stroke-width": 2});
                 };
                 arrowUp.node.onmouseout = function() { ///*logD*/alert("arrowUp.node.onmouseout");
@@ -746,7 +773,7 @@ Raphael.fn.drawPerson = function(personId, relPosition) { //====================
 }
 
 
-// Defines a Person box w and h
+// Defines a Family box w and h
 // B123-7/vsh init
 sketchFamily = function() { //================================================== 
     G.diwe_=G.diwe; //G.diwe = 'D';
@@ -759,12 +786,12 @@ sketchFamily = function() { //==================================================
             //f.w = w + 2*G.margin;
             //f.h = rLines*h + G.margin/2; // kad vert jungtys būtų vientisos
             var whMD = getDimension('oo  '+f.md);
-            var whMP = getDimension('    '+f.mp);
+            // D710-3/vsh var whMP = getDimension('    '+f.mp);
             var whDD = getDimension('o-o '+f.dd);
-            var whDP = getDimension('    '+f.dp);
-            var rLines = Math.max((whMD.w>0 ? 1 : 0) +(whMP.w>0 ? 1 : 0) + (whDD.w>0 ? 1 : 0) + (whDP.w>0 ? 1 : 0), 1);
-            var textWidth = Math.max(whMD.w, whMP.w, whDD.w, whDP.w);
-            var textLineHeight = Math.max(whMD.h, whMP.h, whDD.h, whDP.h);
+            // D710-3/vsh var whDP = getDimension('    '+f.dp);
+            var rLines = Math.max((whMD.w>0 ? 1 : 0) /*+(whMP.w>0 ? 1 : 0)*/ + (whDD.w>0 ? 1 : 0) /*+ (whDP.w>0 ? 1 : 0)*/, 1);
+            var textWidth = Math.max(whMD.w/*, whMP.w*/, whDD.w/*, whDP.w*/);
+            var textLineHeight = Math.max(whMD.h/*, whMP.h*/, whDD.h/*, whDP.h*/);
             f.rLines = rLines;
             f.w = textWidth /*+ 2*G.margin*/;
             f.h = /*rLines**/textLineHeight /*+ G.margin/2*/; // kad vert jungtys būtų vientisos
@@ -1073,14 +1100,15 @@ Raphael.fn.drawFamily = function(familyId, skipSpouseId, skipChildId) {
             //fRect.attr({fill: "90-#fff-#000", stroke: "#f00", opacity: 1});
             //-- do-not-delete  fRect.attr({fill: "#f66", stroke: "#f00", opacity: 0.5});
             var text1 = this.text(f.x + 1*G.margin, f.y+1.5*G.margin+0*textLineHeight, ((f.md==''&& f.mp=='') ? ' ' : 'oo') +' '+f.md + ((f.md=='') ? '' : ''))
-//           var text1 = this.text(f.x+2*G.margin, f.y+1*G.margin+0*textLineHeight, ((f.md==''&& f.mp=='') ? ' ' : 'oo') +' '+f.md + ((f.md=='') ? '' : ''))
+          //var text1 = this.text(f.x+2*G.margin, f.y+1*G.margin+0*textLineHeight, ((f.md==''&& f.mp=='') ? ' ' : 'oo') +' '+f.md + ((f.md=='') ? '' : ''))
             f.r[f.r.length] = text1.attr(CSS.font).attr(CSS.text);
-            var text2 = this.text(f.x + 1*G.margin, f.y+1.5*G.margin+1*textLineHeight, '  '+f.mp+((f.mp=='') ? '' : ''))
-            f.r[f.r.length] = text2.attr(CSS.font).attr(CSS.text); //alert('aaa aaa aaa aaa')
+            /* D710-3/vsh var text2 = this.text(f.x + 1*G.margin, f.y+1.5*G.margin+1*textLineHeight, '  '+f.mp+((f.mp=='') ? '' : ''))
+            f.r[f.r.length] = text2.attr(CSS.font).attr(CSS.text); //alert('aaa aaa aaa aaa')*/
+            alert('aaa aaa aaa aaa')
             var text3 = this.text(f.x + 1*G.margin, f.y+1.5*G.margin+2*textLineHeight, ((f.dd==''&& f.dp=='') ? ' ' : 'o-o') +''+f.dd + ((f.dd=='') ? '' : ''))
             f.r[f.r.length] = text3.attr(CSS.font).attr(CSS.text);
-            var text4 = this.text(f.x + 1*G.margin, f.y+1.5*G.margin+3*textLineHeight, '  '+f.dp+((f.dp=='') ? '' : ''))
-            f.r[f.r.length] = text4.attr(CSS.font).attr(CSS.text);
+            /* D710-3/vsh var text4 = this.text(f.x + 1*G.margin, f.y+1.5*G.margin+3*textLineHeight, '  '+f.dp+((f.dp=='') ? '' : ''))
+            f.r[f.r.length] = text4.attr(CSS.font).attr(CSS.text);*/
         ////////////////////////////////////////////////           
                
                 
@@ -1141,12 +1169,12 @@ Raphael.fn.drawFamily = function(familyId, skipSpouseId, skipChildId) {
 
                 var text1 = this.text(f.x, f.y+1*G.margin+0*textLineHeight, ((f.md==''&& f.mp=='') ? ' ' : 'oo')+' '+f.md+((f.md=='') ? '' : ''))
                 f.r[f.r.length] = text1.attr(CSS.font).attr(CSS.text);
-                var text2 = this.text(f.x, f.y+1*G.margin+1*textLineHeight, '  '+f.mp+((f.mp=='') ? '' : ''))
-                f.r[f.r.length] = text2.attr(CSS.font).attr(CSS.text); //alert('aaa aaa aaa aaa')
+                /* D710-3/vsh var text2 = this.text(f.x, f.y+1*G.margin+1*textLineHeight, '  '+f.mp+((f.mp=='') ? '' : ''))
+                f.r[f.r.length] = text2.attr(CSS.font).attr(CSS.text); //alert('aaa aaa aaa aaa')*/
                 var text3 = this.text(f.x, f.y+1*G.margin+2*textLineHeight, ((f.dd==''&& f.dp=='') ? ' ' : 'o-o')+''+f.dd+((f.mp=='') ? '' : ''))
                 f.r[f.r.length] = text3.attr(CSS.font).attr(CSS.text);
-                var text4 = this.text(f.x, f.y+1*G.margin+3*textLineHeight, '  '+f.dp+((f.dp=='') ? '' : ''))
-                f.r[f.r.length] = text4.attr(CSS.font).attr(CSS.text);
+                /* D710-3/vsh var text4 = this.text(f.x, f.y+1*G.margin+3*textLineHeight, '  '+f.dp+((f.dp=='') ? '' : ''))
+                f.r[f.r.length] = text4.attr(CSS.font).attr(CSS.text);*/
             ////////////////////////////////////////////////
 
  
@@ -1179,12 +1207,12 @@ Raphael.fn.drawFamily = function(familyId, skipSpouseId, skipChildId) {
                 var text1 = this.text(f.x, f.y+1*G.margin+0*textLineHeight, ((f.md==''&& f.mp=='') ? ' ' : 'oo')+' '+f.md+((f.md=='') ? '' : ''))
 //old           var text1 = this.text(f.x, f.y+1*G.margin/1+0*textLineHeight, ((f.md==''&& f.mp=='') ? ' ' : 'oo')+' '+f.md+((f.md=='') ? '' : ''))
                 f.r[f.r.length] = text1.attr(CSS.font).attr(CSS.text);
-                var text2 = this.text(f.x, f.y+1*G.margin/1+1*textLineHeight, '  '+f.mp+((f.mp=='') ? '' : ''))
-                f.r[f.r.length] = text2.attr(CSS.font).attr(CSS.text); //alert('aaa aaa aaa aaa')
+                /* D710-3/vsh var text2 = this.text(f.x, f.y+1*G.margin/1+1*textLineHeight, '  '+f.mp+((f.mp=='') ? '' : ''))
+                f.r[f.r.length] = text2.attr(CSS.font).attr(CSS.text); //alert('aaa aaa aaa aaa')*/
                 var text3 = this.text(f.x, f.y+1*G.margin/1+2*textLineHeight, ((f.dd==''&& f.dp=='') ? ' ' : 'o-o')+''+f.dd+((f.mp=='') ? '' : ''))
                 f.r[f.r.length] = text3.attr(CSS.font).attr(CSS.text);
-                var text4 = this.text(f.x, f.y+1*G.margin/1+3*textLineHeight, '  '+f.dp+((f.dp=='') ? '' : ''))
-                f.r[f.r.length] = text4.attr(CSS.font).attr(CSS.text);
+                /* D710-3/vsh var text4 = this.text(f.x, f.y+1*G.margin/1+3*textLineHeight, '  '+f.dp+((f.dp=='') ? '' : ''))
+                f.r[f.r.length] = text4.attr(CSS.font).attr(CSS.text);*/
             ////////////////////////////////////////////////
                 updateGlobVars(f, f.x-1*G.margin, f.y-1*G.margin, f.w, f.h, 'drawFamily (skipSpouseId > 0) (spouseId > 0)');
                 //-- B120-4/vsh temporary: //updateGlobVars(x-1*G.margin, y-1*G.margin, (w+2*G.margin), (2*h+G.margin/2));
@@ -1272,15 +1300,18 @@ Raphael.fn.drawFamily = function(familyId, skipSpouseId, skipChildId) {
 //        //recta.attr({"fill":"ff3",   "fill-opacity":"1", "stroke":"#fff", "stroke-width":"0"});
 //        f.r[f.r.length] = recta;
         
-        arrowDown.node.onclick = function() { ///*logD*/alert("arrowUp.node.onclick");
+        /* D704-4/vsh arrowDown.node.onclick = function() { //*//*logD*//*alert("arrowUp.node.onclick");
             if (f.father == 0 || f.mother == 0) arrowLeft.hide();
             arrowDown.hide();
             paper.setActions4FamilyChildren(f.id);
-        };
-        arrowDown.node.onmouseover = function() { ///*logD*/alert("arrowUp.node.onmouseover");
+        };*/
+        arrowDown.node.onmouseover = function() { // /*logD*/ alert("arrowUp.node.onmouseover");
+            if (f.father == 0 || f.mother == 0) arrowLeft.hide();
+            if ('arrowDown' in f) f.arrowDown.show();
+            paper.setActions4FamilyChildren(f.id);
             //arrowUp.show()
             //recta.attr({fill: "#ff0", opacity: 1});
-            arrowDown.attr("title", "click mouse to show available actions for the family children");
+            // D704-4/vsh arrowDown.attr("title", "click mouse to show available actions for the family children");
             //recta.attr({fill: "#111", "fill-opacity":"0", stroke: "#0ff", "stroke-width": 2});
         };
         arrowDown.node.onmouseout = function() { ///*logD*/alert("arrowUp.node.onmouseout");

@@ -84,6 +84,7 @@ class Forest /*extends Loggable*/ {
       "G.rootId=" + rootId + ";" + GedcomRest.getLocaleStrings() +
       (if (sbIdGen.toString.length > 0) countGenerationSize(sbIdGen.toString) else ""))
     log.debug("Forest: ||||| " + JsRaw(jsRawStr).toString + " |||||")
+    println("Forest: ||||| " + JsRaw(jsRawStr).toString + " |||||")
     //
     // B301-2/vsh buvo ok iki 2.3-M1_2.8.1 JsRaw(jsRawStr)
     "#jsraw" #> <script type="text/javascript">{jsRawStr}</script>

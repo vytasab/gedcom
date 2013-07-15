@@ -21,18 +21,16 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import _root_.scala.xml.NodeSeq
 
-import _root_.net.liftweb._
-import common.Full
-import http._
-import http.ParsePath
-import http.provider._
-import http.RewriteRequest
-import sitemap._
-import util.Helpers._
-import widgets.menu.MenuWidget
-import widgets.autocomplete.AutoComplete
-import mapper._
-import common._
+import net.liftweb.http._
+import net.liftweb.http.ParsePath
+import net.liftweb.http.provider._
+import net.liftweb.http.RewriteRequest
+import net.liftweb.sitemap._
+import net.liftweb.util.Helpers._
+import net.liftweb.widgets.menu.MenuWidget
+import net.liftweb.widgets.autocomplete.AutoComplete
+import net.liftweb.mapper._
+import net.liftweb.common._
 import _root_.lt.node.gedcom._
 import model._
 import _root_.lt.node.gedcom.rest.GedcomRest
@@ -46,15 +44,35 @@ import scala.Some
  */
 
 class Boot extends Loggable {
+  // http://kevinlocke.name/bits/2013/02/05/configuring-logging-in-lift-tests/
   def boot {
     println("==================================================================")
     //deprec LogBoot._log4JSetup
-    //deprec Slf4jLogBoot.enable
+    //deprec Slf4jLogBoot.enabl
     val log: Logger = LoggerFactory.getLogger("Boot")
+    println("" + log.isDebugEnabled + " " + log.isWarnEnabled + " " + log.isInfoEnabled + " " + log.isErrorEnabled + " " + log.isTraceEnabled)
     log.debug("=====================================================================")
     println("LiftRules.resourceServerPath = " + LiftRules.resourceServerPath)
     println("ResourceServer.baseResourceLocation = " + ResourceServer.baseResourceLocation)
     log.debug("====== ===== ==== === == = Boot gedcom-web = == === ==== ===== ======")
+    log.error("====== ===== ==== === == = Boot gedcom-web = == === ==== ===== ======")
+
+    log.debug("in Boot: System.getProperty(\"run.mode\") = " + System.getProperty("run.mode"))
+    /*log.debug("System properties: ")
+    var propNames = System.getProperties.propertyNames()
+    while (propNames.hasMoreElements) {
+      var pn = propNames.nextElement().toString
+      log.debug(  pn + "  ->  " +  System.getProperties.getProperty(pn))
+    }*/
+    println("in Boot: System.getProperty(\"run.mode\") = " + System.getProperty("run.mode"))
+    /*println("System properties: ")
+    var propNamesx = System.getProperties.propertyNames()
+    while (propNamesx.hasMoreElements) {
+      var pnx = propNamesx.nextElement().toString
+      println(  pnx + "  ->  " +  System.getProperties.getProperty(pnx))
+    }*/
+
+
     //log.debug("GedCom ab24-3"); //log.info("GedCom ab24-3"); log.warn("GedCom ab24-3");
     //    //---------------------------------------
     //    println("------->" + (Locale.getAvailableLocales.
@@ -380,14 +398,13 @@ class Boot extends Loggable {
 
     if (isAuth) {
       log.debug("isAuth |" + isAuth.toString + "|")
-      //(Props.get("mail.smtp.user"), Props.get("mail.smtp.pass")) match {
-      //(Full("vytasab@gmail.com"), Full("paratunka")) match {
-      (Full("vytasab@gmail.com"), Full("paratunka")) match {
+      (Full(Props.get("mail.smtp.user").get), Full(Props.get("mail.smtp.pass").get)) match {
       case (Full(username), Full(password)) =>
-          Mailer.authenticator = Full(new Authenticator() {
+        log.debug("username =|" + username + "|  password =|" + password + "|")
+        Mailer.authenticator = Full(new Authenticator() {
             override def getPasswordAuthentication = new PasswordAuthentication(username, password)
           })
-        case _ => logger.error("Username/password not supplied for Mailer.")
+        case _ => log.error("Username/password not supplied for Mailer.")
       }
     }
     log.debug("... ... ...[] Mailer.authenticator =|" + Mailer.authenticator.get.toString + "|")

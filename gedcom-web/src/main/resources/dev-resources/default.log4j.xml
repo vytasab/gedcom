@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "c:\Scala\gedcom\gedcom-web\src\main\resources\props\log4j.dtd">
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
+<log4j:configuration debug="true" xmlns:log4j="http://jakarta.apache.org/log4j/">
     <appender name="CAgedcom" class="org.apache.log4j.ConsoleAppender">
         <param name="Threshold" value="DEBUG"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -10,8 +10,7 @@
             <!--<param name="ConversionPattern" value="%t %-2p %d{HH:mm:ss,SSS} - %m%n"/>-->
         </layout>
     </appender>
-<!--
-    <appender name="CAgedcom" class="org.apache.log4j.RollingFileAppender">
+    <!--<appender name="CAgedcom" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="../logs/gedcom_web.log"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="500KB"/>
@@ -23,8 +22,7 @@
             <param name="ConversionPattern" value="%t %-2p %d{HH:mm:ss,SSS} [%c{2}] [%M %L] - %m%n"/>
             &lt;!&ndash;<param name="ConversionPattern" value="%t %-2p %d{HH:mm:ss,SSS} - %m%n"/>&ndash;&gt;
         </layout>
-    </appender>
--->
+    </appender>-->
     <!--<appender name="CAvshmixweb" class="org.apache.log4j.ConsoleAppender">
         &lt;!&ndash;layout class="org.apache.log4j.SimpleLayout"/&ndash;&gt;
         <layout class="org.apache.log4j.PatternLayout">

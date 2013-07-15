@@ -439,18 +439,17 @@ mvn clean install -Dmaven.test.skip=true
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>[1.2.13,)</version>
-                <!--	[1.2.13, -->
+                <version>1.2.17</version>     <!--	[1.2.13, 1.2.16. -->
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.6</version>
+                <version>1.7.5</version>   <!-- 1.6.6 -->
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
-                <version>1.6.6</version>
+                <version>1.7.5</version>   <!-- 1.6.6 -->
             </dependency>
             <!--<dependency>
                 // https://groups.google.com/forum/#!msg/liftweb/fvayO0t8t4o/u4cNVO_4y8MJ%5B1-25%5D
@@ -549,6 +548,11 @@ mvn clean install -Dmaven.test.skip=true
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>sql-maven-plugin</artifactId>
                     <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.1</version>  <!-- 2.3  2.1 2.1.1 -->
                 </plugin>
                 <plugin>
                     <!-- http://maven.apache.org/plugins/maven-release-plugin/ -->

@@ -23,8 +23,7 @@ object MenuInfo {
 
   val entries: List[Menu] = List(
     Menu(Loc("Home", List("index"), S ? "Home"),
-      //Menu(Loc("sendMailTest2", List("sendMailTest"), "Send Mail Test")),
-      Menu(Loc("sendMailTest2", List("bandymai", "sendMailTest"),S.?("Send Mail Test"))),
+      //Menu(Loc("sendMailTest2", List("bandymai", "sendMailTest"),S.?("Send Mail Test"))),  // moved to Workshop
       Menu(Loc("errorPage", List("errorPage"), "", Hidden)),
       Menu(Loc("infoPage", List("infoPage"), "", Hidden))
     ),
@@ -142,6 +141,7 @@ object MenuInfo {
 
     Menu(Loc("workshop", List("workshop"), S.?("Workshop"),
       If(() => AccessControl.isDeveloper_?(), () => RedirectResponse("/"))),
+      Menu(Loc("sendMailTestWorkshop", List("bandymai", "sendMailTest"),S.?("Send Mail Test"))),
       Menu(Loc("wizard", List("bandymai", "wizard"), "Wizard")),
       Menu(Loc("ajax", List("bandymai", "ajax"), "AjaxForm")),
       Menu(Loc("gedcomTree", List("gedcom", "personList"), S.?("person.list"))),
