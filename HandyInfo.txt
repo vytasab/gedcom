@@ -1,3 +1,9 @@
+D925-3/vsh ==============================================================================
+Multi Language implementationsource code location:
+     GedcomDateOptions
+
+
+
 mvn clean install -Dmaven.test.skip=true
 9A15-4/vsh ==============================================================================
 http://www.utf8-chartable.de/unicode-utf8-table.pl
@@ -828,7 +834,39 @@ pastaba apie
 PANAŠU, kad viskas koncentruočiau paaiškinta:  http://miteff.com/install-cert
 Šiek tiek apie SMTP EHLO:  http://cr.yp.to/smtp/ehlo.html
 
-ymdd-x/vsh ==============================================================================
+DB07-4/vsh ==============================================================================
+    Development mode:
+    Apache Tomcat 7 Properties -> Java -> Java Options:
+        -Xverify:none
+        -javaagent:C:\Documents and Settings\vsh\.IdeaIC11\config\plugins\jr-ide-idea\lib\jrebel\jrebel.jar
+        -Dcatalina.base=c:\Tomcat
+        -Dcatalina.home=c:\Tomcat
+        -Djava.endorsed.dirs=c:\Tomcat\endorsed
+        -Djava.io.tmpdir=c:\Tomcat\temp
+        -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+        -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+        -Drebel.log4j-plugin=true
+        -Drebel.log=true
+        -Drun.mode=development
+
+    Production mode:
+    Apache Tomcat 7 Properties -> Java -> Java Options:
+        -Xverify:none
+
+        -Dcatalina.base=c:\Tomcat
+        -Dcatalina.home=c:\Tomcat
+        -Djava.endorsed.dirs=c:\Tomcat\endorsed
+        -Djava.io.tmpdir=c:\Tomcat\temp
+        -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+        -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+        -Drebel.log4j-plugin=false
+        -Drebel.log=false
+        -Drun.mode=production
+
+
+
+
+
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
@@ -840,3 +878,33 @@ User hash in=123123SMXRaJIAMdMGfKAZ|
 User hash=IuQWK9DSHzm8JG0JQkBSYq7QXgk=|
           IuQWK9DSHzm8JG0JQkBSYq7QXgk=
 http-apr-8080-exec-5 WARN 16:10:22,671 [LoginOps] [warn 216] - logUserIn: User authentication is invalid
+
+
+[INFO] Checking for multiple versions of scala
+[WARNING]  Expected all dependencies to require Scala version: 2.10.0
+[WARNING]  lt.node.gedcom:gedcom-web:1.0 requires scala version: 2.10.0
+[WARNING]  lt.node.gedcom:gedcom-web:1.0 requires scala version: 2.10.0
+[WARNING]  org.scala-lang:scala-compiler:2.10.0 requires scala version: 2.10.0
+[WARNING]  org.scala-lang:scala-reflect:2.10.0 requires scala version: 2.10.0
+[WARNING]  org.scala-tools.testing:specs_2.8.1:1.6.7 requires scala version: 2.10.0
+[WARNING]  org.scala-tools.testing:specs_2.8.1:1.6.7 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-common_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-actor_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-json_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-json_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  org.scala-lang:scalap:2.10.0 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-util_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-util_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-webkit_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  org.scala-lang:scala-actors:2.10.0 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-db_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-proto_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-mapper_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-jpa_2.10:2.5 requires scala version: 2.10.0
+[WARNING]  org.scala-libs:scalajpa_2.10:1.4 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-webkit_2.9.1:2.4 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-widgets_2.9.1:2.4 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-common_2.9.1:2.4 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-actor_2.9.1:2.4 requires scala version: 2.10.0
+[WARNING]  net.liftweb:lift-json_2.9.1:2.4 requires scala version: 2.9.1
+[WARNING] Multiple versions of scala libraries detected!

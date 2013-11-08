@@ -2,7 +2,7 @@ package lt.node.gedcom.snippet
 
 
 import _root_.net.liftweb._
-import common.Logger
+import common.{Loggable, Logger}
 import http._
 import net.liftweb.util._
 import Helpers._
@@ -11,15 +11,15 @@ import http.js.JE.JsRaw
 import lt.node.gedcom.rest._
 import bootstrap.liftweb.AccessControl
 
-class Forest /*extends Loggable*/ {
+class Forest extends Loggable {
 
-  val log = Logger("Forest");
+  val log = Logger("Forest")
 
   def render = {
     GedcomRest.emptyPids
     GedcomRest.emptyFids
-    val sb: StringBuffer = new StringBuffer("");
-    val sbIdGen: StringBuffer = new StringBuffer("");
+    val sb: StringBuffer = new StringBuffer("")
+    val sbIdGen: StringBuffer = new StringBuffer("")
     val rootId = S.getSessionAttribute("personId").openOr("1").toLong
 
 
@@ -35,7 +35,7 @@ class Forest /*extends Loggable*/ {
     //log.debug("Forest GedcomRest.getPersonJS Props.get(\"db.driver\") = " + Props.get("db.driver").openOr("test---Driver") + "|");
 
 
-    val sbf: StringBuffer = new StringBuffer("");
+    val sbf: StringBuffer = new StringBuffer("")
     //GedcomRest.getFamilyJS(S.getSessionAttribute("personId").open_!.toLong, sbf)
     var gedcomJsData = "G={};g={};" +
       (<_>G.app='{Props.get("__app").openOr("/gedcom-web/")}';</_>).text + sb + sbf
@@ -62,7 +62,7 @@ class Forest /*extends Loggable*/ {
       }
       val sb: StringBuffer = new StringBuffer("\n" + (<_>G.gSize={counts.size};G.gMin={gMin};G.gMax={gMax};</_>.text))
       for (x <- counts.keys) {
-        val xx = if (x == 0) '0' else x.toString;
+        val xx = if (x == 0) '0' else x.toString
         val sbIds: StringBuffer = new StringBuffer("G['g" + {
           xx
         } + "']=['")
@@ -83,8 +83,7 @@ class Forest /*extends Loggable*/ {
     val jsRawStr: String = (gedcomJsData + "\n" + "G.loggedIn=" + AccessControl.isAuthenticated_? + ";" +
       "G.rootId=" + rootId + ";" + GedcomRest.getLocaleStrings() +
       (if (sbIdGen.toString.length > 0) countGenerationSize(sbIdGen.toString) else ""))
-    log.debug("Forest: ||||| " + JsRaw(jsRawStr).toString + " |||||")
-    println("Forest: ||||| " + JsRaw(jsRawStr).toString + " |||||")
+    log.debug("JS: ||||| " + JsRaw(jsRawStr).toString + " |||||")
     //
     // B301-2/vsh buvo ok iki 2.3-M1_2.8.1 JsRaw(jsRawStr)
     "#jsraw" #> <script type="text/javascript">{jsRawStr}</script>

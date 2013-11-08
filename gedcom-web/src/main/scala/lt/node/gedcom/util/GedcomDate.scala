@@ -37,6 +37,13 @@ object GedcomUtil {
   val initYear = 1800
   val yyyys: List[(String, String)] = "yyyy" :: List.range(initYear, (thisYear.toInt + 1)) map (i => (i.toString, i.toString))
 
+  val nnMMM: Map[String,String] = Map( "01"->"JAN", "02"->"FEB", "03"->"MAR",
+    "04"->"APR", "05"->"MAY", "06"->"JUN",
+    "07"->"JUL", "08"->"AUG", "09"->"SEP",
+    "10"->"OCT", "11"->"NOV", "12"->"DEC" )
+
+  lazy val MMMnn: Map[String,String] = nnMMM.map(_.swap)  //.get(mmm).get
+
   val MMs: List[(String, String)] = "mm" :: List.range(1, 13) map (i => {
     val t = "0" + i.toString
     val n = t.substring(t.size - 2)
@@ -176,13 +183,15 @@ object GedcomUtil {
         case (null, mm, yy) =>
           log.debug("DatePtrnOpt(null, mm, yy)")
           new SimpleDateFormat( """yyyy-MM""").format(new SimpleDateFormat( """MMM yyyy""", Locale.ENGLISH).parse(gedcomDateValue))
+          //nnMMM(mm) + " " + yy
         case (dd, null, yy) =>
           log.debug("DatePtrnOpt(dd, null, yy)")
           "Err: |" + gedcomDateValue + "|"
         case (dd, mm, yy) =>
           log.debug("DatePtrnOpt(dd, mm, yy) |" + gedcomDateValue + "|" )
           new SimpleDateFormat( "yyyy-MM-dd").format(new SimpleDateFormat( "d MMM yyyy", Locale.ENGLISH).parse(gedcomDateValue))
-         //-- http://stackoverflow.com/questions/6154772/java-unparseable-date?rq=1
+          //dd + " " + nnMMM(mm) + " " + yy
+        //-- http://stackoverflow.com/questions/6154772/java-unparseable-date?rq=1
       }
     }
 
@@ -309,13 +318,15 @@ object GedcomUtil {
           yy
         case (yy, mm, null) =>
           log.debug("DatePtrnOptLt(yy, mm, null)")
-          new SimpleDateFormat( """MMM yyyy""").format(new SimpleDateFormat( """yyyy-MM""").parse(i18nDateValue)).toUpperCase
+          //new SimpleDateFormat( """MMM yyyy""").format(new SimpleDateFormat( """yyyy-MM""").parse(i18nDateValue)).toUpperCase
+          nnMMM(mm.substring(1)) + " " + yy
         case (yy, null, dd) =>
           log.debug("DatePtrnOptLt(yy, null, dd)")
           "Err: " + i18nDateValue
         case (yy, mm, dd) =>
           log.debug("DatePtrnOptLt(yy, mm, dd)")
-          new SimpleDateFormat( """d MMM yyyy""").format(new SimpleDateFormat( """yyyy-MM-dd""").parse(i18nDateValue)).toUpperCase
+          //ew SimpleDateFormat( """d MMM yyyy""").format(new SimpleDateFormat( """yyyy-MM-dd""").parse(i18nDateValue)).toUpperCase
+          dd.substring(1) + " " + nnMMM(mm.substring(1)) + " " + yy
       }
     }
 
@@ -378,7 +389,7 @@ object GedcomUtil {
                       (bef, aft, abt) match {
                         case (ok, null, null) => "BEF " + dateLt(ok.substring("PRIEŠ ".size+0*6))
                         case (null, ok, null) => "AFT " + dateLt(ok.substring("PO ".size+0*3))
-                        case (null, null, ok) => "APIE " + dateLt(ok.substring("APIE ".size+0*5))
+                        case (null, null, ok) => "ABT " + dateLt(ok.substring("APIE ".size+0*5))
                       }
                     } catch {
                       case ex: Exception =>
@@ -414,11 +425,11 @@ object GedcomUtil {
     //val pYyyy_ = java.util.regex.Pattern.compile("^(\\d+)$")
     log.debug("iso8601Date date |"+date+"|")
 
-    val nnMMM: Map[String,String] = Map( "01"->"JAN", "02"->"FEB", "03"->"MAR",
-      "04"->"APR", "05"->"MAY", "06"->"JUN",
-      "07"->"JUL", "08"->"AUG", "09"->"SEP",
-      "10"->"OCT", "11"->"NOV", "12"->"DEC" )
-    lazy val MMMnn: Map[String,String] = nnMMM.map(_.swap)  //.get(mmm).get
+    //val nnMMM: Map[String,String] = Map( "01"->"JAN", "02"->"FEB", "03"->"MAR",
+    //  "04"->"APR", "05"->"MAY", "06"->"JUN",
+    //  "07"->"JUL", "08"->"AUG", "09"->"SEP",
+    //  "10"->"OCT", "11"->"NOV", "12"->"DEC" )
+    //lazy val MMMnn: Map[String,String] = nnMMM.map(_.swap)  //.get(mmm).get
 
     S.get("locale").getOrElse("en") match {
       case "en" =>

@@ -37,25 +37,29 @@ import _root_.lt.node.gedcom.rest.GedcomRest
 import net.liftweb.util.{Mailer, Props}
 import javax.mail.{PasswordAuthentication, Authenticator}
 import scala.Some
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.core.util.StatusPrinter
 
 /**
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
  */
 
-class Boot extends Loggable {
+class Boot /*extends Logger*/ extends Loggable {
   // http://kevinlocke.name/bits/2013/02/05/configuring-logging-in-lift-tests/
   def boot {
     println("==================================================================")
-    //deprec LogBoot._log4JSetup
-    //deprec Slf4jLogBoot.enabl
-    val log: Logger = LoggerFactory.getLogger("Boot")
+    val log/*: Logger*/ = LoggerFactory.getLogger("Boot")
     println("" + log.isDebugEnabled + " " + log.isWarnEnabled + " " + log.isInfoEnabled + " " + log.isErrorEnabled + " " + log.isTraceEnabled)
     log.debug("=====================================================================")
     println("LiftRules.resourceServerPath = " + LiftRules.resourceServerPath)
     println("ResourceServer.baseResourceLocation = " + ResourceServer.baseResourceLocation)
     log.debug("====== ===== ==== === == = Boot gedcom-web = == === ==== ===== ======")
     log.error("====== ===== ==== === == = Boot gedcom-web = == === ==== ===== ======")
+    logger.debug("[LoggerContext]...")
+    val lc: LoggerContext = LoggerFactory.getILoggerFactory.asInstanceOf[LoggerContext]
+    StatusPrinter.print(lc)
+    logger.debug("...[LoggerContext]")
 
     log.debug("in Boot: System.getProperty(\"run.mode\") = " + System.getProperty("run.mode"))
     /*log.debug("System properties: ")

@@ -184,6 +184,7 @@ class PersonView {
 
   // google-group: Lift: [CSS Selector bindings and attributes]
   def render0: net.liftweb.util.CssSel = {
+    // TODO D922-7/vsh ar reikalinga kita eilutė ?
     PersonReading()
     personVar.is match {
       case Full(p) =>
@@ -204,6 +205,7 @@ class PersonView {
 
   def render1: net.liftweb.util.CssSel = {
     logSomeSessAttrs("render1")
+    // TODO D922-7/vsh ar reikalinga kita eilutė ?
     PersonReading()
     personVar.is match {
       case Full(p) =>
@@ -259,6 +261,7 @@ class PersonView {
     println("LiftRules.getResource.getFile =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getFile + "|")
     println("LiftRules.getResource.getPath =|" + LiftRules.getResource("/xsl/locTexts4XSL.xml").open_!.getPath + "|")
 
+    // TODO D922-7/vsh ar reikalinga kita eilutė ?
     PersonReading
     log.debug("renderPerson ...[]")
 

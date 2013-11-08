@@ -33,7 +33,7 @@
     <orderEntry type="library" name="Maven: net.liftweb:lift-util_2.10:2.5" level="project" />
     <orderEntry type="library" name="Maven: net.liftweb:lift-actor_2.10:2.5" level="project" />
     <orderEntry type="library" name="Maven: net.liftweb:lift-common_2.10:2.5" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.6" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
     <orderEntry type="library" name="Maven: net.liftweb:lift-json_2.10:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scalap:2.10.0" level="project" />
     <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.4.1" level="project" />

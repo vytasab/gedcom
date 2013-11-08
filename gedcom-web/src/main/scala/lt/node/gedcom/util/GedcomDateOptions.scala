@@ -20,8 +20,8 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
       "lt" -> "be datos"),
     "03gdt_exact" -> Map(
       "xx" -> "",
-      "en" -> "Exact date",
-      "lt" -> "tiksli"),
+      "en" -> "Date",
+      "lt" -> "data"),
     "05gdt_between" -> Map(
       "xx" -> "BET",
       "en" -> "Between",
@@ -41,7 +41,7 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
       "xx" -> "ABT",
       "en" -> "About",
       //"en" -> "gdt_about",
-      "lt" -> "apytikrė"),
+      "lt" -> "apytikrė: APIE ..."),
     "25gdt_from_to" -> Map(
       "xx" -> "FROM_TO",
       "en" -> "From To",
@@ -71,21 +71,28 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
   //    is an estimate that an event happened on a single date somewhere in the date range specified.
   //lazy val DatePtrnValid = """(\d\d? )?(JAN |FEB |MAR |APR |MAY |JUN |JUL |AUG |SEP |OCT |NOV |DEC )?(\d\d\d\d)""".r
 
-  //    lazy val DatePtrnExactWsValid = """^(((((0[1-9])|(1\d)|(2[0-8]))\/((0[1-9])|(1[0-2])))|((31\/((0[13578])|(1[02])))|((29|30)\/((0[1,3-9])|(1[0-2])))))\/((20[0-9][0-9])|(19[0-9][0-9])))|((29\/02\/(19|20)(([02468][048])|([13579][26]))))$""".r
-  //    //-- dd/mm/yyyy  => http://forums.asp.net/t/1410702.aspx/1
-
-  lazy val DatePtrnExactGedcomValid = """^((31(?! (FEB|APR|JUN|SEP|NOV)))|((30|29)(?! FEB))|(29(?= FEB (((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))|(0?[1-9])|1\d|2[0-8]) (JAN|FEB|MAR|MAY|APR|JUL|JUN|AUG|OCT|SEP|NOV|DEC) ((1[6-9]|[2-9]\d)\d{2})$""".r
+  val DatePtrnYearValid = """(20[0-9][0-9])|(19[0-9][0-9])|(18[0-9][0-9])|(17[0-9][0-9])|(16[0-9][0-9])"""
+  // D928-6/vsh old -- lazy val DatePtrnExactGedcomValid = """^((31(?! (FEB|APR|JUN|SEP|NOV)))|((30|29)(?! FEB))|(29(?= FEB (((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))|(0?[1-9])|1\d|2[0-8]) (JAN|FEB|MAR|MAY|APR|JUL|JUN|AUG|OCT|SEP|NOV|DEC) ((1[6-9]|[2-9]\d)\d{2})$""".r
+  val DatePtrnExact__YValid = ("""(""" + DatePtrnYearValid + """)""")
+  val DatePtrnExact_MYValid = ("""((JAN|FEB|MAR|MAY|APR|JUL|JUN|AUG|OCT|SEP|NOV|DEC) """ + DatePtrnYearValid + """)""")
+  val DatePtrnExactDMYValid = """((31(?! (FEB|APR|JUN|SEP|NOV)))|((30|29)(?! FEB))|(29(?= FEB (((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))|(0?[1-9])|1\d|2[0-8]) (JAN|FEB|MAR|MAY|APR|JUL|JUN|AUG|OCT|SEP|NOV|DEC) ((1[6-9]|[2-9]\d)\d{2})"""
+  lazy val DatePtrnExactGedcomValid = ("""^""" + DatePtrnExactDMYValid + """|""" + DatePtrnExact_MYValid + """|""" + DatePtrnExact__YValid + """$""").r
   //-- dd MMM yyyy (Gedcom format) => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
 
   //  //lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1[[0-9]])|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
   //    //-- yyyy-mm-dd  => http://datacleaner.org/regex/ISO%20date%20(yyyy-mm-dd)
-  lazy val DatePtrnExactValidLt = """^((((19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
+  // D925-3/vsh old -- lazy val DatePtrnExactValidLt = """^((((16|17|18|19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9])|(18[0-9][0-9])|(17[0-9][0-9])|(16[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))$""".r
+  val DatePtrnExactY__Lt = DatePtrnExact__YValid
+//val DatePtrnExactYM_Lt_ ="""(((20[0-9][0-9])|(19[0-9][0-9])|(18[0-9][0-9])|(17[0-9][0-9])|(16[0-9][0-9]))-((0[1-9])|(1[0-2])))""".r
+  val DatePtrnExactYM_Lt = """((""" + DatePtrnYearValid + """)-((0[1-9])|(1[0-2])))"""
+  val DatePtrnExactYMDLt = """((((16|17|18|19|20)(([02468][048])|([13579][26]))-02-29))|((20[0-9][0-9])|(19[0-9][0-9])|(18[0-9][0-9])|(17[0-9][0-9])|(16[0-9][0-9]))-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))"""
+  lazy val DatePtrnExactValidLt = ("""^""" + DatePtrnExactYMDLt + """|""" + DatePtrnExactYM_Lt + """|""" + DatePtrnExactY__Lt + """$""").r
   //-- yyyy-mm-dd  => http://regexlib.com/Search.aspx?k=date&c=5&m=-1&ps=20&p=4
   // Based on some of the other patterns on RegExpLib. This is the ISO way of writing dates.
 
 
 
-  def dateInitValue: Map[String, Map[String, String]] = Map(
+    def dateInitValue: Map[String, Map[String, String]] = Map(
     "gdt_no_date" -> Map( "en" -> "", "lt" -> ""),
     "gdt_exact" -> Map( "en" -> getDateFormatExact, "lt" -> getDateFormatExact),
     "gdt_between" -> Map( // BET AND
@@ -182,7 +189,8 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
       log.debug("isValiDate S.locale.getLanguage i18nDatVal isoDatVal|" + S.locale.getLanguage + "| |" + i18nDatVal  + "| |" + GedcomUtil.iso8601Date(i18nDatVal) + "|")
       try {
         GedcomUtil.iso8601Date(i18nDatVal) match {
-        case "0000-00-00" => S ? "date.is.invalid"
+        case "0000-00-00" =>
+          S ? "date.is.invalid"
         case ymd if ymd.size == 10 =>
           DatePtrnExactValidLt findPrefixOf ymd match {
             case Some(x) =>

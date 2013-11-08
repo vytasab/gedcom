@@ -11,10 +11,8 @@
         <description>The Filter that intercepts lift calls</description>
         <filter-class>bootstrap.liftweb.StaxLiftFilter</filter-class>
         <!-- C730-1/vsh  https://groups.google.com/forum/?fromgroups#!topic/liftweb/k_MV-YZBpjs
-        <filter-class>net.liftweb.http.LiftFilter</filter-class>
-        -->
+        <filter-class>net.liftweb.http.LiftFilter</filter-class> -->
     </filter>
-
 
     <filter-mapping>
         <filter-name>LiftFilter</filter-name>

@@ -323,7 +323,7 @@ class PeWizard extends Wizard with Loggable {
 
   val peTagEVEN = new Screen {
     val descriptorInit = wvEVEN.get
-    val descriptorNew = textarea/*field*/(S ? "pe.descriptor", descriptorInit, "style"->"display:yes", "class"->"textarea-small")/*.toString*/
+    val descriptorNew = textarea/*field*/(S ? "pe.descriptor", descriptorInit, "style"->"display:yes", "class"->"textarea-small")/*.toString*/  //D922-7
 //    val dateoptionsInit = GedcomDateOptions.getMsg(wvEvenDat4Pe.get._2)
 //    val dateoptionsNew = select(S ? "pe.dateValue", dateoptionsInit,
 //      GedcomDateOptions.tags.filter( _._1 != "gdt_and").map(_._2), "size"->"9")
@@ -614,7 +614,7 @@ class PeWizard extends Wizard with Loggable {
       override def nextScreen = {
 //        wvAttrDat4Pe.set(wvAttrDat4Pe.get._1, dateoptionsNew.get)
 //        wvAttrDat4Pe.set(dateNew, wvAttrDat4Pe.get._2)
-        wvXXXX.set((valueNew, wvXXXX.get._2))
+        wvXXXX.set((valueNew/*.toString*/, wvXXXX.get._2))      //D922-7
         wvDPAS.set(dateNew.get, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
         conf/*nextScreen4Date*/
       }
@@ -1039,6 +1039,8 @@ class PeWizard extends Wizard with Loggable {
     wvPE.remove()
     wvPA.remove()
     wvED.remove()
+    log.debug("/rest/personView/" + wvBoxPerson.get.open_!.id)
+    S.redirectTo("/rest/personView/" + wvBoxPerson.get.open_!.id) //})
   }
 
   //def ajaxRender = "* [onclick]" #> SHtml.ajaxInvoke(() =>
