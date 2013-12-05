@@ -1,13 +1,12 @@
 package bootstrap.liftweb
 
-
 import org.slf4j.{LoggerFactory, Logger}
-
 import _root_.net.liftweb._
 import http._
 import common._
 import _root_.lt.node.gedcom._
 import model._
+
 /**
  * Created by IntelliJ IDEA.
  * User: padargas
@@ -15,7 +14,6 @@ import model._
  * Time: 6:18 PM
  * To change this template use File | Settings | File Templates.
  */
-
 
 // Charles F. Munat: Encrypting user passwords with Jasypt and JPA []... ====================
 
@@ -42,8 +40,8 @@ object AccessControl {
       case Empty => false
       case Full(id) => Model.find(classOf[User], id) match {
         case Some(m) =>
-          CurrentUser(Full(m));
-          CurrentUserId(Full(m.id))
+          CurrentUser.set(Full(m))
+          CurrentUserId.set(Full(m.id))
           true
         case None => false
       }

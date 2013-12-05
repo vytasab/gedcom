@@ -466,14 +466,14 @@
             <!--<activation><property><name>dev-on</name></property></activation>-->
             <!-- http://www.manydesigns.com/en/portofino/portofino3/tutorials/using-maven-profiles-and-resource-filtering -->
             <properties>
+                <!--<__app>/gedcom-web/</__app>
+                <loc_texts_4XSL>./webapps/gedcom-web/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>-->
                 <db_driver>com.mysql.jdbc.Driver</db_driver>
                 <db_url>jdbc:mysql://localhost:3306/datasource-gedcom</db_url>
                 <db_user>shaknisgedcom</db_user>
                 <db_password>123123</db_password>
-                <host__>localhost</host__>
-                <_port_>:8080</_port_>
-                <!--<__app>/gedcom-web/</__app>
-                <loc_texts_4XSL>./webapps/gedcom-web/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>-->
+                <!--<host__>localhost</host__>-->
+                <!--<_port_>:8080</_port_>-->  <!-- 8080  8443  -->
                 <__app>/gedcom/</__app>
                 <loc_texts_4XSL>./webapps/gedcom/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>
             </properties>

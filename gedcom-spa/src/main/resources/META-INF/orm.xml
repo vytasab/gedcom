@@ -7,6 +7,9 @@
     <package>lt.node.gedcom.model</package>
 
     <entity class="User">
+        <named-query name="findUserValidatedByEmailAddress">
+            <query><![CDATA[from User u where u.emailAddress = :emailAddress and u.validated = true]]></query>
+        </named-query>
         <named-query name="findUserByEmailAddress">
             <query><![CDATA[from User u where u.emailAddress = :emailAddress]]></query>
         </named-query>

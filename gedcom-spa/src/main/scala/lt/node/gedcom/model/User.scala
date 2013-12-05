@@ -116,7 +116,7 @@ class User /*extends BaseEntity*/ {
   def setValidation: String = {
     this.validated = false   // B209-3
     this.validationCode = randomString(32)
-    this.validationExpiry = System.currentTimeMillis + 7400000L
+    this.validationExpiry = System.currentTimeMillis + 7*24*3600*1000 // seven days // old value was 7400000L
     this.validationCode
   }
 

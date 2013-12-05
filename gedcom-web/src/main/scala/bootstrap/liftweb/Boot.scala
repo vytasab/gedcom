@@ -197,84 +197,22 @@ class Boot /*extends Logger*/ extends Loggable {
     }
 
     //-- http://blog.getintheloop.eu/2009/05/03/url-rewriting-with-the-lift-framework
-    LiftRules.statelessRewrite.prepend(/*NamedPF("UserValidation")*/ {
+    LiftRules.statelessRewrite.prepend( {
       case RewriteRequest(ParsePath(List("validation", page), _, _, _), _, _) => {
-        log.debug("RewriteRequest validation page = " + page)
-        RewriteResponse(ParsePath(List("login", "changePassword"), "", true, false),
-          Map("code" -> page.toString), true)
+        log.debug("RewriteRequest 'validation' page = |%s|".format(page))
+        RewriteResponse(ParsePath(List("login", "newPassword"), "", true, false),
+          Map("code" -> page), true)
       }
-      case RewriteRequest(ParsePath(List("addendup", page), _, _, _), _, _) => {
-        log.debug("S.inStatefulScope_?= |" + S.inStatefulScope_? + "|")
-        log.debug("RewriteRequest signup page = " + page)
-        log.debug("userOption = |" +
-          Model.createNamedQuery[User]("findUserByValidationCode",
-          "code" -> page).findOne + "|")
-
+      case RewriteRequest(ParsePath(List("addendup", page), _, _, _), _, _) =>
+        log.debug("S.inStatefulScope_?= |%s|", S.inStatefulScope_?)
+        log.debug("RewriteRequest 'addendup' signup page=|%s| ".format(page))
+        log.debug("userOption = |%s|", Model.createNamedQuery[User]("findUserByValidationCode", "code" -> page).findOne)
         S.setSessionAttribute("kodas", page)
-        log.debug("S.getSessionAttribute('kodas')= |" + S.getSessionAttribute("kodas") + "|")
+        log.debug("S.getSessionAttribute('kodas')= |%s|".format(S.getSessionAttribute("kodas")))
         RewriteResponse(ParsePath(List("login", "addendup"), "", true, false),
-          Map("code" -> page.toString), true)
+          Map("code" -> page), true)
 
-//        val userOption: Option[User] = Model.createNamedQuery[User]("findUserByValidationCode",
-//          "code" -> page).findOne //.getSingleResult()
-//        userOption match {
-//          case Some(user) =>
-//            if (user.validationExpiry > System.currentTimeMillis()) {
-//              user.validationCode = null
-//              user.validationExpiry = 0
-//              user.validated = true
-//              Model.mergeAndFlush(user)
-//              CurrentUser(Empty)       // CurrentUser(Full(user))
-//              CurrentUserId(Empty)     // CurrentUserId(Full(user.id))
-//              S.notice("You have successfully finished your user account creation.")
-//              //S.notice("You have successfully finished your user account creation and are now logged in.")
-//
-//              //val persons: List[Person] = Model.createNamedQuery[Person]("findPersonByGivnSurn",
-//              //  "nameGivn" -> user.firstName, "nameSurn" -> user.lastName).findAll.toList
-//              //log.debug("login:  persons.size=" + persons.size)
-//              //persons match {
-//              //  case x :: Nil => // go to canvas
-//              //    log.debug("login:  case x :: Nil")
-//              //    //RequestedURL(Full(<_>/rest/person/{x.id}</_>.text))
-//              //    RewriteResponse(ParsePath(List("rest", "person", x.id.toString), "", true, false),
-//              //      Map(), true)
-//              //  case x :: xs => // go to search form
-//              //  //RequestedURL(Full("/gedcom/personsSublist"))
-//              //    RewriteResponse(ParsePath(List("gedcom", "personsSublist"), "", true, false),
-//              //      Map(/*"code" -> page.toString*/), true)
-//              //  case _ => // go to decision making page
-//              //    log.debug("login:  case _")
-//              //    S.unsetSessionAttribute("role")
-//              //    S.setSessionAttribute("aNameGivn", user.firstName)
-//              //    S.setSessionAttribute("aNameSurn", user.lastName)
-//              //    S.unsetSessionAttribute("aGender")
-//              //    //RequestedURL(Full("/gedcom/addeditPerson"))
-//              //    RewriteResponse(ParsePath(List("gedcom", "addeditPerson"), "", true, false),
-//              //      Map(), true)
-//              //}
-//              //RewriteResponse(ParsePath(List("gedcom", "personsSublist"), "", true, false),
-//              //  Map(/*"code" -> page.toString*/), true)
-//              //RewriteResponse(ParsePath(List("login", "login"), "", true, false), Map(), true)
-//              InfoXmlMsg.set(Full(LongMsgs.longMsgs("endup.validation")(S.locale.getLanguage)))
-//              log.debug("InfoXmlMsg: " + InfoXmlMsg.is.open_!.toString)
-//              RewriteResponse(ParsePath(List("infoPage"), "", true, false), Map(), true)
-//            } else {
-//              S.error("That validation code has expired.")
-//              RewriteResponse(ParsePath(List("login", "lostPassword"), "", true, false), Map(), true)
-//            }
-//          case None =>
-//            //S.setSessionAttribute("appErrorLocation", "Boot.LiftRules.statelessRewrite: addendup ")
-//            //S.setSessionAttribute("appError", "No User found via 'findUserByValidationCode' for = " + page)
-//            //.openOr(Map("location" -> <p>no info message</p>, "message" -> <p>strange: no info message</p>))
-//            //    val errLocMsg: Map[String,NodeSeq] = ErrorXmlMsg.openOr(Map("location" -> <p>no info message</p>, "message" -> <p>strange: no info message</p>))
-//            ErrorXmlMsg.set(Some(Map(
-//              "location" -> <p>Boot.LiftRules.statelessRewrite: addendup</p>,
-//              "message" -> <p>No User found via 'findUserByValidationCode' for = {page}</p>)))
-//            RewriteResponse(ParsePath(List("errorPage"), "", true, false),
-//              Map(/*"code" -> page.toString*/), true)
-//        }
-      }
-    })
+    } )
 
     LiftRules.dispatch.prepend{
       case Req /*guestState*/ ("admin" :: page, "", _)
@@ -331,9 +269,7 @@ class Boot /*extends Logger*/ extends Loggable {
         new Locale(x.head, x.last)
       }
       def calcLocale: Box[Locale] =
-        S.findCookie(cookieName).map(
-          _.value.map(localeFromString)
-        ).openOr(Full(LiftRules.defaultLocaleCalculator(request)))
+        S.findCookie(cookieName).map(_.value.map(localeFromString)).openOr(Full(LiftRules.defaultLocaleCalculator(request)))
       S.get("locale") match {
         case f@Full(selectedLocale) =>
           //log.debug(MessageFormat.format("localeCalculator f@Full(selectedLocale) - |{0}|", selectedLocale.toString))
@@ -394,9 +330,7 @@ class Boot /*extends Logger*/ extends Loggable {
         val msg = ("completeQuery: \"mail.smtp.host\" is not \"smtp.gmail.com\"")
         log.debug(msg)
         S.redirectTo("/errorPage", () => {
-          ErrorXmlMsg.set(Some(Map(
-            "location" -> <p>Boot.configureMailer</p>,
-            "message" -> <p>{msg}</p>)))
+          ErrorXmlMsg.set(Some(Map("location" -> <p>Boot.configureMailer</p>, "message" -> <p>{msg}</p>)))
         })
     }
 

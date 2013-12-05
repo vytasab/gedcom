@@ -5,18 +5,11 @@ import _root_.scala._
 
 import _root_.net.liftweb._
 import http._
-import js._
-import JsCmds._
 import common._
 import widgets.autocomplete.AutoComplete
-
 import _root_.net.liftweb.util.Helpers._
-
-//import http.js.JsCmds.{RedirectTo, FocusOnLoad}
-
+import http.js.JsCmds.FocusOnLoad
 import http.{RequestVar, S, SHtml}
-
-
 import bootstrap.liftweb.{ErrorXmlMsg, AccessControl, RequestedURL, CurrentUser}
 import _root_.lt.node.gedcom.model.{Model,Person,Family}
 
@@ -45,22 +38,24 @@ class PersonSnips {
       S.redirectTo(<_>/rest/person/{selectedPersonURL}</_>.text)
     }
 
-    "#domain" #> FocusOnLoad(SHtml.select(personList, Empty,
-      { selectedPersonURL = _ },
-      "size" -> "1", "onchange" -> "selectWhenChanged(this)" ) ) &
+    "#domain" #> (FocusOnLoad(SHtml.select(personList, Empty,
+      { selectedPersonURL = _ }, "size" -> "1", "onchange" -> "selectWhenChanged(this)" ))) &
       "#submit" #> SHtml.submit("Save", preparePersonData)
   }
 
 
   def sublistInternal(requestedURLpref: String) = {
-    //----------------------------------------------------------
+    log.debug("[sublistInternal]... AccessControl.isAuthenticated_?(): " + AccessControl.isAuthenticated_?())
+    log.debug("[sublistInternal]... CurrentUser.is.isDefined: " + CurrentUser.is.isDefined)
+    log.debug(("[sublistInternal]... CurrentUser.is.toString: |%s|", CurrentUser.is.toString))
+
     object personsVar extends /*Request*/ SessionVar[Map[Long, String]](Map.empty)
 
     def buildQuery(current: String, limit: Int): Seq[String] = {
       //log.info("buildQuery: current= " + current + " limit=" + limit)
       val persons = Model.createNamedQuery[Person]("findPersonOrGivnSurn").
-        setParams("nameGivn" -> ("%" + current + "%").toString,
-        "nameSurn" -> ("%" + current + "%").toString).getResultList().toList
+        setParams("nameGivn" -> ("%" + current + "%"),
+        "nameSurn" -> ("%" + current + "%")).getResultList().toList
       val id2person: Map[Long, String] = persons. /*filter{
         p => S.getSessionAttribute("gender") match {
           case Full(x) => p.gender == x
@@ -74,7 +69,7 @@ class PersonSnips {
       id2person.values.toSeq
     }
 
-    def completeQuery(value: String): Unit = {
+    def completeQuery(value: String) {
       log.debug(<_>completeQuery: value={value};</_>.text)
       val foundPersonId: Option[(Long, String)] =
         personsVar.is.find {
@@ -84,11 +79,10 @@ class PersonSnips {
       //RequestedURL(Full(<_>/rest/person/{foundPersonId.get._1}</_>.text))
       RequestedURL(Full(<_>/{requestedURLpref}/{foundPersonId.get._1}</_>.text))
       S.redirectTo(RequestedURL.openOr("/"))
-    };
+    }
 
-    "#selector" #> FocusOnLoad(AutoComplete("", buildQuery _,
-      completeQuery _,
-      List(("selectFirst", "false"), ("minChars", "1"))))
+    "#selector" #> (FocusOnLoad(AutoComplete("", buildQuery _,
+      completeQuery _, List(("selectFirst", "false"), ("minChars", "1")))))
   }
 
 

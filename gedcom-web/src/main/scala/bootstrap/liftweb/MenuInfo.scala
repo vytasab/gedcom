@@ -2,6 +2,7 @@ package bootstrap.liftweb
 import org.slf4j.{LoggerFactory, Logger}
 
 import net.liftweb.http._
+import net.liftweb.common.Loggable
 
 //import http.S.?
 import net.liftweb.sitemap._
@@ -14,8 +15,8 @@ import Loc._
  * To change this template use File | Settings | File Templates.
  */
 
-object MenuInfo {
-  val log: Logger = LoggerFactory.getLogger("MenuInfo")
+object MenuInfo  extends Loggable {
+  val log/*: Logger*/ = LoggerFactory.getLogger("MenuInfo")
   log.debug("MenuInfo: []... ... ...")
 
   // CB05-1/vsh DPP: The 'S ? "Home"' etc. parameters to Menu() are call-by-name which means
@@ -124,13 +125,15 @@ object MenuInfo {
     //Menu(Loc("loginout", List("topMenu"), S ? "authentication"),
       //Loc("authent", User.basePath, "Authentication"),
       Menu(Loc("UserLogin", List("login", "login"), S.?("log.in"),
-        If(() => AccessControl.isAuthenticated_?() == false, () => RedirectResponse("/")))),
+        If(() => !AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
       Menu(Loc("UserLogout", List("logout"), S.?("log.out"),
         If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
-      Menu(Loc("UserReset", List("login", "lostPassword"),S.?("lost.password"))),
-      Menu(Loc("UserChgPsw", List("login", "changePassword"),S.?("change.password")
-        /*,If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/"))*/
-      )),
+      Menu(Loc("UserReset", List("login", "lostPassword"),S.?("lost.password"),
+        If(() => !AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
+      Menu(Loc("UserChgPsw", List("login", "changePassword"), S.?("change.password"),
+        If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
+      Menu(Loc("UserNewPsw", List("login", "newPassword"), S.?("password.new"),
+        If(() => !AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
       Menu(Loc("UserEdit", List("login", "useredit"),S.?("edit.profile"),
         If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
       Menu(Loc("UserAdd", List("login", "useradd"),S.?("sign.up"),
