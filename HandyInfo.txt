@@ -844,6 +844,7 @@ DB07-4/vsh =====================================================================
         -Djava.io.tmpdir=c:\Tomcat\temp
         -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
         -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+
         -Drun.mode=development
         -Drebel.log4j-plugin=true
         -Drebel.log=true
@@ -858,9 +859,10 @@ DB07-4/vsh =====================================================================
         -Djava.io.tmpdir=c:\Tomcat\temp
         -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
         -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+
+        -Drun.mode=production
         -Drebel.log4j-plugin=false
         -Drebel.log=false
-        -Drun.mode=production
 
 
 DB12-2/vsh ==============================================================================
@@ -1142,8 +1144,3 @@ http-apr-8080-exec-5 WARN 16:10:22,671 [LoginOps] [warn 216] - logUserIn: User a
 [WARNING]  net.liftweb:lift-actor_2.9.1:2.4 requires scala version: 2.10.0
 [WARNING]  net.liftweb:lift-json_2.9.1:2.4 requires scala version: 2.9.1
 [WARNING] Multiple versions of scala libraries detected!
-
-
-LoginOps.addendup
-    No User found via 'findUserByValidationCode' for =
-    |1_FYLSXNULCBDUKRNJebLKOJOCIPeSfcDd|

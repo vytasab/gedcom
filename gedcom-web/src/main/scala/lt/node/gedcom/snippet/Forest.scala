@@ -20,7 +20,7 @@ class Forest extends Loggable {
     GedcomRest.emptyFids
     val sb: StringBuffer = new StringBuffer("")
     val sbIdGen: StringBuffer = new StringBuffer("")
-    val rootId = S.getSessionAttribute("personId").openOr("1").toLong
+    val rootId = S.getSessionAttribute("personId").openOr("1").trim.toLong
 
 
     GedcomRest.getPersonJS(

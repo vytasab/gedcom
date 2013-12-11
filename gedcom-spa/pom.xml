@@ -140,7 +140,7 @@
                 <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
                 <hibernate.connection.url>jdbc:mysql://localhost:3306/datasource-gedcom</hibernate.connection.url>
                 <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
-                <hibernate.connection.password>123123</hibernate.connection.password>
+                <hibernate.connection.password>271314log</hibernate.connection.password>
                 <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
                 <hibernate.show_sql>false</hibernate.show_sql>
                 <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
@@ -177,7 +177,47 @@
             <!--</build>-->
         </profile>
 
-        <!--  mvn -Pspa_prodStax -Dmaven.test.skip=true clean install  -->
+        <!--  mvn -Pspa_prodNexus -Dmaven.test.skip=true clean install  -->
+        <profile>
+            <id>spa_prodNexus</id>
+            <activation>
+                <property>
+                    <name>spa_prodNexus-on</name>
+                </property>
+            </activation>
+            <properties>
+                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
+                <hibernate.connection.url>jdbc:mysql://localhost:3306/datasource-gedcom</hibernate.connection.url>
+                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
+                <hibernate.connection.password>271314log</hibernate.connection.password>
+                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
+                <hibernate.show_sql>false</hibernate.show_sql>
+                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+            </properties>
+        </profile>
+
+
+        <!--  mvn -Pspa_prodAosvu -Dmaven.test.skip=true clean install  -->
+        <profile>
+            <id>spa_prodAosvu</id>
+            <activation>
+                <property>
+                    <name>spa_prodAosvu-on</name>
+                </property>
+            </activation>
+            <properties>
+                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
+                <hibernate.connection.url>jdbc:mysql://localhost:3306/datasource-gedcom</hibernate.connection.url>
+                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
+                <hibernate.connection.password>271314log</hibernate.connection.password>
+                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
+                <hibernate.show_sql>false</hibernate.show_sql>
+                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+            </properties>
+        </profile>
+    <!--  mvn -Pspa_prodStax -Dmaven.test.skip=true clean install  -->
         <profile>
             <id>spa_prodStax</id>
             <activation>
@@ -228,25 +268,6 @@
             <!--</build>-->
         </profile>
 
-        <!--  mvn -Pspa_prodNexus -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>spa_prodNexus</id>
-            <activation>
-                <property>
-                    <name>spa_prodNexus-on</name>
-                </property>
-            </activation>
-            <properties>
-                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
-                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
-                <hibernate.connection.url>jdbc:mysql://localhost:3306/datasource-gedcom</hibernate.connection.url>
-                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
-                <hibernate.connection.password>123123</hibernate.connection.password>
-                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
-                <hibernate.show_sql>false</hibernate.show_sql>
-                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-            </properties>
-        </profile>
 
         <!--  mvn -Pspa_prodBudge -Dmaven.test.skip=true clean install  -->
         <profile>
@@ -267,29 +288,9 @@
                 <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
             </properties>
         </profile>
-
-        <!--  mvn -Pspa_prodAosvu -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>spa_prodAosvu</id>
-            <activation>
-                <property>
-                    <name>spa_prodAosvu-on</name>
-                </property>
-            </activation>
-            <properties>
-                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
-                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
-                <hibernate.connection.url>jdbc:mysql://localhost:3306/datasource-gedcom</hibernate.connection.url>
-                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
-                <hibernate.connection.password>123123</hibernate.connection.password>
-                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
-                <hibernate.show_sql>false</hibernate.show_sql>
-                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-            </properties>
-        </profile>
     </profiles>
 
-    <reporting>
+<reporting>
         <plugins>
             <plugin>
                 <groupId>org.scala-tools</groupId>

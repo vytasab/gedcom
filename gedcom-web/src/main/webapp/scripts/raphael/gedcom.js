@@ -7,12 +7,12 @@
 */
 // Global parameters
 // G.loggedIn = the value is set in server Lift side (Forest.scala)
-G.globWidth =  0*640 + 0*720 + 0*800 + 0 + 1*1280;
-G.globHeight = 0*480 + 0*576 + 0*600 + 0 + 1*720;
+G.globWidth =  0*640 + 1*720 + 0*800 + 0 + 0*1280;
+G.globHeight = 0*480 + 1*576 + 0*600 + 0 + 0*720;
 G.locale = 'lt'; // actual value must be generated in Lift
 G.direction = 'BT'; // tree dreawing direction: BT-BottomTop TB-TopBottom LR-LeftRight RL-RightLeft
 G.vertGapBetweenGenerations = 200;
-G.horizGapBetweenSiblings = 20;
+G.horizGapBetweenSiblings = 25;
 G.margin = 10; // Family and Person box internal margin
 // G.rootId = id; // a root Person id
 // G.gSize = 0; // number of generations
@@ -27,6 +27,7 @@ G.baseHmin = G.initY = G.globHeight/2+00;
 G.baseHmax = G.globHeight/2;
 G.tempWidth = 0;
 G.tempHeight = 0;
+G.topRectCssAttrs = ({fill: "#eeeeee", stroke: "#fff", opacity: 1});
 
 G.shownFam=[];
 if (!G.shownFam.indexOf) {
@@ -95,6 +96,20 @@ function levenshtein(str1, str2) {
 //var poros = [['Ašmys','Aschmies'],['Ašmys','Asmys'],['Ašmys','Asmis']];
 //for (var i in poros ) alert(""+ levenshtein(poros[i][0], poros[i][1]);
 }
+
+
+/**
+ * Returns a random CSS color rgb code between min and max
+ */
+function randomColor () {
+    var min = 50;
+    var max = 250;
+    var r = Math.random() * (max - min) + min;
+    var g = Math.random() * (max - min) + min;
+    var b = Math.random() * (max - min) + min;
+    return "rgb("+r+","+g+","+b+")"
+}
+
 
 var getPersonFamilyIdsArr = function(person) {
     var familyIds = [];
@@ -278,7 +293,7 @@ Raphael.fn.setAction4Sibling = function(personId, actionName, restUrl) { //=====
     
     actionBox.node.onclick = function() { //logD("anAction.node.onclick");
         G.topAcctionsRect.remove()
-        G.topRect.attr({fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1})
+        G.topRect.attr(G.topRectCssAttrs/*{fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1}*/)
         actionBox.attr("fill","#fff");
         if (restUrl == '') {
             for (var i in As.a) {
@@ -377,8 +392,7 @@ Raphael.fn.setAction4Ancestor = function(personId, actionName, restUrl) { //====
     };
     actionBox.node.onclick = function() { //logD("anAction.node.onclick");
         G.topAcctionsRect.remove()
-        G.topRect.attr({fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1})
-        actionBox.attr("fill","#fff");
+        G.topRect.attr(G.topRectCssAttrs/*{fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1}*/)
         actionBox.attr("fill","#fff");
         if (restUrl == '') {
             for (var i in Aa.a) {
@@ -566,11 +580,12 @@ Raphael.fn.drawPerson = function(personId, relPosition) { //====================
         p.x = x - 0*G.margin;
         updateGlobVars(p, p.x-1*G.margin, p.y-1*G.margin, p.w, p.h, 'drawPerson');
 
+        var rectBorder = (p.id==G.rootId) ? 3 : 1
         CSS.font = {'font-family':'Verdana', 'font-size':'10px'};
         CSS.text = {'fill':'#000000', 'stroke-width':'1', 'text-anchor':'start'};
-        CSS.male = CSS.female = CSS.sex = {'fill-opacity':'0.9', 'stroke':'#000', 'stroke-width':'1', 'text-anchor':'start'};
-        CSS.male = {'fill':'270-#cff-#fff'};
-        CSS.female = {'fill':'270-#fcf-#fff'}; 
+        //CSS.male = CSS.female = CSS.sex = {'fill-opacity':'0.9', 'stroke':'#000', 'stroke-width':'1', 'text-anchor':'start'};
+        CSS.male = {'fill':'270-#cff-#fff', 'stroke':'#000', 'stroke-width':rectBorder};
+        CSS.female = {'fill':'270-#fcf-#fff', 'stroke':'#000', 'stroke-width':rectBorder};
         CSS.maleOver = {'fill':'90-#6ff-#fff'};
         CSS.femaleOver = {'fill':'90-#f6f-#fff'}; 
         //CSS.male = $.extend( CSS.sex, {'fill':'270-#cff-#fff'})
@@ -907,7 +922,7 @@ Raphael.fn.setAction4FamilySpouse = function(familyId, actionName, restUrl) { //
     };
     actionBox.node.onclick = function() { //logD("anAction.node.onclick");
         G.topAcctionsRect.remove()
-        G.topRect.attr({fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1})
+        G.topRect.attr(G.topRectCssAttrs/*{fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1}*/)
         actionBox.attr("fill","#fff");
         if (restUrl == '') {
             for (var i in Afs.a) {
@@ -981,7 +996,7 @@ Raphael.fn.setAction4FamilyChildren = function(familyId, actionName, restUrl) { 
     Afc.a[actionCode] = anAction;
     
     var actionBox = this.rect(Afc.cx-G.margin/2, Afc.cy-Afc.h-1.25*G.margin, Afc.w+1*G.margin, Afc.h+1*G.margin/4, 0);
-    Afc.init = {"fill":"#cff", "stroke":"#000", "opacity":"0.5", "stroke-width":"2"};
+    Afc.init = {"fill":"#fff", /*"fill":"#cff",*/ "stroke":"#000", "opacity":"0.5", "stroke-width":"2"};
     actionBox.attr(Afc.init);
     Afc.a[actionCode+'Box'] = actionBox;
 
@@ -996,7 +1011,7 @@ Raphael.fn.setAction4FamilyChildren = function(familyId, actionName, restUrl) { 
     };
     actionBox.node.onclick = function() { //logD("anAction.node.onclick");
         G.topAcctionsRect.remove()
-        G.topRect.attr({fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1})
+        G.topRect.attr(G.topRectCssAttrs/*{fill: "270-#eeeeee-#dddddd", stroke: "#fff", opacity: 1}*/)
         actionBox.attr("fill","#fff");
         if (restUrl == '') {
             for (var i in Afc.a) {
@@ -1023,6 +1038,7 @@ Raphael.fn.drawFamily = function(familyId, skipSpouseId, skipChildId) {
     //logD('[-- dF familyId skipSpouseId skipChildId ' + familyId+' '+skipSpouseId+' '+skipChildId);
     var fKey = "f"+familyId;
     var f = g[fKey];
+    f.color = randomColor()
     if (f.r.length > 0)/*('x' in f)*/ { // the Family box is built now
         //logD('--](skip) dF familyId skipSpouseId skipChildId w h x y ' + familyId+' '+skipSpouseId+' '+skipChildId+' '+f.w+' '+f.h+' '+f.x+' '+f.y);
         return;
@@ -1589,6 +1605,7 @@ Raphael.fn.drawBox4Gener = function() {
         var rt = this.rect(G['g'+i+'_wMin'], G['g'+i+'_hMin'], G['g'+i+'_wMax']-G['g'+i+'_wMin'], 
             G['g'+i+'_hMax']-G['g'+i+'_hMin']);
         rt.attr({fill: "90-#fff-#000"});
+        //rt.attr({fill: "90-#fff-#000", 'stroke-width':11});
         G['g'+i+'_rect'] = rt;
     }
     //logD("Click to remove development time generation area rectangle");
@@ -1600,7 +1617,7 @@ Raphael.fn.drawBox4Gener = function() {
 };
 
 
-// draws box for every generaton, a box contains all one genetation onjects
+//
 // B126-3/vsh init
 Raphael.fn.translteForest = function(deltaX, deltaY) {
     G.diwe_=G.diwe; G.diwe = 'D';
@@ -1948,7 +1965,8 @@ Raphael.fn.bindPersons = function() { //========================================
                 if (fKey in g) {  // B130-7: opposite may happen because of forest show narrowing
                     //if (fKey == 'f1') alert('fKey in g fKey=' + fKey);
                     var f = g[fKey];   //logD(f);
-        // TODO     // nebaigta !!! var spouseId = (('mother' in f) && (personId == f.mother)) ? (('father' in fd) ? f.father : '0') :
+                    var rColor = f.color; //randomColor()
+                    // TODO nebaigta !!! var spouseId = (('mother' in f) && (personId == f.mother)) ? (('father' in fd) ? f.father : '0') :
                     //    (('father' in fd) && (personId == f.father)) ? (('mother' in fd) ? f.mother : '0') : '0';
                     /* BB07-1/vsh
                     this.drawFamily(p.familyId, 0, personId); // (familyId, skipsSpouseId, skipChilId)
@@ -1964,6 +1982,7 @@ Raphael.fn.bindPersons = function() { //========================================
                     //if (fKey == 'f1') alert('fKey in g fKey=' + fKey + '------- ' + 'M'+fmw+' '+fmh+'L'+plw+' '+plh);
                     var path1 = this.path('M'+fmw+' '+fmh+'L'+plw+' '+plh);  // alert("drawPerson relPosition = " + relPosition);
                     //if (fKey == 'f1') alert('fKey in g fKey=' + fKey + '=======');
+                    path1.attr({stroke: rColor/*randomColor()*/})
                     p.r[p.r.length] = path1;
                     //logD("Raphael.fn.drawPerson: p.r[p.r.length-1] = " +  p.r[p.r.length-1]);
                     //G.diwe = G.diwe_temp;
@@ -1983,10 +2002,13 @@ Raphael.fn.bindPersons = function() { //========================================
  var scale = 1.5;
  paper.setSize(scale*G.globWidth, scale*G.globHeight); 
  
- paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr({fill: "315-#ffffff-dddddd", stroke: "#fff", opacity: 1});
- 
- G.topRect = paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight);
- 
+ //paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr({fill: "315-#ffffff-dddddd", stroke: "#fff", opacity: 1});
+ //paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr({fill: "111111", stroke: "#fff", opacity: 1});
+ //paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr({ stroke: "#fff", opacity: 1});
+
+ //var cssAttrs = ({fill: "315-#ffffff-dddddd", stroke: "#fff", opacity: 1});
+ G.topRect = paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr(G.topRectCssAttrs);
+
  //--paper.drawTestShapes(); // DO NOT DELETE
  
 /*
@@ -2017,14 +2039,33 @@ Raphael.fn.bindPersons = function() { //========================================
   //alert("G.initX = "+G.initX + ";   G.initY = "+G.initY);
   sketchPerson();
   sketchFamily();
+
+  //paper.drawBox4Gener();
+
   paper.drawPerson(G.rootId, 'personOnly');
   paper.drawAll();
   paper.bindPersons();
 
-//========================================
+  //var G.globWidth =  0*640 + 1*720 + 0*800 + 0 + 0*1280;
+  //var G.globHeight = 0*480 + 1*576 + 0*600 + 0 + 0*720;
+  //paper.path("M16,30.534c8.027,0,14.534-6.507,14.534-14.534c0-8.027-6.507-14.534-14.534-14.534C7.973,1.466,1.466,7.973,1.466,16C1.466,24.027,7.973,30.534,16,30.534zM18.335,6.276l3.536,3.538l-6.187,6.187l6.187,6.187l-3.536,3.537l-9.723-9.724L18.335,6.276z").attr({fill: "#999", stroke: "none"});
 
+  var goXxxW = 30;
+  var goXxxH = 30;
+  var marginX = 10;
+  var marginY = 10;
+  var vInitx = marginX;
+  var vInity = G.globHeight/2 + 2*goXxxH;
+  var step = 200;
+  var goUp = paper.drawImage( G.app+'images/goUp.png', vInitx, vInity + goXxxH, 'w', 30);
+  goUp.node.onclick = function() { paper.translteForest(0, 1*step); };
+  var goRight = paper.drawImage( G.app+'images/goRight.png', vInitx, vInity + 2*goXxxH, 'w', 30);   // go090.jpg
+  goRight.node.onclick = function() { paper.translteForest(-1*step, 0); };
+  var goLeft = paper.drawImage( G.app+'images/goLeft.png', vInitx, vInity + 3*goXxxH, 'w', 30);
+  goLeft.node.onclick = function() { paper.translteForest(1*step, 0); };
+  var goDown = paper.drawImage( G.app+'images/goDown.png', vInitx, vInity + 4*goXxxH, 'w', 30);
+  goDown.node.onclick = function() { paper.translteForest(0, -1*step); };
 
- 
- window.onload = function (paper) { /*logE("window.onload");*/ }
+ //window.onload = function (paper) { logE("window.onload"); }
 
 
