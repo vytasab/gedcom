@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Maven: lt.node.gedcom:gedcom-spa:1.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/gedcom-spa/pom.xml!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/gedcom-spa/pom-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/lt/node/gedcom/gedcom-spa/1.0-SNAPSHOT/gedcom-spa-1.0-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/gedcom-spa/pom-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/lt/node/gedcom/gedcom-spa/1.0-SNAPSHOT/gedcom-spa-1.0-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

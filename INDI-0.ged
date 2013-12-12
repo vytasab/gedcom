@@ -1,0 +1,273 @@
+0 HEAD
+1 SOUR gedcom-web
+2 VERS 1.0
+2 NAME gedcom-web
+1 DEST ANY
+1 DATE 26 May 2012
+2 TIME 00:04:31
+1 SUBM @B1@
+1 FILE INDI-0.ged
+1 GEDC 
+2 VERS 5.5.1 
+2 FORM Lineage-Linked 
+1 CHAR UTF-8
+0 @B1@ SUBM 
+1 NAME padargas
+0 @I1@ INDI
+1 NAME Vytautas /Šabanas/
+1 SEX M
+1 BIRT
+2 DATE 20 APR 1949
+2 PLAC Raudėnų kaimas Šiaulių rajonas
+2 AGE 61y
+2 NOTE Gimė dabartiniame dėdės Danielaus Sutkaus name, gimė gana silpnas
+1 EDUC Vidurinis mokslas
+2 DATE FROM 1968 TO 1969
+2 PLAC Palanga
+2 AGE <20y
+2 SOUR autobiogr
+1 NCHI 2
+2 SOUR vsh
+1 RESI
+2 PLAC Gebenių 33, Kaunas
+2 AGE 62y
+1 FAMS @F1@
+0 @I4@ INDI
+1 NAME Mantas /Šabanas/
+1 SEX M
+1 FAMS @F14@
+0 @I34@ INDI
+1 NAME Ramunė /Gedgaudaitė/
+1 SEX F
+1 FAMS @F14@
+0 @F14@ FAM
+1 HUSB @I4@
+1 WIFE @I34@
+0 @I3@ INDI
+1 NAME Andrius /Šabanas/
+1 SEX M
+1 FAMS @F10@
+0 @I33@ INDI
+1 NAME Božena /Petikonis-Šabanienė (Petikonis)/
+1 SEX F
+1 FAMS @F10@
+0 @F10@ FAM
+1 HUSB @I3@
+1 WIFE @I33@
+0 @I2@ INDI
+1 NAME Dalia /Šabanienė (Ašmytė)/
+1 SEX F
+1 BIRT
+2 DATE 30 MAY 1953
+2 PLAC Druskininkai
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 CHIL @I4@
+1 CHIL @I3@
+1 MARR
+2 DATE 30 JUN 1979
+2 PLAC Kaunas, Vilijampolė, kavinė 'Vilija'
+2 AGE 30M
+2 SOUR Vestuvių pokylis buvo 'Vilija' kavinėje Vilijampolėje; ten vėliau buvo mafų 'meeting point'. Štai taip.
+0 @I8@ INDI
+1 NAME Stasys /Šabanas/
+1 SEX M
+1 FAMS @F3@
+0 @I22@ INDI
+1 NAME Algirdas /Šabanas/
+1 SEX M
+1 BIRT
+2 DATE 05 MAY 1945
+2 PLAC Raudėnai, Šiaulių raj.
+1 FAMS @F9@
+0 @I30@ INDI
+1 NAME Kęstutis /Šabanas/
+1 SEX M
+0 @I27@ INDI
+1 NAME Rūta /Šabanienė (Jurgelionytė)/
+1 SEX F
+1 FAMS @F9@
+0 @F9@ FAM
+1 HUSB @I22@
+1 WIFE @I27@
+1 CHIL @I30@
+0 @I17@ INDI
+1 NAME Stasė /Šabanienė (Sutkutė)/
+1 SEX F
+1 FAMS @F3@
+0 @F3@ FAM
+1 HUSB @I8@
+1 WIFE @I17@
+1 CHIL @I1@
+1 CHIL @I22@
+0 @I18@ INDI
+1 NAME Vilius /Ašmys/
+1 SEX M
+1 BIRT
+2 DATE 09 NOV 1919
+2 PLAC Priekulė, Butkų k.
+1 FAMS @F4@
+0 @I23@ INDI
+1 NAME Giedrius Donatas /Ašmys/
+1 SEX M
+1 FAMS @F8@
+0 @I26@ INDI
+1 NAME Gražina /Ašmienė/
+1 SEX F
+1 FAMS @F8@
+0 @F8@ FAM
+1 HUSB @I23@
+1 WIFE @I26@
+0 @I19@ INDI
+1 NAME Kamilė /Ašmienė (Toločkaitė)/
+1 SEX F
+1 BIRT
+2 DATE 20 APR 1921
+2 PLAC Ukmergė
+1 FAMS @F4@
+0 @F4@ FAM
+1 HUSB @I18@
+1 WIFE @I19@
+1 CHIL @I23@
+1 CHIL @I2@
+0 @I20@ INDI
+1 NAME Henrikas /Toločka/
+1 SEX M
+0 @I21@ INDI
+1 NAME Antanas /Toločka/
+1 SEX M
+1 FAMS @F5@
+0 @I40@ INDI
+1 NAME Antanas /Toločka/
+1 SEX M
+0 @I31@ INDI
+1 NAME Aldona /Toločkaitė/
+1 SEX F
+0 @I41@ INDI
+1 NAME Kamilė /Toločkienė (Ivanauskaitė)/
+1 SEX F
+1 FAMS @F5@
+0 @F5@ FAM
+1 HUSB @I21@
+1 WIFE @I41@
+1 CHIL @I19@
+1 CHIL @I20@
+1 CHIL @I40@
+1 CHIL @I31@
+0 @I24@ INDI
+1 NAME Stanislovas /Sutkus/
+1 SEX M
+1 FAMS @F6@
+0 @I29@ INDI
+1 NAME Zigmas /Sutkus/
+1 SEX M
+1 DEAT
+2 DATE 06 NOV 1957
+2 PLAC Kažkur aplink Švendrius
+2 CAUS Autoįvykis
+2 SOUR sesuo Elena
+1 BIRT
+2 DATE ABT 1932
+2 PLAC Švendriai
+2 SOUR sesuo Elena
+0 @I47@ INDI
+1 NAME Pranas /Sutkus/
+1 SEX M
+0 @I42@ INDI
+1 NAME Elena /Liupšienė (Sutkutė)/
+1 SEX F
+0 @I45@ INDI
+1 NAME Steponas /Sutkus/
+1 SEX M
+0 @I46@ INDI
+1 NAME Antanas /Sutkus/
+1 SEX M
+0 @I48@ INDI
+1 NAME Danielius /Sutkus/
+1 SEX M
+0 @I28@ INDI
+1 NAME Izabelė /Sutkienė (Banaitė)/
+1 SEX F
+1 FAMS @F6@
+0 @F6@ FAM
+1 HUSB @I24@
+1 WIFE @I28@
+1 CHIL @I17@
+1 CHIL @I29@
+1 CHIL @I47@
+1 CHIL @I42@
+1 CHIL @I45@
+1 CHIL @I46@
+1 CHIL @I48@
+0 @I32@ INDI
+1 NAME Ad /Minaitis/
+1 SEX M
+1 EVEN
+2 TYPE  <_ d="lt"><lt>Xmltv</lt></_>
+2 DATE ABT MAR 2011
+2 PLAC Freda
+2 AGE 62y
+2 SOUR ego
+1 BIRT
+2 DATE ABT 2010
+2 PLAC Gebenių 33, Kaunas
+2 SOUR Išgalvotas
+1 NATI marsietis
+2 DATE ABT 31 MAR 2011
+2 SOUR taip sugalvojau
+0 @I35@ INDI
+1 NAME Elena /Banienė (Norvaišaitė)/
+1 SEX F
+0 @I36@ INDI
+1 NAME Adomas /Minas/
+1 SEX M
+1 FAMS @F13@
+0 @I39@ INDI
+1 NAME Ada /Adminaitytė/
+1 SEX F
+0 @I38@ INDI
+1 NAME Adoma /Adminienė (Kažkokaitė)/
+1 SEX F
+1 FAMS @F13@
+0 @F13@ FAM
+1 HUSB @I36@
+1 WIFE @I38@
+1 CHIL @I39@
+1 CHIL @I32@
+0 @I43@ INDI
+1 NAME Veronika /Žilinskaitė/
+1 SEX F
+0 @I49@ INDI
+1 NAME Izidorius /Banys/
+1 SEX M
+1 FAMS @F12@
+0 @F12@ FAM
+1 HUSB @I49@
+1 CHIL @I28@
+0 @I50@ INDI
+1 NAME Justinas /Gedgaudas/
+1 SEX M
+1 FAMS @F15@
+0 @I53@ INDI
+1 NAME Saulius /Gedgaudas/
+1 SEX M
+0 @I52@ INDI
+1 NAME Justinas /Gedgaudas/
+1 SEX M
+0 @I54@ INDI
+1 NAME Jūratė /Gedgaudaitė/
+1 SEX F
+0 @I51@ INDI
+1 NAME Adelė /Gedgaudienė (Zabitytė)/
+1 SEX F
+1 FAMS @F15@
+0 @F15@ FAM
+1 HUSB @I50@
+1 WIFE @I51@
+1 CHIL @I34@
+1 CHIL @I53@
+1 CHIL @I52@
+1 CHIL @I54@
+0 TRLR

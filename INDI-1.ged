@@ -1,0 +1,74 @@
+﻿0 HEAD
+1 SOUR gedcom-web
+2 VERS 1.0
+2 NAME gedcom-web
+1 DEST ANY
+1 DATE 19 May 2012
+2 TIME 11:50:20
+1 SUBM @B1@
+1 FILE INDI-1.ged
+1 GEDC 
+2 VERS 5.5.1 
+2 FORM Lineage-Linked 
+1 CHAR UTF-8
+0 @B1@ SUBM 
+1 NAME padargas
+0 @I1@ INDI
+1 NAME Vytautas /Šabanas/
+1 SEX M
+1 BIRT
+2 DATE 1949 04 20
+2 PLAC Raudėnų kaimas Šiaulių rajonas
+2 AGE 61y
+2 NOTE Gimė dabartiniame dėdės Danielaus Sutkaus name, gimė gana silpnas
+1 EDUC Vidurinis mokslas
+2 DATE FROM 1968 TO 1969
+2 PLAC Palanga
+2 AGE <20y
+2 SOUR autobiogr
+1 NCHI 2
+2 SOUR vsh
+1 RESI
+2 PLAC Gebenių 33, Kaunas
+2 AGE 62y
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Andrius /Šabanas/
+1 SEX M
+1 FAMS @F10@
+0 @I33@ INDI
+1 NAME Božena /Petikonis-Šabanienė (Petikonis)/
+1 SEX F
+1 FAMS @F10@
+0 @F10@ FAM
+1 HUSB @I3@
+1 WIFE @I33@
+0 @I4@ INDI
+1 NAME Mantas /Šabanas/
+1 SEX M
+1 FAMS @F14@
+0 @I34@ INDI
+1 NAME Ramunė /Gedgaudaitė/
+1 SEX F
+1 FAMS @F14@
+0 @F14@ FAM
+1 HUSB @I4@
+1 WIFE @I34@
+0 @I2@ INDI
+1 NAME Dalia /Šabanienė (Ašmytė)/
+1 SEX F
+1 BIRT
+2 DATE 1953 05 30
+2 PLAC Druskininkai
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 CHIL @I3@
+1 CHIL @I4@
+1 MARR
+2 DATE 1979 06 30
+2 PLAC Kaunas, Vilijampolė, kavinė 'Vilija'
+2 AGE 30M
+2 SOUR Vestuvių pokylis buvo 'Vilija' kavinėje Vilijampolėje; ten vėliau buvo mafų 'meeting point'. Štai taip.
+0 TRLR

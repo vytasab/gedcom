@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gedcom.iml" filepath="$PROJECT_DIR$/gedcom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gedcom-spa/gedcom-spa.iml" filepath="$PROJECT_DIR$/gedcom-spa/gedcom-spa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gedcom-web/gedcom-web.iml" filepath="$PROJECT_DIR$/gedcom-web/gedcom-web.iml" />
+    </modules>
+  </component>
+</project>
+
