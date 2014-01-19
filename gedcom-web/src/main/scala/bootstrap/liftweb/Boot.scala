@@ -184,7 +184,8 @@ class Boot /*extends Logger*/ extends Loggable {
     // B321-1=============================================
 
     //LiftRules.statelessDispatchTable.append(ImageInfo.serveImage)
-    LiftRules.statelessDispatchTable.append(MultiMediaService.serveImage)  // // D605-6/vsh  uncommented
+    //LiftRules.statelessDispatchTable.append(MultiMediaService.serveImage)  // // D605-6/vsh  uncommented
+    LiftRules.statelessDispatch.append(MultiMediaService.serveImage)
     // D605-6/vsh  no such method:  LiftRules.statelessDispatch.append(MultiMediaService.serveImage)
 
     LiftRules.localeCalculator = localeCalculator _
@@ -269,7 +270,8 @@ class Boot /*extends Logger*/ extends Loggable {
         new Locale(x.head, x.last)
       }
       def calcLocale: Box[Locale] =
-        S.findCookie(cookieName).map(_.value.map(localeFromString)).openOr(Full(LiftRules.defaultLocaleCalculator(request)))
+        S.findCookie(cookieName).map(_.value.map(localeFromString)).
+          openOr(Full(LiftRules.defaultLocaleCalculator(request)))
       S.get("locale") match {
         case f@Full(selectedLocale) =>
           //log.debug(MessageFormat.format("localeCalculator f@Full(selectedLocale) - |{0}|", selectedLocale.toString))

@@ -100,10 +100,12 @@ object MenuInfo  extends Loggable {
     //    Menu(Loc("UserReset", List("login", "resetPassword"),S.?("Password Reset"))),
     //    Menu(Loc("UserAdd", List("login", "useradd"),S.?("Add.User"))),
 
-    Menu(Loc("addendum", List("export"), S.?("Addendum")),
+    Menu(Loc("addendum", List("export"), S.?("Addendum"),
+      If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/"))),
     //Menu(Loc("addendum", List("addendum", "export"), S.?("Addendum")),
     //Menu(Loc("addendum", List("topMenu"), S.?("Addendum")),
-      Menu(Loc("aExportAll", List("addendum", "doExportAll"), S.?("export.all"))),
+      Menu(Loc("aExportAll", List("addendum", "doExportAll"), S.?("export.all"),
+        If(() => AccessControl.isDeveloper_?(), () => RedirectResponse("/")))),
       Menu(Loc("aExportPart", List("addendum", "exportPart"), S.?("export.part"))),
       //Menu(Loc("bExportAll", List("addendum", "doExportAll"), "", Hidden)),
       Menu(Loc("bExportPart", List("addendum", "doExportPart"), "", Hidden))

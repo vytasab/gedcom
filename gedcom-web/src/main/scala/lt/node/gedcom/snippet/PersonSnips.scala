@@ -82,7 +82,7 @@ class PersonSnips {
     }
 
     "#selector" #> (FocusOnLoad(AutoComplete("", buildQuery _,
-      completeQuery _, List(("selectFirst", "false"), ("minChars", "1")))))
+      completeQuery _, List(("selectFirst", "false"), ("minChars", "4"), ("size", "20")))))
   }
 
 

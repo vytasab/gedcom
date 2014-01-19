@@ -845,10 +845,10 @@ DB07-4/vsh =====================================================================
         -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
         -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
 
-        -Drun.mode=development
-        -Drebel.log4j-plugin=true
-        -Drebel.log=true
-        -javaagent:C:\Documents and Settings\vsh\.IdeaIC11\config\plugins\jr-ide-idea\lib\jrebel\jrebel.jar
+-Drun.mode=development
+-Drebel.log4j-plugin=true
+-Drebel.log=true
+-javaagent:C:\Documents and Settings\vsh\.IdeaIC11\config\plugins\jr-ide-idea\lib\jrebel\jrebel.jar
 
     Production mode:
     Apache Tomcat 7,8 Properties -> Java -> Java Options:
@@ -860,9 +860,9 @@ DB07-4/vsh =====================================================================
         -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
         -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
 
-        -Drun.mode=production
-        -Drebel.log4j-plugin=false
-        -Drebel.log=false
+-Drun.mode=production
+-Drebel.log4j-plugin=false
+-Drebel.log=false
 
 
 DB12-2/vsh ==============================================================================
@@ -1102,7 +1102,21 @@ Išsiskleidusiame meniu spustelėkite pele Prisijungti meniu punktą.
 
 
 
-ymdd-x/vsh ==============================================================================
+E119-7/vsh =============================================================================
+
+Nexus rekonfiguracija 8080 -> 8443
+    - execute: c:\Scala\gedcom\nexus_tomcat_switch_to_8080.bat
+    - remove lat unnecessary char (after "</Server>") in c:\Tomcat\conf\server.xml
+    - start c:\Tomcat\bin\tomcat8w.exe :
+        - click 'Java' tab
+        - change 'Java Options' according c:\Scala\gedcom\nexus_tomcat_8080_8443_config.txt
+        - click 'General' tab
+        - click 'start' tab or 'stop' and 'start' tabs
+    - execute: c:\Scala\gedcom\build-gedcom-dev-web.bat
+    - execute: c:\Scala\gedcom\copy-gedcom_nexus.bat
+    - ... do development ...
+
+
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================

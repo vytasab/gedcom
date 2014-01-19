@@ -21,6 +21,15 @@ class SettingSnips {
   def flag = {
     var selectedLocale: String = S.locale.toString  //.getLanguage
     log.debug(<_>S.uriAndQueryString={S.uriAndQueryString.toString}</_>.text)
+    S.get("locale") match{
+      case Full(lang) => log.debug(<_>flag Full(lang): |{lang}|</_>.text)
+      case Empty =>
+        S.set("locale", S.locale.getLanguage.substring(0,2))
+        log.debug(<_>flag Empty: |{S.get("locale")}|</_>.text)
+      case _ =>
+        S.set("locale", "en")
+        log.error(<_>flag _ (unexpected case): |{S.get("locale")}|</_>.text)
+    }
     val uri = S.uri
 
     def setLocale2() {
@@ -68,7 +77,8 @@ class SettingSnips {
           "#ancest_lbl" #> <span style="display:none">{S.?("set.ancestor.num")}</span>  &
           "#ancest" #> SHtml.select((1 to 4).toList.map{x => (<_>{x}</_>.text, <_>{x}</_>.text)}.toMap.toSeq,
             Full(S.get("ancestNum").getOrElse("1")), S.set("ancestNum", _),
-            "size" -> (1 to 4/4).size.toString, "onchange" -> "selectWhenChangedAncesDesce(this)") &
+            "size" -> (1 to 4/4).size.toString, "onmouseover" -> "onMouseOver()",
+            "onchange" -> "selectWhenChangedAncesDesce(this)" ) &
           "#descend_lbl" #> <span style="display:none">{S.?("set.descendant.num")}</span>  &
           "#descend" #> SHtml.select((1 to 4).toList.map{x => (<_>{x}</_>.text, <_>{x}</_>.text)}.toMap.toSeq,
             Full(S.get("descendNum").getOrElse("1")), S.set("descendNum", _),

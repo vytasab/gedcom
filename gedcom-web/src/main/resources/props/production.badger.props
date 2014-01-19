@@ -5,8 +5,8 @@ db.url=${db_url}
 db.user=${db_user}
 db.password=${db_password}
 
-host__=${host__}
-_port_=${_port_}
+#host__=${host__}
+#_port_=${_port_}
 __app=${__app}
 
 loc.texts.4XSL=${loc_texts_4XSL}

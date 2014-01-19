@@ -97,7 +97,10 @@ class PersonUpdate {
         S.unsetSessionAttribute("aNameSurn")
         S.unsetSessionAttribute("aGender")
         S.unsetSessionAttribute("gender")
-      case Full("pF")|Full("pM") | Full("sH")|Full("sW") | Full("cB")|Full("cS") | Full("fSon")|Full("fDaughter") =>
+      case Full("pF")|Full("pM") |
+           Full("sH")|Full("sW")|Full("sF") |
+           Full("cB")|Full("cS") |
+           Full("fSon")|Full("fDaughter") =>
         // p = parent, s = spouse, c = child, f = family
         //person = new Person
         personVar.set(Empty) // it is too early for: new Person
@@ -140,7 +143,10 @@ class PersonUpdate {
               person = personVar.is.openOr(new Person)
               // Hold a val here so that the "id" closure holds it when we re-enter this method
               //currentId = person.id
-            case Full("pF")|Full("pM") | Full("sH")|Full("sW")|Full("cB")|Full("cS") | Full("fSon")|Full("fDaughter") =>
+            case Full("pF")|Full("pM") |
+                 Full("sH")|Full("sW")|Full("sF") |
+                 Full("cB")|Full("cS") |
+                 Full("fSon")|Full("fDaughter")|Full("fSpouse") =>
               person = new Person
             case Full("newAlone") =>
               person = new Person
@@ -166,87 +172,17 @@ class PersonUpdate {
             S.notice(person.toString(Model.getUnderlying) + "  " + S.?("person.added.updated"))
             S.getSessionAttribute("role") match {
               case Full("upd") =>
-              case Full("pF")|Full("pM") | Full("sH")|Full("sW")|Full("cB")|Full("cS") | Full("fSon")|Full("fDaughter") =>
+              case Full("pF")|Full("pM") |
+                   Full("sH")|Full("sW")|Full("sF") |
+                   Full("cB")|Full("cS") |
+                   Full("fSon")|Full("fDaughter") =>
                 val aPersonSnips = new PersonSnips;
                 aPersonSnips.completeQuery(person.id)
               case _ =>
                 S.unsetSessionAttribute("aNameGivn")
                 S.unsetSessionAttribute("aNameSurn")
                 S.unsetSessionAttribute("aGender")
-                /*val msg = ("doAddEdit: You are not logged in")
-                log.debug(msg)
-                S.redirectTo("/errorPage", () => {
-                  ErrorXmlMsg.set(Some(Map(
-                    "location" -> <p>PersonUpdate.addEdit.doAddEdit</p>,
-                    "message" -> <p>{msg}</p>))) })*/
               }
-
-  //        }
-        /*
-            case Full("pF")|Full("pM") | Full("sH")|Full("sW")|Full("cB")|Full("cS") | Full("fSon")|Full("fDaughter") =>
-              person = new Person
-  */
-  /*
-              person.nameGivn = aNameGivn
-              person.nameSurn = aNameSurn
-              person.gender = aGender
-              person.setSubmitter(CurrentUser.is.open_!)
-              Model.persistAndFlush(person)
-              var audit = new Audit
-              audit.setFields(CurrentUser.is.open_!, "Pe", person.id,
-                personClone match{case Full(x) => "upd"; case _ => "add";},
-                person.getAuditRec(personClone))
-              audit = Model.merge(audit)
-              Model.flush
-  */
-  /*
-            case _ =>
-              val msg = ("doAddEdit: You are not logged in")
-              log.debug(msg)
-              S.redirectTo("/errorPage", () => {
-                ErrorXmlMsg.set(Some(Map(
-                  "location" -> <p>PersonUpdate.addEdit.doAddEdit</p>,
-                  "message" -> <p>{msg}</p>)))
-              })
-        }
-  */
-
-  /*
-          var person: Person = personVar.is.openOr(new Person)
-          // Hold a val here so that the "id" closure holds it when we re-enter this method
-          //currentId = person.id
-          person.nameGivn = aNameGivn
-          person.nameSurn = aNameSurn
-          person.gender = aGender
-          person.setSubmitter(CurrentUser.is.open_!)
-          person = Model.merge(person)
-
-          var audit = new Audit
-          //audit.entityName = "Pe"
-          //audit.entityId = person.id
-          //audit.action = personClone match{case Full(x) => "upd"; case _ => "add";}
-          //audit.message = person./*addAudit*/getAuditRec(personClone)
-          //audit.setSubmitter(CurrentUser.is.open_!)
-          audit.setFields(CurrentUser.is.open_!, "Pe", person.id,
-            personClone match{case Full(x) => "upd"; case _ => "add";},
-            person.getAuditRec(personClone))
-          audit = Model.merge(audit)
-          Model.flush
-  */
-
-          /*S.notice(person.toString(Model.getUnderlying) + "  " + S.?("person.added.updated"))
-          S.unsetSessionAttribute("aNameGivn")
-          S.unsetSessionAttribute("aNameSurn")
-          S.unsetSessionAttribute("aGender")
-          (S.getSessionAttribute("personId").isDefined ||
-            S.getSessionAttribute("familyId").isDefined ||
-            S.getSessionAttribute("gender").isDefined ||
-            S.getSessionAttribute("role").isDefined) match {
-            case true =>
-              completeQuery(person.id)
-            case _ => // for unrelated add action
-              S.redirectTo("/rest/person/" + person.id)
-          }*/
           S.redirectTo(RequestedURL.is.openOr("/"))
           //S.redirectTo("/rest/person/" + person.id)
         } else {
@@ -262,7 +198,6 @@ class PersonUpdate {
             "location" -> <p>PersonUpdate.addEdit.doAddEdit</p>,
             "message" -> <p>{msg}</p>)))
         })
-
       }
     }
 
@@ -282,7 +217,6 @@ class PersonUpdate {
         case Full(x) if x != "" && "MF".contains(x) =>
           val kvMap = mapGender map(_.swap)
           Full(kvMap(x).toString)
-          //Full((mapGender.map(_.swap))(x))
         case _ => Empty
       }
     }
@@ -742,7 +676,7 @@ class PersonUpdate {
     }
     val adoptedByOptions = Map("HUSB" -> S.?("HUSB"), "WIFE" -> S.?("WIFE"), "BOTH" -> S.?("BOTH"))
 
-// TODO start solving L12 of mextual fields
+// TODO start solving L12 of textual fields
     var adoptedBy = ""
     var descriptor = ""
     var dateValue = ""
@@ -754,7 +688,7 @@ class PersonUpdate {
     "#petag" #> <span>{tag}</span> &
       "#adoptedBy_" #> <span style={attr4AdoptedBy}>{S ? "pe.adoptedBy"}</span> &
       "#adoptedBy" #> <span style={attr4AdoptedBy}>{SHtml.radio(adoptedByOptions.keys.toList, Empty, {
-        (x) => (adoptedBy = adoptedByOptions(x))
+        (x) => adoptedBy = adoptedByOptions(x)
       }).toForm}</span> &
       "#descriptor_" #> <span style={attr4Descriptor}>{S ? "pe.descriptor"}</span> &
       "#descriptor" #> SHtml.text(descriptor, descriptor = _, "style" -> attr4Descriptor,

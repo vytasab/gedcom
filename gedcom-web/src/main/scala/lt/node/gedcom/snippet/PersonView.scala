@@ -80,12 +80,12 @@ object PersonReading extends Loggable {
           "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
           "lang"->S.locale.getLanguage.toLowerCase,
           "personId"->personVar.get.get.id.toString,
-          "app"->Props.get("__app").openOr("/gedcom-web/"))
+          "app"->Props.get("__app").openOr("/gedcom/"))
     ).toString
     log.debug("getFamDataHtml resHtmlFa |" + resHtmlFa + "|")
     resHtmlFa
   }
-//Map("app" -> Props.get("__app").openOr("/gedcom-web/"))
+//Map("app" -> Props.get("__app").openOr("/gedcom/"))
 }
 
 //// http://stackoverflow.com/questions/970675/scala-modifying-nested-elements-in-xml?rq=1
@@ -129,18 +129,24 @@ object AdjustToNumOfFamilies extends Loggable {
         log.debug("AdjustToNumOfFamilies: " + p.families(Model.getUnderlying).toString)
         p.families(Model.getUnderlying).size match {
           case 0 =>
-            log.debug("--0--   lift:PersonView.render0")
+            log.debug("-- 0 --   lift:PersonView.render0")
               <lift:embed what="/gedcom/personView0"/>
           case 1 =>
-            log.debug("--1--   lift:PersonView.render1")
+            log.debug("-- 1 --   lift:PersonView.render1")
               <lift:embed what="/gedcom/personView1"/>
+          case 2 =>
+            log.debug("-- 2 --   lift:PersonView.render2")
+              <lift:embed what="/gedcom/personView2"/>
+          case 3 =>
+            log.debug("-- 3 --   lift:PersonView.render3")
+              <lift:embed what="/gedcom/personView3"/>
+          case 4 =>
+            log.debug("-- 4 --   lift:PersonView.render4")
+              <lift:embed what="/gedcom/personView3"/>
           case n =>
-            log.debug("--n--   lift:PersonView.render1Plus")
-              <lift:embed what="/gedcom/personView1Plus"/>
-          //case 2 => "/gedcom/personView2"
-          //case 3 => "/gedcom/personView3"
-          //case 4 => "/gedcom/personView4"
-          //case n => "/gedcom/personView4Plus"
+            log.debug("-- 4+ --   lift:PersonView.render4Plus")
+             <!-- <lift:embed what="/gedcom/personView3Plus"/>-->
+              <lift:embed what="/gedcom/personView4Plus"/>
         }
       case _ =>
         log.debug("--_--")
@@ -211,7 +217,7 @@ class PersonView {
       case Full(p) =>
         p.families(Model.getUnderlying).size match {
           case 1 =>
-            log.debug("PersonView render1 --1--")
+            log.debug("PersonView render1 -- 1 --")
             this.renderPerson()  &
             "#familyinfo1" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(1))) &
             "#fawiz1" #> (AccessControl.userIs() match {
@@ -233,6 +239,169 @@ class PersonView {
         "#filler" #> "filler"
     }
   }
+
+
+  def render2: net.liftweb.util.CssSel = {
+    logSomeSessAttrs("render2")
+    // TODO D922-7/vsh ar reikalinga kita eilutė ?
+    PersonReading()
+    personVar.is match {
+      case Full(p) =>
+        p.families(Model.getUnderlying).size match {
+          case 2 =>
+            log.debug("PersonView render2 -- 2 --")
+            this.renderPerson()  &
+            "#familyinfo1" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(1))) &
+            "#fawiz1" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner1.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            }) &
+            "#familyinfo2" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(2))) &
+            "#fawiz2" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner2.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            })
+          case n =>
+            log.error("PersonView render2 --n-- person.id=" + p.id.toString)
+            "#filler" #> "filler"
+        }
+      case _ =>
+        log.error("PersonView render2 --_-- person.id=")
+        "#filler" #> "filler"
+    }
+  }
+
+
+  def render3: net.liftweb.util.CssSel = {
+    logSomeSessAttrs("render3")
+    // TODO D922-7/vsh ar reikalinga kita eilutė ?
+    PersonReading()
+    personVar.is match {
+      case Full(p) =>
+        p.families(Model.getUnderlying).size match {
+          case 3 =>
+            log.debug("PersonView render3 -- 3 --")
+            this.renderPerson()  &
+            "#familyinfo1" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(1))) &
+            "#fawiz1" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner1.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            }) &
+            "#familyinfo2" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(2))) &
+            "#fawiz2" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner2.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            }) &
+            "#familyinfo3" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(3))) &
+            "#fawiz3" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner3.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            })
+          case n =>
+            log.error("PersonView render3 --n-- person.id=" + p.id.toString)
+            "#filler" #> "filler"
+        }
+      case _ =>
+        log.error("PersonView render3 --_-- person.id=")
+        "#filler" #> "filler"
+    }
+  }
+
+
+  def render4: net.liftweb.util.CssSel = {
+    logSomeSessAttrs("render4")
+    // TODO D922-7/vsh ar reikalinga kita eilutė ?
+    PersonReading()
+    personVar.is match {
+      case Full(p) =>
+        p.families(Model.getUnderlying).size match {
+          case 4 =>
+            log.debug("PersonView render4 -- 4 --")
+            this.renderPerson()  &
+            "#familyinfo1" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(1))) &
+            "#fawiz1" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner1.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            }) &
+            "#familyinfo2" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(2))) &
+            "#fawiz2" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner2.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            }) &
+            "#familyinfo3" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(3))) &
+            "#fawiz3" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner3.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            }) &
+            "#familyinfo4" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", PersonReading.getFamDataHtml(4))) &
+            "#fawiz4" #> (AccessControl.userIs() match {
+              case "guest" => <span></span>
+              case _ => <span>
+                <button class="lift:AddFaWizardRunner4.render">
+                  <lift:loc>wiz.add.fe</lift:loc>
+                  <img src="/images/page_new.gif" />
+                </button>
+                <br/>
+              </span>
+            })
+          case n =>
+            log.error("PersonView render4 --n-- person.id=" + p.id.toString)
+            "#filler" #> "filler"
+        }
+      case _ =>
+        log.error("PersonView render4 --_-- person.id=")
+        "#filler" #> "filler"
+    }
+  }
+
 
   def getBaseApplicationPath: Box[String] = {
     LiftRules.context match {
@@ -279,7 +448,7 @@ class PersonView {
             "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
             "lang"->S.locale.getLanguage.toLowerCase,
             "mode"->"noFams",
-            "app"->Props.get("__app").openOr("/gedcom-web/"))).toString()
+            "app"->Props.get("__app").openOr("/gedcom/"))).toString()
         log.debug("renderPerson resHtml |" + resHtml + "|")
 
         // <button class="lift:AddPeWizardRunner">
@@ -327,7 +496,7 @@ class PersonView {
                 "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
                 "lang"->S.locale.getLanguage.toLowerCase,
                 "personId"->p.id.toString(),
-                "app"->Props.get("__app").openOr("/gedcom-web/"))).toString()
+                "app"->Props.get("__app").openOr("/gedcom/"))).toString()
           log.debug("resHtml |" + resHtml + "|")
           "#childreninfo" #> Unparsed(Localizer.tagMsg("Fe", "fe", "_", resHtml))
         case _ =>
@@ -389,7 +558,7 @@ class PersonView {
                           "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
                           "lang"->S.locale.getLanguage.toLowerCase,
                           "mode"->"mini",
-                          "app"->Props.get("__app").openOr("/gedcom-web/"))
+                          "app"->Props.get("__app").openOr("/gedcom/"))
                       ).toString
                     log.debug("renderParent resHtml |" + resHtml + "|")
                     selector #> Unparsed(Localizer.tagMsg("Pe", "pe", "_", Localizer.tagMsg("Pa", "pa", "_", resHtml)))
@@ -404,9 +573,9 @@ class PersonView {
           case null => /* no family */
             log.debug("renderParent: null  no family")
             selector #> <span>&nbsp;--&nbsp;</span>
-          case _ => /* no family */
+          /*case _ => /* no family */
             log.debug("renderParent: _  no family")
-            selector #> <span>&nbsp;--&nbsp;</span>
+            selector #> <span>&nbsp;--&nbsp;</span>*/
         }
       case _ =>
         val msg = "PersonView.renderParent: wrong precondition: the Person is missing"
@@ -455,7 +624,7 @@ class PersonView {
         "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "lang"->S.locale.getLanguage.toLowerCase,
         "mode"->"noFams",
-        "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+        "app"->Props.get("__app").openOr("/gedcom/"))).toString
     log.debug("deletePerson resHtml |" + resHtml + "|")
 
     def doDeletePerson() = {
@@ -508,7 +677,7 @@ class PersonView {
         "lang"->S.locale.getLanguage.toLowerCase,
         "personId"->S.getSessionAttribute("personId").get,
         "childId"->S.getSessionAttribute("childId").get,
-        "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+        "app"->Props.get("__app").openOr("/gedcom/"))).toString
     log.debug("familyChildDelete resHtml |" + resHtml + "|")
 
     def doFamilyChildDelete(): Unit = {
@@ -572,7 +741,7 @@ class PersonView {
         "lang"->S.locale.getLanguage.toLowerCase,
         "personId"->S.getSessionAttribute("personId").get,
         "familyId"->S.getSessionAttribute("familyId").get,
-        "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+        "app"->Props.get("__app").openOr("/gedcom/"))).toString
     log.debug("familyDelete resHtml |" + resHtml + "|")
 
     def doFamilyDelete(): Unit = {
@@ -646,7 +815,7 @@ class PersonView {
           //"locTexts4XSL"->Props.get("loc.texts.4XSL").openOr("loc_texts_4XSL_unresolved"),
           "lang"->S.locale.getLanguage.toLowerCase,
           "peId"->S.getSessionAttribute("personEventId").get,
-          "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+          "app"->Props.get("__app").openOr("/gedcom/"))).toString
       log.debug("deletePe resHtml |" + resHtml + "|")
 
       var pe: PersonEvent = null
@@ -737,7 +906,7 @@ class PersonView {
           "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
           "lang"->S.locale.getLanguage.toLowerCase,
           "paId"->S.getSessionAttribute("personAttribId").get,
-          "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+          "app"->Props.get("__app").openOr("/gedcom/"))).toString
       log.debug("deletePa resHtml |" + resHtml + "|")
 
       var pa: PersonAttrib = null
@@ -822,7 +991,7 @@ class PersonView {
         "locTexts4XSL"->locTexts4XSLfilePathReqVar.is,
         "lang"->S.locale.getLanguage.toLowerCase,
         "feId"->S.getSessionAttribute("familyEventId").get,
-        "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+        "app"->Props.get("__app").openOr("/gedcom/"))).toString
     log.debug("deleteFe resHtml |" + resHtml + "|")
 
     var fe: FamilyEvent = null
@@ -896,7 +1065,7 @@ class PersonView {
         "lang"->S.locale.getLanguage.toLowerCase,
         //"paId"->S.getSessionAttribute("personAttribId").get,
         "mmId"->S.getSessionAttribute("mmId").get,
-        "app"->Props.get("__app").openOr("/gedcom-web/"))).toString
+        "app"->Props.get("__app").openOr("/gedcom/"))).toString
     log.debug("deleteMultiMedia resHtml |" + resHtml + "|")
     var mm: MultiMedia = null
     val optionMm: Option[MultiMedia] =

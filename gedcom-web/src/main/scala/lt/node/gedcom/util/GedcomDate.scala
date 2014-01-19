@@ -202,7 +202,7 @@ object GedcomUtil {
     lang match {
       case "lt" =>
         gedcomDateValue match {
-          case "" => ""
+          //case "" => ""
           case _ =>
             try {
               val DatePtrnOpt(d, m, y) = gedcomDateValue
@@ -218,7 +218,7 @@ object GedcomUtil {
                   log.debug(" DatePeriodPtrnOpt(from,s,to)" +
                     (if (from != null) from else "null") + (if (s != null) s else "null") + (if (to != null) to else "null"))
                   (from, s, to) match {
-                    case (null, null, null) => "Err: /" + gedcomDateValue + "/"
+                    //case (null, null, null) => "Err: /" + gedcomDateValue + "/"
                     case (f, null, null) =>
                       log.debug("NUO |" + f.substring(5) + "|")
                       "NUO " + dateLt(f.substring(5))
@@ -228,6 +228,8 @@ object GedcomUtil {
                     case (f, ss, t) =>
                       log.debug("NUO IKI")
                       "NUO " + dateLt(f.substring(5)) + " IKI " + dateLt(t.substring(3))
+                    case _ /*(null, null, null)*/ =>
+                      throw new Exception("i18nizeGedcomDate DatePeriodPtrnOpt(from,s,to)")
                   }
                 } catch {
                   case ex: Exception =>
@@ -238,12 +240,14 @@ object GedcomUtil {
                       val DateRangeBAPtrn(bet, and) = gedcomDateValue
                       log.debug(" DateRangeBAPtrn(bet, and)" + (if (bet != null) bet else "null") + (if (and != null) and else "null"))
                       (bet, and) match {
-                        case (null, null) => "Err: -/" + gedcomDateValue + "/-"
-                        case (b, null) => "Err: =/" + gedcomDateValue + "/="
-                        case (null, a) => "Err: +/" + gedcomDateValue + "/+"
+                        //case (null, null) => "Err: -/" + gedcomDateValue + "/-"
+                        //case (b, null) => "Err: =/" + gedcomDateValue + "/="
+                        //case (null, a) => "Err: +/" + gedcomDateValue + "/+"
                         case (b, a) =>
                           log.debug("BET AND")
                           "TARP " + dateLt(b.substring(4)) + " IR " + dateLt(a.substring(5))
+                        case _  =>
+                          throw new Exception("i18nizeGedcomDate DateRangeBAPtrn(bet, and)")
                       }
                     } catch {
                       case ex: Exception =>
@@ -257,11 +261,37 @@ object GedcomUtil {
                             case (ok, null, null) => "PRIEŠ " + dateLt(ok.substring(4))
                             case (null, ok, null) => "PO " + dateLt(ok.substring(4))
                             case (null, null, ok) => "APIE " + dateLt(ok.substring(4))
+                            case _  =>
+                              throw new Exception("i18nizeGedcomDate DateOtherPtrn(bef, aft, abt)")
                           }
                         } catch {
                           case ex: Exception =>
-                            log.warn("DateOtherPtrn(null, null, null): " + ex.toString)
-                            "[en]: " + gedcomDateValue
+                            log.warn("i18nizeGedcomDate LT final Exception DateOtherPtrn(null, null, null): |" + gedcomDateValue + "|")
+                            gedcomDateValue match {
+                              case xxx if xxx.size == 0 => ""
+                              case " "  => ""
+                              case _ =>
+                                lazy val TextDatePtrnOpt = """^\((en|lt|de|pl|ru)\:(.+)\)$""".r
+                                //    ^\((en|lt|de|pl|ru)\:(.+)\)$  -->  (lt: testas)
+                                //    ^\(\([a-z]{2}\)\:\|(.+)\|\)$  -->  ((lt):|asasasd|)
+                                TextDatePtrnOpt findPrefixOf /*findFirstIn*/ gedcomDateValue match {
+                                  case Some(ymdtxt) =>
+                                    gedcomDateValue
+                                  case _ =>
+                                    log.warn("DateOtherPtrn(null, null, null): " + ex.toString)
+                                    "[lt]: " + gedcomDateValue
+                                }
+                            }
+                            /*lazy val TextDatePtrnOpt = """^\((en|lt|de|pl|ru)\:(.+)\)$""".r
+                            //    ^\((en|lt|de|pl|ru)\:(.+)\)$  -->  (lt: testas)
+                            //    ^\(\([a-z]{2}\)\:\|(.+)\|\)$  -->  ((lt):|asasasd|)
+                            TextDatePtrnOpt findPrefixOf /*findFirstIn*/ gedcomDateValue match {
+                              case Some(ymdtxt) =>
+                                gedcomDateValue
+                              case _ =>
+                                log.warn("DateOtherPtrn(null, null, null): " + ex.toString)
+                                "[en]: " + gedcomDateValue
+                            }*/
                         }
                     }
                 }
@@ -350,7 +380,6 @@ object GedcomUtil {
               log.debug(" DatePeriodPtrnOpt(from,s,to)" +
                 (if (from != null) from else "null") + (if (s != null) s else "null") + (if (to != null) to else "null"))
               (from, s, to) match {
-                case (null, null, null) => "Err: " + i18nDateValue
                 case (f, null, null) =>
                   log.debug("FROM |" + f.substring("NUO ".size) + "|")
                   "FROM " + dateLt(f.substring("NUO ".size))
@@ -360,6 +389,8 @@ object GedcomUtil {
                 case (f, ss, t) =>
                   log.debug("FROM TO")
                   "FROM " + dateLt(f.substring("NUO ".size)) + " TO " + dateLt(t.substring("IKI ".size))
+                case _ /*(null, null, null)*/ =>
+                  throw new Exception("gedcomizeI18nDate DatePeriodPtrnOpt(from,s,to)")
               }
             } catch {
               case ex: Exception =>
@@ -370,12 +401,15 @@ object GedcomUtil {
                   val DateRangeBAPtrn(bet, and) = i18nDateValue
                   log.debug(" DateRangeBAPtrn(bet, and)" + (if (bet != null) bet else "null") + (if (and != null) and else "null"))
                   (bet, and) match {
-                    case (null, null) => "Err: " + i18nDateValue
-                    case (b, null) => "Err: " + i18nDateValue
-                    case (null, a) => "Err: " + i18nDateValue
+                    //case (null, null) => "Err: " + i18nDateValue
+                    //case (b, null) => "Err: " + i18nDateValue
+                    //case (null, a) => "Err: " + i18nDateValue
                     case (b, a) =>
                       log.debug("BET AND")
                       "BET " + dateLt(b.substring("TARP ".size)) + " AND " + dateLt(a.substring(" IR ".size))
+                    case _ =>
+                      throw new Exception("gedcomizeI18nDate DateRangeBAPtrn(bet, and)")
+
                   }
                 } catch {
                   case ex: Exception =>
@@ -390,11 +424,28 @@ object GedcomUtil {
                         case (ok, null, null) => "BEF " + dateLt(ok.substring("PRIEŠ ".size+0*6))
                         case (null, ok, null) => "AFT " + dateLt(ok.substring("PO ".size+0*3))
                         case (null, null, ok) => "ABT " + dateLt(ok.substring("APIE ".size+0*5))
+                        case _ =>
+                          throw new Exception("gedcomizeI18nDate DateOtherPtrn(bef, aft, abt)")
                       }
                     } catch {
                       case ex: Exception =>
-                        log.warn("DateOtherPtrn(null, null, null): " + ex.toString)
-                        "[lt]: " + i18nDateValue
+                        log.warn("gedcomizeI18nDate LT final Exception DateOtherPtrn(null, null, null): |" + i18nDateValue + "|")
+                        i18nDateValue match {
+                          case xxx if xxx.size == 0 => ""
+                          case " "  => ""
+                          case _ =>
+                            lazy val TextDatePtrnOpt = """^\((en|lt|de|pl|ru)\:(.+)\)$""".r
+                            //    ^\((en|lt|de|pl|ru)\:(.+)\)$  -->  (lt: testas)
+                            //    ^\(\([a-z]{2}\)\:\|(.+)\|\)$  -->  ((lt):|asasasd|)
+                            TextDatePtrnOpt findPrefixOf /*findFirstIn*/ i18nDateValue match {
+                              case Some(ymdtxt) =>
+                                i18nDateValue
+                              case _ =>
+                                log.warn("DateOtherPtrn(null, null, null): " + ex.toString)
+                                "[lt]: " + i18nDateValue
+                            }
+                        }
+
                     }
                 }
             }

@@ -53,6 +53,7 @@
             elemDescendLbl.style.display='';
             elemDescend.style.display='';
         }
+        function onMouseOver() {  /*alert('onMouseOver !!! !!! !!!');*/ }
     </script>
 </head>
 
@@ -93,7 +94,8 @@
                           document.getElementById('descend_lbl').style.display='';
                           document.getElementById('descend').style.display='';"></span>
                     <span id="ancest_lbl" style="display:none"></span>
-                    <span id="ancest" style="display:none" onclick="showWhenAncesDesceClick();"></span>
+                    <span id="ancest" style="display:none" onclick="showWhenAncesDesceClick();"
+                          onmouseover="onMouseOver(someElem)();"></span>
                     <span id="descend_lbl" style="display:none"></span>
                     <span id="descend" style="display:none" onclick="showWhenAncesDesceClick();"></span>
                     <span id="submit2" style="display:none">submit</span>

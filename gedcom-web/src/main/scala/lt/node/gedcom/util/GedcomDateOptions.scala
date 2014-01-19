@@ -14,6 +14,7 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
   )
 
   val msgs: Map[String, Map[String, String]] = Map(
+    /* Naudojamas datos formato pasirinkimui */
     "01gdt_no_date" -> Map(
       "xx" -> "",
       "en" -> "No date",
@@ -61,7 +62,7 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
       "xx" -> "",
       "en" -> "plain text",
       //"en" -> "gdt_text",
-      "lt" -> "žodžiais, jei kitaip netinka"),
+      "lt" -> "data žodžiais"),
     "45gdt_and" -> Map(
       "xx" -> "AND",
       "en" -> "gdt_and",
@@ -117,8 +118,8 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
       "en" -> (S ? "gd_to" + " " + getDateFormatApprox),
       "lt" -> (S ? "gd_to" + " " + getDateFormatApprox)),
     "gdt_text" -> Map( // text
-      "en" -> "(en:| ...type_here... |)",
-      "lt" -> "(lt:| ...žodžiais,_jei_kitaip_netinka... |)")
+      "en" -> "(en: ...type_here... )",
+      "lt" -> "(lt: ...rašykit žodžiais čia... )")
   )
 
 
@@ -305,7 +306,9 @@ object GedcomDateOptions extends AnyRef with lt.node.gedcom.util.GedcomMsgsI18n 
       val i18nDatVal = if (i18nDateValue == " ") "" else i18nDateValue
       log.debug("isGdtText i18nDateValue i18nDatVal |" + i18nDateValue + "| |" + i18nDatVal + "|")
       try {
-        lazy val TextDatePtrnOpt = """^\(([a-z]{2}):\|(.+)\|\)$""".r
+        lazy val TextDatePtrnOpt = """^\((en|lt|de|pl|ru)\:(.+)\)$""".r
+        //    ^\((en|lt|de|pl|ru)\:(.+)\)$  -->  (lt: testas)
+        //    ^\(\([a-z]{2}\)\:\|(.+)\|\)$  -->  ((lt):|asasasd|)
         TextDatePtrnOpt findPrefixOf /*findFirstIn*/ i18nDatVal match {
           case Some(ymdtxt) =>
             log.debug("isGdtText  i18nDatVal ymdtxt |" + i18nDatVal + "| |" + ymdtxt + "|")

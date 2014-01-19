@@ -34,10 +34,22 @@ goto end
 if ""%2"" == ""spa"" goto end
 
 :prod-web
+if ""%3"" == ""default"" goto prodDefault
 if ""%3"" == ""nexus"" goto prodNexus
 if ""%3"" == ""badger"" goto prodBadger
 if ""%3"" == ""stax"" goto prodStax
 if ""%3"" == ""aosvu"" goto prodAosvu
+
+:prodDefault
+echo --- prod-web default ... ... ...
+cd c:\Scala\gedcom\gedcom-web
+set warVer=1.0
+set war=gedcom
+mvn     -Pprod -Dmaven.test.skip=true -Drun.mode=production clean install
+pause " --- before copy execution -- "
+copy /b target\gedcom-web-%warVer%.war c:\Tomcat\webapps\%war%.war /b /v /y
+pause  "Production build is complete for d_e_f_a_u_l_t"
+goto end
 
 :prodNexus
 echo --- prod-web Nexus ... ... ...

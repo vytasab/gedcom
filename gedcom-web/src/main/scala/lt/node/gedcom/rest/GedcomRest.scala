@@ -14,19 +14,21 @@ object GedcomRest extends XMLApiHelper with Loggable {
 
   val rootId = S.getSessionAttribute("personId").openOr("1").toLong
 
-  val log: Logger = LoggerFactory.getLogger("GedcomRest");
+  val log: Logger = LoggerFactory.getLogger("GedcomRest")
 
   val bundleTextList = List(
     "js_add_family",
     "js_add_father", "js_add_mother",
     "js_add_spouse", "js_add_husband", "js_add_wife",
     "js_add_brother", "js_add_sister",
-    "js_add_son", "js_add_daughter",
-    "js_full_info", /*"js_go_home",*/ "js_cancel")
-
-
-//  var pIds: List[Long] = List()
-//  var fIds: List[Long] = List()
+    "js_add_son",     "js_add_daughter",
+    "js_full_info",   "js_cancel",   /*"js_go_home",*/
+    "js_go2PeData",   "js_go2ChgPe",   "js_go2FaAct",
+    "js_goUp", "js_goRight", "js_goLeft", "js_goDown", "js_goInit", "js_canvas_center" )
+  /*
+  js_goInit=restore init view
+js_canvas_center=Your mouse click position in canvas will be moved here
+ */
 
   def emptyPids = PersonIds.set(List()) /*pIds = List()*/
 
@@ -35,9 +37,9 @@ object GedcomRest extends XMLApiHelper with Loggable {
 
   def xIsNotYetInJS(xIds: SessionVar [List[Long]], xId: Long): Boolean = {
     val result = xIds.get.exists(id => id == xId)
-    log.debug(<_>xIsNotYetInJS={xIds.get.toString} xId={xId} result={result}</_>.text)
+    log.debug(<_>xIsNotYetInJS={xIds.get.toString()} xId={xId} result={result}</_>.text)
     if (!result) xIds.set(xId :: xIds.get)
-    log.debug(<_>xIsNotYetInJS={xIds.get.toString}</_>.text)
+    log.debug(<_>xIsNotYetInJS={xIds.get.toString()}</_>.text)
     !result
   }
 
@@ -95,7 +97,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
       S.redirectTo("/gedcom/deletePa")
     }
     case Req(List("rest", "editFe", feId), _, GetRequest) => {
-      log.debug("('rest', 'editFe', "+feId.toString()+")")
+      log.debug("('rest', 'editFe', "+feId.toString+")")
       S.setSessionAttribute("familyEventId", feId)
       S.unsetSessionAttribute("role")  // ?
       S.redirectTo("/gedcom/editFe")
@@ -424,8 +426,13 @@ object GedcomRest extends XMLApiHelper with Loggable {
             sbIdGen.append(z.id + "," + generation + " ");
             jsText.append("\nvar p={};var r=[];p.r=r;" +
               <_>p.id={z.id};g['p'+p.id]=p;p.generation={generation};p.nameGivn='{z.nameGivn}';p.nameSurn='{z.nameSurn}';p.gender='{z.gender}';</_>.text +
-              <_>p.bd='{birtDatePlace._1}';p.bp='{birtDatePlace._2.replaceAll("'", "")}';</_>.text +
-              <_>p.dd='{deatDatePlace._1}';p.dp='{deatDatePlace._2.replaceAll("'", "")}';</_>.text +
+              /* E118-6/vsh */
+              /*  <_>p.bd='{birtDatePlace._1}';p.bp='{birtDatePlace._2.replaceAll("'", "")}';</_>.text +
+              <_>p.dd='{deatDatePlace._1}';p.dp='{deatDatePlace._2.replaceAll("'", "")}';</_>.text +*/
+              (if (birtDatePlace._1.replaceAll("'", "").size>0) <_>p.bd='{birtDatePlace._1.replaceAll("'", "")}';</_>.text else "" ) +
+              (if (birtDatePlace._2.replaceAll("'", "").size>0) <_>p.bp='{birtDatePlace._2.replaceAll("'", "")}';</_>.text else "" ) +
+              (if (deatDatePlace._1.replaceAll("'", "").size>0) <_>p.dd='{deatDatePlace._1.replaceAll("'", "")}';</_>.text else "" ) +
+              (if (deatDatePlace._2.replaceAll("'", "").size>0) <_>p.dp='{deatDatePlace._2.replaceAll("'", "")}';</_>.text else "" ) +
               familyIdPart + fdIds + sbFams + familyPart);
             //}
           }
@@ -529,7 +536,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
           )
         }
         case _ =>
-          log.debug("getFamilyJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+family.toString(Model.getUnderlying));
+          log.debug("getFamilyJS case "+ (-area._1 <= generation).toString+" "+(area._2 >= generation).toString+" "+family.toString(Model.getUnderlying));
         /*
                 case (false, false) =>
                   log.debug("getFamilyJS case false false " + family.toString(Model.getUnderlying));
@@ -543,11 +550,11 @@ object GedcomRest extends XMLApiHelper with Loggable {
       }
     }
 
-  def getLocaleStrings(): String = {
+  def getLocaleStrings() = {
     val result: StringBuffer = new StringBuffer("\nL={}; ")
     bundleTextList.foreach(str => result.append("L." + str + "='" + S.?(str) + "'; "))
     result.toString
-  };
+  }
 
 
   /**
@@ -575,7 +582,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
             }
           }
           case _ =>
-            log.debug("exportPerson case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+z.toString(Model.getUnderlying));
+            log.debug("exportPerson case "+ (-area._1 <= generation).toString+" "+(area._2 >= generation).toString+" "+z.toString(Model.getUnderlying));
         }
       }
       case None => {
@@ -612,7 +619,7 @@ object GedcomRest extends XMLApiHelper with Loggable {
           gedText.append(family.toGedcom(Model.getUnderlying, 0, S.locale.getLanguage))
         }
         case _ =>
-          log.debug("getFamilyJS case "+ (-area._1 <= generation).toString()+" "+(area._2 >= generation).toString()+" "+family.toString(Model.getUnderlying));
+          log.debug("getFamilyJS case "+ (-area._1 <= generation).toString+" "+(area._2 >= generation).toString+" "+family.toString(Model.getUnderlying));
       }
     }
 

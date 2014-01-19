@@ -59,6 +59,7 @@ class FaWizard extends Wizard with Loggable {
   private object wvED extends WizardVar[(/*id*/Long,
     /*descriptor (for EVENT)*/String, /*dateValue*/String, /*place*/String, /*ageAtEvent*/String,
     /*cause for DEAT*/String, /*note*/String, /*source*/String)](0L, "", "", "", "", "", "", "")
+  private object wvRootPersonId extends WizardVar[String](personVar.get.get.id.toString)
   val dateFormat = GedcomDateOptions.msg4Date(S.get("locale").getOrElse("en"))
 
 
@@ -182,7 +183,7 @@ class FaWizard extends Wizard with Loggable {
       //wvEvenDat4Fa.set(wvEvenDat4Fa.get._1, dateoptionsNew.get)
 
       wvEVEN.set(descriptorNew)
-      wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
+      wvDPAS.set( /*wvDPAS.get._1*/dateNew, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
       conf/*nextScreen4Date*/
     }
   }
@@ -240,7 +241,7 @@ class FaWizard extends Wizard with Loggable {
 
     override def nextScreen = {
       //wvEvenDat4Fa.set(wvEvenDat4Fa.get._1, dateoptionsNew.get)
-      wvDPAS.set( wvDPAS.get._1, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
+      wvDPAS.set( /*wvDPAS.get._1*/dateNew, placeNew.get, ageAtEventNew.get, sourceNew.get, noteNew.get)
       conf/*nextScreen4Date*/
     }
   }
@@ -364,134 +365,172 @@ class FaWizard extends Wizard with Loggable {
 // TODO B308-2/vsh sutvarkyti /*familyId(when BIRT CHR ADOP)*/
 
   def finish() {
-        val msg = <_>wvEvenDat4Fa: ({wvEvenDat4Fa.get.toString()})</_>.text + " | " +
-          <_>wvDPAS: ({wvDPAS.get.toString()})</_>.text + " | " +
-          <_>wvEVEN: ({wvEVEN.get.toString()})</_>.text + " | "
-        log.debug(msg)
-        S.notice(msg)
-        wvED.set(wvED.get._1,
-         (if (wvEvenDat4Fa.get._1 == "EVEN") wvEVEN.get else ""),
-         wvDPAS.get._1,
-         wvDPAS.get._2,
-         wvDPAS.get._3,
-         (if (wvEvenDat4Fa.get._1 == "DEAT") ""/*wvDEAT.get*/ else ""),
-         wvDPAS.get._4, wvDPAS.get._5 )
-        val msg2 = <_>wvFE: ({wvFE.get.toString()})</_>.text + " | " +
-          <_>wvED: ({wvED.get.toString()})</_>.text
-        log.debug(msg2)
-        S.notice(msg2)
+    val msg = <_>wvEvenDat4Fa: (
+      {wvEvenDat4Fa.get.toString()}
+      )</_>.text + " | " +
+      <_>wvDPAS: (
+        {wvDPAS.get.toString()}
+        )</_>.text + " | " +
+      <_>wvEVEN: (
+        {wvEVEN.get.toString()}
+        )</_>.text + " | "
+    log.debug(msg)
+    S.notice(msg)
+    wvED.set(wvED.get._1,
+      (if (wvEvenDat4Fa.get._1 == "EVEN") wvEVEN.get else ""),
+      wvDPAS.get._1,
+      wvDPAS.get._2,
+      wvDPAS.get._3,
+      (if (wvEvenDat4Fa.get._1 == "DEAT") "" /*wvDEAT.get*/ else ""),
+      wvDPAS.get._4, wvDPAS.get._5)
+    val msg2 = <_>wvFE: (
+      {wvFE.get.toString()}
+      )</_>.text + " | " +
+      <_>wvED: (
+        {wvED.get.toString()}
+        )</_>.text
+    log.debug(msg2)
+    S.notice(msg2)
 
-        if (true/*validResult*/) {
-          actionCUD match {
-
-            case "C" =>
-              var fe: FamilyEvent = new FamilyEvent
-              log.debug("FaWizard.finish FamilyEvent.id |" + fe.id.toString() + "|")
-              var feClone: Box[FamilyEventClone] = Empty
-              var ed: EventDetail = new EventDetail
-              var edClone: Box[EventDetailClone] = Empty
-              fe.familyevent = wvBoxFamily.is.open_!
-              fe.tag = wvEvenDat4Fa.get._1
-              fe.tag match {
-                case "EVEN" =>
-                  ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg(/*"descriptor", */wvEVEN.get/*, S.locale.getLanguage.toLowerCase*/)
-                case _ =>
-              }
-              // C626-2 ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Fa.get._2)
-              ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
-              ed.place = wvEDMLT.get._3.addupdLangMsg(wvDPAS.get._2)
-              ed.ageAtEvent = wvDPAS.get._3
-              ed.source = wvEDMLT.get._5.addupdLangMsg(wvDPAS.get._4)
-              ed.note = wvEDMLT.get._6.addupdLangMsg(wvDPAS.get._5)
-
-              log.debug("FaWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")
-              log.debug("FaWizard.finish wvBoxCU.is wvBoxCU |" + wvBoxCU.is + "|")
-
-              fe.setSubmitter(wvBoxCU.is.open_!)
-              fe = Model.merge(fe)
-
-              var fea = new Audit
-              fea.setFields(wvBoxCU.is.open_!, "FE", fe.id, "add", fe.getAuditRec(feClone))
-              fea = Model.merge(fea)
-
-              ed.familyevent = fe
-              ed.setSubmitter(wvBoxCU.is.open_!)
-              ed = Model.merge(ed)
-
-              var eda = new Audit
-              eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "add", ed.getAuditRec(edClone))
-              eda = Model.merge(eda)
-              Model.flush
-
-            case "U" =>
-// TODO B411-1/vsh  ....get.get.id).get ==> ???
-              //log.debug("FaWizard.finish wvBoxFamilyEvent.get.get.familyevent |" + wvBoxFamilyEvent.get.get.familyevent.toString() + "|")
-//              var family: Family = Model.find(classOf[Family], wvBoxFamilyEvent.get.get.familyevent).get  ///*new FamilyEvent*/ wvBoxFamilyEvent.get.get
-//              log.debug("FaWizard.finish Family.id |" + family.id.toString() + "|")
-// TODO B411-1/vsh  ....get.get.id).get ==> ???
-              var fe: FamilyEvent = Model.find(classOf[FamilyEvent], wvBoxFamilyEvent.get.get.id).get
-              log.debug("FaWizard.finish FamilyEvent.id |" + fe.id.toString() + "|")
-              val feClone: Box[FamilyEventClone] =
-                Full(FamilyEventClone(fe.tag, fe.familyevent.id.toString()))
-
-              val family: Family = Model.find(classOf[Family], fe.familyevent.id).get   //val family: Family = fe.familyevent
-              log.debug("FaWizard.finish Family.id |" + family.id.toString() + "|")
-
-// TODO B411-1/vsh  ....get.get.id).get ==> ???
-              var ed: EventDetail = Model.find(classOf[EventDetail], wvBoxEventDetail.get.get.id).get
-              val edClone: Box[EventDetailClone] = Full(EventDetailClone(
-                ed.descriptor, ed.dateValue, ed.place, ed.ageAtEvent, ed.cause, ed.source, ed.note,
-                (if (ed.personevent==null) "0" else ed.personevent.id.toString),
-                (if (ed.personattrib==null) "0" else ed.personattrib.id.toString),
-                (if (ed.familyevent==null) "0" else ed.familyevent.id.toString) ))
-              fe.familyevent = family  // wvBoxFamily.is.open_!
-              fe.tag = wvEvenDat4Fa.get._1
-              fe.tag match {
-                case "EVEN" =>
-                  ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg(/*"descriptor", */wvEVEN.get/*, S.locale.getLanguage.toLowerCase*/)
-                case _ =>
-              }
-              // C626-2 ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Fa.get._2)
-              ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
-              ed.place = wvEDMLT.get._3.addupdLangMsg(wvDPAS.get._2)
-              ed.ageAtEvent = wvDPAS.get._3
-              ed.source = wvEDMLT.get._5.addupdLangMsg(wvDPAS.get._4)
-              ed.note = wvEDMLT.get._6.addupdLangMsg(wvDPAS.get._5)
-
-              log.debug("FaWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")
-              log.debug("FaWizard.finish wvBoxCU.is wvBoxCU |" + wvBoxCU.is + "|")
-
-              fe.setSubmitter(wvBoxCU.is.open_!)
-              fe = Model.merge(fe)
-
-              var fea = new Audit
-              fea.setFields(wvBoxCU.is.open_!, "FE", fe.id, "upd", fe.getAuditRec(feClone))
-              fea = Model.merge(fea)
-
-              ed.familyevent = fe
-              ed.setSubmitter(wvBoxCU.is.open_!)
-              ed = Model.merge(ed)
-
-              var eda = new Audit
-              eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "upd", ed.getAuditRec(edClone))
-              eda = Model.merge(eda)
-              Model.flush()
+    if (true /*validResult*/ ) {
+      actionCUD match {
+        case "C" =>
+          var fe: FamilyEvent = new FamilyEvent
+          log.debug("FaWizard.finish FamilyEvent.id |" + fe.id.toString() + "|")
+          var feClone: Box[FamilyEventClone] = Empty
+          var ed: EventDetail = new EventDetail
+          var edClone: Box[EventDetailClone] = Empty
+          fe.familyevent = wvBoxFamily.is.open_! // DC19-4/vsh  error occurs here
+          fe.tag = wvEvenDat4Fa.get._1
+          fe.tag match {
+            case "EVEN" =>
+              ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg(/*"descriptor", */ wvEVEN.get /*, S.locale.getLanguage.toLowerCase*/)
             case _ =>
           }
+          // C626-2 ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Fa.get._2)
+          ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
+          ed.place = wvEDMLT.get._3.addupdLangMsg(wvDPAS.get._2)
+          ed.ageAtEvent = wvDPAS.get._3
+          ed.source = wvEDMLT.get._5.addupdLangMsg(wvDPAS.get._4)
+          ed.note = wvEDMLT.get._6.addupdLangMsg(wvDPAS.get._5)
 
-        } else {
-          val place = "FaWizard finish event"
-          val msg = ("Validation is unsuccessful")
-          log.error(place+"; "+msg)
-          S.redirectTo("/errorPage", () => {
-            ErrorXmlMsg.set(Some(Map(
-              "location" -> <p>{place}</p>,
-              "message" -> <p>{msg}</p>)))
-          })
-        }
+          log.debug("FaWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")
+          log.debug("FaWizard.finish wvBoxCU.is wvBoxCU |" + wvBoxCU.is + "|")
+
+          fe.setSubmitter(wvBoxCU.is.open_!)
+          fe = Model.merge(fe)
+
+          var fea = new Audit
+          fea.setFields(wvBoxCU.is.open_!, "FE", fe.id, "add", fe.getAuditRec(feClone))
+          fea = Model.merge(fea)
+
+          ed.familyevent = fe
+          ed.setSubmitter(wvBoxCU.is.open_!)
+          ed = Model.merge(ed)
+
+          var eda = new Audit
+          eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "add", ed.getAuditRec(edClone))
+          eda = Model.merge(eda)
+          Model.flush
+
+        case "U" =>
+          // TODO B411-1/vsh  ....get.get.id).get ==> ???
+          //log.debug("FaWizard.finish wvBoxFamilyEvent.get.get.familyevent |" + wvBoxFamilyEvent.get.get.familyevent.toString() + "|")
+          //              var family: Family = Model.find(classOf[Family], wvBoxFamilyEvent.get.get.familyevent).get  ///*new FamilyEvent*/ wvBoxFamilyEvent.get.get
+          //              log.debug("FaWizard.finish Family.id |" + family.id.toString() + "|")
+          // TODO B411-1/vsh  ....get.get.id).get ==> ???
+          var fe: FamilyEvent = Model.find(classOf[FamilyEvent], wvBoxFamilyEvent.get.get.id).get
+          log.debug("FaWizard.finish FamilyEvent.id |" + fe.id.toString() + "|")
+          val feClone: Box[FamilyEventClone] =
+            Full(FamilyEventClone(fe.tag, fe.familyevent.id.toString()))
+
+          //  TODO DC19-4/vsh Ne visai tvarkingas sprendimas, nes U atveju po taisymo neišlieka root person reikšmė
+          //    reikėtų GedcomRest'e FE taisymo atveju nurodyti papikdimu S parametru root person Id'ą
+          Math.random() match {
+            case x if x < 0.5 && fe.familyevent.wifeId > 0 =>
+              wvRootPersonId.set(fe.familyevent.wifeId.toString)
+            case x if x < 0.5 && fe.familyevent.wifeId == 0 =>
+              wvRootPersonId.set(fe.familyevent.husbandId.toString)
+            case x if fe.familyevent.husbandId > 0 =>
+              wvRootPersonId.set(fe.familyevent.husbandId.toString)
+            case _ =>
+              wvRootPersonId.set(fe.familyevent.wifeId.toString)
+          }
+
+          val family: Family = Model.find(classOf[Family], fe.familyevent.id).get //val family: Family = fe.familyevent
+          log.debug("FaWizard.finish Family.id |" + family.id.toString() + "|")
+
+          // TODO B411-1/vsh  ....get.get.id).get ==> ???
+          var ed: EventDetail = Model.find(classOf[EventDetail], wvBoxEventDetail.get.get.id).get
+          val edClone: Box[EventDetailClone] = Full(EventDetailClone(
+            ed.descriptor, ed.dateValue, ed.place, ed.ageAtEvent, ed.cause, ed.source, ed.note,
+            (if (ed.personevent == null) "0" else ed.personevent.id.toString),
+            (if (ed.personattrib == null) "0" else ed.personattrib.id.toString),
+            (if (ed.familyevent == null) "0" else ed.familyevent.id.toString)))
+          fe.familyevent = family // wvBoxFamily.is.open_!
+          fe.tag = wvEvenDat4Fa.get._1
+          fe.tag match {
+            case "EVEN" =>
+              ed.descriptor = /*wvEVEN.get*/ wvEDMLT.get._1.addupdLangMsg(/*"descriptor", */ wvEVEN.get /*, S.locale.getLanguage.toLowerCase*/)
+            case _ =>
+          }
+          // C626-2 ed.dateValue = /*wvDPAS.get._1*/  GedcomUtil.doGedcomDate(wvDPAS.get._1, wvEvenDat4Fa.get._2)
+          ed.dateValue = GedcomUtil.gedcomizeI18nDate(wvDPAS.get._1)
+          ed.place = wvEDMLT.get._3.addupdLangMsg(wvDPAS.get._2)
+          ed.ageAtEvent = wvDPAS.get._3
+          ed.source = wvEDMLT.get._5.addupdLangMsg(wvDPAS.get._4)
+          ed.note = wvEDMLT.get._6.addupdLangMsg(wvDPAS.get._5)
+
+          log.debug("FaWizard.finish wvBoxCU.is CurrentUser |" + CurrentUser.is + "|")
+          log.debug("FaWizard.finish wvBoxCU.is wvBoxCU |" + wvBoxCU.is + "|")
+
+          fe.setSubmitter(wvBoxCU.is.open_!)
+          fe = Model.merge(fe)
+
+          var fea = new Audit
+          fea.setFields(wvBoxCU.is.open_!, "FE", fe.id, "upd", fe.getAuditRec(feClone))
+          fea = Model.merge(fea)
+
+          ed.familyevent = fe
+          ed.setSubmitter(wvBoxCU.is.open_!)
+          ed = Model.merge(ed)
+
+          var eda = new Audit
+          eda.setFields(wvBoxCU.is.open_!, "ED", ed.id, "upd", ed.getAuditRec(edClone))
+          eda = Model.merge(eda)
+          Model.flush()
+        case _ =>
+      }
+
+    } else {
+      val place = "FaWizard finish event"
+      val msg = ("Validation is unsuccessful")
+      log.error(place + "; " + msg)
+      S.redirectTo("/errorPage", () => {
+        ErrorXmlMsg.set(Some(Map(
+          "location" -> <p>
+            {place}
+          </p>,
+          "message" -> <p>
+            {msg}
+          </p>)))
+      })
+    }
+    wvED.remove()
+    wvBoxFamily.remove()
+    wvBoxFamilyEvent.remove()
+    wvBoxEventDetail.remove()
+    wvEvenDat4Fa.remove()
+    wvDPAS.remove()
+    wvEDMLT.remove()
+    wvEVEN.remove()
+    wvFE.remove()
+    log.debug("/rest/personView/" + wvRootPersonId.get/*personVar.get.get.id.toString*/ /*wvBoxPerson.get.open_!.id*/)
+    S.redirectTo("/rest/personView/" + wvRootPersonId.get/*personVar.get.get.id.toString*/ /*wvBoxPerson.get.open_!.id*/) //})
   }
 
-  def getFamilyData()/*: Unit =*/ {
+  def getFamilyData() {
+    log.debug("FaWizard getFamilyData")
     S.getSessionAttribute("familyEventId") match {
       case Full(familyEventId) =>
         val familyEvent: Option[FamilyEvent] = Model.find(classOf[FamilyEvent], familyEventId.toLong)
@@ -551,6 +590,12 @@ class FaWizard extends Wizard with Loggable {
             })
         }
       case _ =>
+        val place = "FaWizard getFamilyData"
+        val msg = ("(case _): 'familyEventId' is undefined")
+        log.error(place+"; "+msg)
+        S.redirectTo("/errorPage", () => {
+          ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
+        })
     }
     S.unsetSessionAttribute("familyEventId")
   }

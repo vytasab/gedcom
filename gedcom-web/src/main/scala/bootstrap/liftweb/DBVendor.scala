@@ -47,7 +47,7 @@ object DBVendor extends ConnectionManager {
       log.debug(MessageFormat.format("Boot Props.get db.user |{0}|,db.password |{1}|",
         Props.get("db.user"), Props.get("db.password")))
 
-      println("DBVendor Props.get(\"__app\") = " + Props.get("__app").openOr("/gedcom-web/") + "|");
+      println("DBVendor Props.get(\"__app\") = " + Props.get("__app").openOr("/gedcom/") + "|");
       println("DBVendor Props.get(\"db.driver\") = " + Props.get("db.driver").openOr("test---Driver") + "|");
 
 

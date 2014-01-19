@@ -711,8 +711,8 @@ mvn clean install -Dmaven.test.skip=true
                 </configuration>
             </plugin>
 
-            <plugin>
-                <!-- http://maven.apache.org/guides/mini/guide-releasing.html -->
+            <!--<plugin>
+                &lt;!&ndash; http://maven.apache.org/guides/mini/guide-releasing.html &ndash;&gt;
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
@@ -720,7 +720,7 @@ mvn clean install -Dmaven.test.skip=true
                         svn+ssh://sodas.node.lt/srv/svn/scala/tags
                     </tagBase>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
             <!--<plugin>
                 <groupId>org.zeroturnaround</groupId>
@@ -744,7 +744,7 @@ mvn clean install -Dmaven.test.skip=true
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
-                <version>2.14.3</version>
+                <version>[2.15.2,</version>
                 <configuration>
                     <charset>${project.build.sourceEncoding}</charset>
                     <jvmArgs>
