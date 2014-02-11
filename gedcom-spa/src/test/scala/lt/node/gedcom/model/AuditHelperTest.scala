@@ -53,7 +53,8 @@ object AuditHelperSpec /*MultiLangTextSpec*/ extends Specification("AuditHelper 
 
     val header = "'checkAddField' zero-Value field returns NodeSeq.Empty"
     header >> {
-      val ah = AuditHelper.checkAddField("fldA", "", "")
+      //val ah = AuditHelper.checkAddField("fldA", "", "")
+      val ah = AuditHelper.checkAddFields(List(("fldA", "", "")))
       print ("-------------------- "); println(header)
       println(<_>|{ah.toString}|</_>.text)
       ah.toString.size must beLessThanOrEqualTo (0)
@@ -62,7 +63,8 @@ object AuditHelperSpec /*MultiLangTextSpec*/ extends Specification("AuditHelper 
     val header1 = "'checkAddField' LT value field returns <f n'=...'><lt> ... </lt></f> node"
     header1 >> {
       val iniText = """<_ d="lt"><lt>fldB LT tekstas ąčęėįšųūžĄČĘĖĮŠŲŪŽ</lt></_>"""
-      val ah = AuditHelper.checkAddField("fldB", "lt", (iniText))
+      //val ah = AuditHelper.checkAddField("fldB", "lt", (iniText))
+      val ah = AuditHelper.checkAddFields(List(("fldB", "lt", iniText)))
       print("-------------------- "); println(header1)
       println(<_>|{ah.toString}|</_>.text)
       ah must equalIgnoreSpace (<f n="fldB"><lt>fldB LT tekstas ąčęėįšųūžĄČĘĖĮŠŲŪŽ</lt></f>)
@@ -70,7 +72,8 @@ object AuditHelperSpec /*MultiLangTextSpec*/ extends Specification("AuditHelper 
 
     val header2 = "'checkAddField' value field returns <f n'=...'> ... </f> node"
     header2 >> {
-      val ah = AuditHelper.checkAddField("fldC", "", "fldB tekstas ąčęėįšųūžĄČĘĖĮŠŲŪŽ")
+      //val ah = AuditHelper.checkAddField("fldC", "", "fldB tekstas ąčęėįšųūžĄČĘĖĮŠŲŪŽ")
+      val ah = AuditHelper.checkAddFields(List(("fldC", "", "fldB tekstas ąčęėįšųūžĄČĘĖĮŠŲŪŽ")))
       print("-------------------- "); println(header2)
       println(<_>|{ah.toString}|</_>.text)
       ah must equalIgnoreSpace (<f n="fldC">fldB tekstas ąčęėįšųūžĄČĘĖĮŠŲŪŽ</f>)

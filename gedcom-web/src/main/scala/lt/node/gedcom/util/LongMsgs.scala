@@ -159,10 +159,21 @@ object LongMsgs {
       ("en" -> (<p>Are you sure you want to remove the family?</p>),
         "lt" -> (<p>Ar Jūs tikrai tikrai norite ištrinti šeimą?</p>)
     ),
+    "lfsb.res.0" -> Map(
+      "en" -> (<p>There is no person by the first name, surname and date of birth. Consult the web site admin</p>),
+      "lt" -> <p>Nėra asmens pagal nurodytas vardą, pavardę ir gimimo datą.</p>
+        <p>Kreipkitės pagalbos į svetainės adminą</p>
+    ),
+    "lfsb.res.n" -> Map(
+      "en" -> (<p>Several persons found under the first name, surname and date of birth.</p>
+        <p>Repeat the search using the full first name, surname, or contact the web site admin.</p>),
+      "lt" -> (<p>Keli asmenys rasti pagal nurodytus vardą, pavardę ir gimimo datą.</p>
+        <p>Pakartokite paiešką naudodami pilna varda, pavardę arba kreipkitės pagalbos į svetainės admina.</p>)
+    ),
     //"xxx" -> Map("en" -> (<p>en</p>), "lt" -> (<p>lt</p>)),
     //"xxx" -> Map("en" -> (<p>en</p>), "lt" -> (<p>lt</p>)),
     //"xxx" -> Map("en" -> (<p>en</p>), "lt" -> (<p>lt</p>)),
-    //"xxx" -> Map("en" -> (<p>en</p>), "lt" -> (<p>lt</p>)),
+
     "xxx" -> Map("en" -> (<p>en</p>), "lt" -> (<p>lt</p>))
   )
 }

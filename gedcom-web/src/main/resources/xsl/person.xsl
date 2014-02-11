@@ -239,15 +239,17 @@
                     </div>
                 </xsl:if>
                 <div class="span-7 colborder">
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
-                        </xsl:attribute>
-                        <b>
-                            <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
-                            <xsl:apply-templates select="gender"/>
-                        </b>
-                    </a>&#160;&#160;&#160;
+                    <!--<a>-->
+                        <!--<xsl:attribute name="href">-->
+                            <!--<xsl:value-of select="concat($app,'rest/personView/',./@id)"/>-->
+                        <!--</xsl:attribute>-->
+                        <b><u>
+                            <span style="font-size:larger">
+                                <xsl:value-of select="concat(nameGivn,' ',nameSurn,' ')"/>
+                                <xsl:apply-templates select="gender"/>
+                            </span>
+                        </u></b>
+                    <!--</a>-->&#160;&#160;&#160;
                     <a>
                         <xsl:attribute name="href">
                             <xsl:value-of select="concat($app,'rest/person/',./@id)"/>

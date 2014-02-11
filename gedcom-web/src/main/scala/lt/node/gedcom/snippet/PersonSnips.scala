@@ -11,7 +11,11 @@ import _root_.net.liftweb.util.Helpers._
 import http.js.JsCmds.FocusOnLoad
 import http.{RequestVar, S, SHtml}
 import bootstrap.liftweb.{ErrorXmlMsg, AccessControl, RequestedURL, CurrentUser}
-import _root_.lt.node.gedcom.model.{Model,Person,Family}
+import lt.node.gedcom.model._
+import net.liftweb.common.Full
+import scala.Some
+import scala.collection.JavaConverters._
+import lt.node.gedcom.util.GedcomUtil
 
 class PersonSnips {
   val log = Logger("PersonSnips");
@@ -44,12 +48,22 @@ class PersonSnips {
   }
 
 
+
   def sublistInternal(requestedURLpref: String) = {
     log.debug("[sublistInternal]... AccessControl.isAuthenticated_?(): " + AccessControl.isAuthenticated_?())
     log.debug("[sublistInternal]... CurrentUser.is.isDefined: " + CurrentUser.is.isDefined)
     log.debug(("[sublistInternal]... CurrentUser.is.toString: |%s|", CurrentUser.is.toString))
 
     object personsVar extends /*Request*/ SessionVar[Map[Long, String]](Map.empty)
+
+    def peEventDate(pe: Person, eventName: String): String  = {
+      pe.personevents.asScala.filter(x => x.tag == eventName).toList match {
+        case Nil => ""
+        case list => (if (eventName=="BIRT") " * " else " + ") +
+          GedcomUtil.i18nizeGedcomDate(list.head.eventdetails.iterator.next().dateValue)
+          //list.head.eventdetails.iterator.next().dateValue
+      }
+    }
 
     def buildQuery(current: String, limit: Int): Seq[String] = {
       //log.info("buildQuery: current= " + current + " limit=" + limit)
@@ -62,12 +76,13 @@ class PersonSnips {
           case _ => true
         }
       }.*/
-        map {
-        p => (p.id, (<_>{if (p.gender == "M") "♂ " else "♀ "}{p.nameGivn + " "}{p.nameSurn}</_>.text))
+        map { p => (p.id,
+          <_>{if (p.gender == "M") "♂ " else "♀ "}{p.nameGivn + " "}{p.nameSurn}{peEventDate(p, "BIRT")}{peEventDate(p, "DEAT")}</_>.text)
       }.toMap
       personsVar(id2person)
       id2person.values.toSeq
-    }
+
+}
 
     def completeQuery(value: String) {
       log.debug(<_>completeQuery: value={value};</_>.text)
@@ -81,8 +96,11 @@ class PersonSnips {
       S.redirectTo(RequestedURL.openOr("/"))
     }
 
-    "#selector" #> (FocusOnLoad(AutoComplete("", buildQuery _,
-      completeQuery _, List(("selectFirst", "false"), ("minChars", "4"), ("size", "20")))))
+    // E123-4/vsh:  http://stackoverflow.com/questions/1559871/autocomplete-customize-it-jquery
+    "#selector" #> (FocusOnLoad(AutoComplete("", buildQuery _, completeQuery _,
+      List(("selectFirst", "false"), ("minChars", "2"), ("width", "350"),
+        ("max", "0")
+      ))))
   }
 
 

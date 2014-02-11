@@ -40,13 +40,23 @@ class SettingSnips {
 
     //"#lang_lbl" #> S.?("set.locale") &
     "#lang" #> SHtml.select(Locales.LocalesVar.is.toSeq, Full(S.locale.toString),
-    { x: String => selectedLocale = x }, "size" ->/* "1"*/(Locales.langs.size.toString),
+    {x:String => selectedLocale=x }/*, "size" ->"1"*//*(Locales.langs.size.toString)*/,
     "onblur" -> "selectWhenChanged(this)", "onchange" -> "selectWhenChanged(this)")  &
+    /*"#lang" #> SHtml.radio(Locales.langs/*.toSeq*/, Full(S.locale.toString),{x:String => selectedLocale = x },
+    "onblur" -> "selectWhenChanged(this)", "onchange" -> "selectWhenChanged(this)").toForm  &*/
       "#lokale" #> <img src={"/images/flag_" + S.locale.toString.split("_").toList.head.trim + ".png"}
                         title={S.loc("set.locale")} width="4%" height="3%"/> &
       "#submit" #> SHtml.submit("Save", setLocale2)
   }
+/*
+  val eaCases: List[(String, String)] =
+    List(("event", "wiz.event"), ("attrib", "wiz.attribute")).map((kv)=>(kv._1, S ? kv._2))
+    val eoaNew = radio(S ? "wiz.add", eaCases.filter((kv) => kv._1==aoeInit).head._2, eaCases.map( _._2),
+      valMinLen(1, S ? "wiz.click.radio"))
+  val mapGender = Map(S.?("male") -> "M", S.?("female") -> "F")
+  SHtml.radio(mapGender.keys.toList, initGender4Radio, {x: String => aGender = mapGender(x)}).toForm
 
+* */
 
   def ancesDesce = {
     val uri = S.uri

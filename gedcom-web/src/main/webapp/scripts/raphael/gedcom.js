@@ -2013,7 +2013,7 @@ G.topRect = paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr(G.topRe
   var vInitx = marginX;
   var vInity = 10 //G.globHeight/2 + 2*goXxxH;
   var step = 200;
-  var vGap = 10;
+  var vGap = hGap = 10;
 
   //var go2TopLeft = paper.rect(vInitx+3, vInitx, 20, 20).attr('fill', 'lightgreen').attr("title", localeString("js_goInit"))
   var go2TopLeft = paper.drawImage( G.app+'images/goRefresh.png', vInitx, vInity + 0*(goXxxH + vGap), 'w', 30).attr("title", localeString("js_goInit"));
@@ -2024,7 +2024,7 @@ G.topRect = paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr(G.topRe
      goDown.attr("title", localeString("js_goInit"));
    };
 
-  var goUp = paper.drawImage( G.app+'images/goUp.png', vInitx, vInity + goXxxH+ vGap, 'w', 30);
+  var goUp = paper.drawImage( G.app+'images/goUp.png', vInitx + 1*(goXxxH + hGap), vInity  + 0*(goXxxH + vGap), 'w', 30);
   goUp.node.onclick = function() {
     paper.translteForest(0, 1*step);
     goUp.attr("title", localeString("js_goUp"));
@@ -2034,7 +2034,7 @@ G.topRect = paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr(G.topRe
     goUp.attr("title", localeString("js_goUp"));
   };
 
-  var goRight = paper.drawImage( G.app+'images/goRight.png', vInitx, vInity + 2*(goXxxH + vGap), 'w', 30);   // go090.jpg
+  var goRight = paper.drawImage( G.app+'images/goRight.png', vInitx, vInity + 1*(goXxxH + vGap), 'w', 30);   // go090.jpg
   goRight.node.onclick = function() {
     paper.translteForest(-1*step, 0);
     goRight.attr("title", localeString("js_goRight"));
@@ -2044,7 +2044,7 @@ G.topRect = paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr(G.topRe
     goRight.attr("title", localeString("js_goRight"));
   };
 
-  var goLeft = paper.drawImage( G.app+'images/goLeft.png', vInitx, vInity + 3*(goXxxH + vGap), 'w', 30);
+  var goLeft = paper.drawImage( G.app+'images/goLeft.png', vInitx, vInity + 2*(goXxxH + vGap), 'w', 30);
   goLeft.node.onclick = function() {
     paper.translteForest(1*step, 0);
     goLeft.attr("title", localeString("js_goLeft"));
@@ -2054,7 +2054,7 @@ G.topRect = paper.rect(0, 0, scale*G.globWidth, scale*G.globHeight).attr(G.topRe
     goLeft.attr("title", localeString("js_goLeft"));
   };
 
-  var goDown = paper.drawImage( G.app+'images/goDown.png', vInitx, vInity + 4*(goXxxH + vGap), 'w', 30);
+  var goDown = paper.drawImage( G.app+'images/goDown.png', vInitx + 2*(goXxxH + hGap), vInity + 0*(goXxxH + vGap), 'w', 30);
   goDown.node.onclick = function() {
     paper.translteForest(0, -1*step);
     goDown.attr("title", localeString("js_goDown"));

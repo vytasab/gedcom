@@ -353,9 +353,11 @@ class Boot /*extends Logger*/ extends Loggable {
 }
 
 object Locales {
-  val langs = List(/*"--", */"lt_LT", "en_EN"/*, "de", "pl", "ru"*/)
+  val langs = List("--", "lt_LT", "en_EN"/*, "de", "pl", "ru"*/)
 
-  val aMap = langs.map{ x => (<_>{x}</_>.text, x)}.toMap
+  // sinsce E209/vsh  val aMap = langs.map{ x => (<_>{x}</_>.text, x}.toMap
+  //val aMap = langs.map{ x => (<_>{x}</_>.text.substring(0,2), x.substring(0,2))}.toMap
+  val aMap = langs.map{ x => (x.substring(0,2), x.substring(0,2))}.toMap
 
   object LocalesVar extends SessionVar[Map[String, String]](aMap)
 

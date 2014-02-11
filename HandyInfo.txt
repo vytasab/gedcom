@@ -1117,7 +1117,13 @@ Nexus rekonfiguracija 8080 -> 8443
     - ... do development ...
 
 
-ymdd-x/vsh ==============================================================================
+E128-2/vsh ==============================================================================
+    Sometimes, when you open
+        https://www.individual.lt:8443/gedcom/gedcom/forest
+    an empty page with strange message
+        Something unexpected happened while serving the page at /gedcom/forest
+    may appear
+
 ymdd-x/vsh ==============================================================================
 ymdd-x/vsh ==============================================================================
 

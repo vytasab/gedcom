@@ -3,6 +3,7 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import net.liftweb.http._
 import net.liftweb.common.Loggable
+import net.liftweb.sitemap.Loc.If
 
 //import http.S.?
 import net.liftweb.sitemap._
@@ -29,14 +30,17 @@ object MenuInfo  extends Loggable {
       Menu(Loc("infoPage", List("infoPage"), "", Hidden))
     ),
     //Menu(Loc("gedcom", List("gedcom"), S ? "gedcom"),
-    Menu(Loc("gedcom", List("topMenu"), S ? "gedcom"),
-      Menu(Loc("personssublist", List("gedcom", "personsSublist"), S.?("person.sublist"))),
+    Menu(Loc("gedcom", List("topMenu"), S ? "gedcom"/*,If(()=>AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/"))*/),
+      Menu(Loc("personssublist", List("gedcom", "personsSublist"), S.?("person.sublist"),
+        If(() => AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/")))),
+      Menu(Loc("treeBranch", List("loginFSB"), S ? "fam.tree.branch",
+        If(() => !AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/")))),
       Menu(Loc("forest", List("gedcom", "forest"), S.?("forest"), Hidden)),
       //Menu(Loc("restperson1", List("rest", "person", "1"), S.?("Vytautas"))),
       //Menu(Loc("restperson2", List("rest", "person", "2"), S.?("Dalia"))),
       //Menu(Loc("restperson3", List("rest", "person", "3"), S.?("Andrius"))),
       Menu(Loc("addPerson", List("gedcom"/*, "addeditPerson"*/, "addAlonePerson"), S.?("add.person"),
-        If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
+        If(()=>AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/")))),
       //Menu(Loc("addeditPE", List("gedcom", "addeditPE"), S.?("add.person.event") /*, Hidden*/)),
       //Menu(Loc("addeditPA", List("gedcom", "addeditPA"), S.?("add.person.attrib") /*, Hidden*/)),
       Menu(Loc("personView", List("gedcom", "personView"), "", Hidden)),
@@ -69,36 +73,7 @@ object MenuInfo  extends Loggable {
       //Menu(Loc("addMultiMediaEDi", List("gedcom", "addMultiMediaInt"), "", Hidden)),
       Menu(Loc("editMultiMedia",   List("gedcom", "editMultiMedia"), "", Hidden)),
       Menu(Loc("deleteMultiMedia", List("gedcom", "deleteMultiMedia"), "", Hidden))
-    /*
-        case Req(List("rest", "addMultiMedia", "Pe", idPe), _, GetRequest) => {
-      log.debug("('rest', 'addMultiMedia', 'Pe', idPe)")
-      S.setSessionAttribute("role", "Pe")
-      S.setSessionAttribute("personId", idPe)
-      S.redirectTo("/gedcom/addMultiMedia")
-    }
-    case Req(List("rest", "addMultiMedia", "Fa", idFa), _, GetRequest) => {
-      log.debug("('rest', 'addMultiMedia', 'Fa', idFa)")
-      S.setSessionAttribute("role", "Fa")
-      S.setSessionAttribute("familyId", idFa)
-      S.redirectTo("/gedcom/addMultiMedia")
-    }
- */
-  /*case Req(List("rest", "addMultiMedia", role, idParentED), _, GetRequest) => {
-      log.debug("('rest', 'addMultiMedia', role, idParentED)")
-      S.setSessionAttribute("role", role)
-      S.setSessionAttribute("idParentED", idParentED)
-      S.redirectTo("/gedcom/addMultiMedia")
-    }*/
     ),
-    // TODO localize menu strings
-    //    Menu(Loc("UserCred", List("login", "changePassword"),S.?("Credentials"), Hidden)),
-    //    Menu(Loc("UserValidation", List("validation"),S.?("UserValidation"), Hidden)),
-    //    Menu(Loc("UserLogin", List("login", "index"),S.?("Login"),
-    //      If(() => AccessControl.isAuthenticated_?() == false, () => RedirectResponse("/")))),
-    //    Menu(Loc("UserLogout", List("logout"),S.?("Logout"),
-    //      If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/")))),
-    //    Menu(Loc("UserReset", List("login", "resetPassword"),S.?("Password Reset"))),
-    //    Menu(Loc("UserAdd", List("login", "useradd"),S.?("Add.User"))),
 
     Menu(Loc("addendum", List("export"), S.?("Addendum"),
       If(() => AccessControl.isAuthenticated_?(), () => RedirectResponse("/"))),

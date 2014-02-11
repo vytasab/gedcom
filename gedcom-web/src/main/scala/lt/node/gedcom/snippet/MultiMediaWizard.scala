@@ -21,26 +21,26 @@ import javax.persistence.EntityTransaction
 
 import _root_.lt.node.gedcom.util._ //{GedcomDateOptions,PeTags,PaTags,ToolTips}
 
-/**
- * Created with IntelliJ IDEA.
- * User: vsh
- * Date: 12/3/12
- * Time: 9:37 PM
- * To change this template use File | Settings | File Templates.
- */
-class /*object*/ AddMultiMediaWizardRunner {
-  /*def render = "#aaa" #> SHtml.ajaxInvoke(() =>
-    ModalDialog((<div><lift:MultiMediaWizard ajax="true"/><br/></div>),
-      JsObj(("top","200px"),("left","300px"),("width","600px"),("height","600px"))))*/
-  def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
-    ModalDialog((<div><lift:MultiMediaWizard ajax="true"/><br/></div>),
-      JsObj(("top","200px"),("left","300px"),("width","600px"),("height","600px"))))
-}
-
-class/*object*/ MultiMediaWizardRunner {
-  def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
-    ModalDialog(<div><lift:MultiMediaWizard ajax="true"/></div>))
-}
+///**
+// * Created with IntelliJ IDEA.
+// * User: vsh
+// * Date: 12/3/12
+// * Time: 9:37 PM
+// * To change this template use File | Settings | File Templates.
+// */
+//class /*object*/ AddMultiMediaWizardRunner {
+//  /*def render = "#aaa" #> SHtml.ajaxInvoke(() =>
+//    ModalDialog((<div><lift:MultiMediaWizard ajax="true"/><br/></div>),
+//      JsObj(("top","200px"),("left","300px"),("width","600px"),("height","600px"))))*/
+//  def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
+//    ModalDialog((<div><lift:MultiMediaWizard ajax="true"/><br/></div>),
+//      JsObj(("top","200px"),("left","300px"),("width","600px"),("height","600px"))))
+//}
+//
+//class/*object*/ MultiMediaWizardRunner {
+//  def render = "* [onclick]" #> SHtml.ajaxInvoke(() =>
+//    ModalDialog(<div><lift:MultiMediaWizard ajax="true"/></div>))
+//}
 
 
 // https://groups.google.com/forum/?fromgroups=#!search/file$20upload$20wizard$20lift/liftweb/gPwd0noM2Lg/_g2Df0d9Qn4J
@@ -100,15 +100,12 @@ class MultiMediaWizard extends Wizard with Loggable {
       conf
     }
 
-    def isValidMime(s: Array[Byte]): List[FieldError] = {
-      // !!! there is some strange validation implementation
-      wvInt._1 match {
-        case Full(x) if (mimes.exists(m => m == x.mimeType)) => Nil
-        /*case Full(x) if x.mimeType == "image/gif" => Nil
-        case Full(x) if x.mimeType == "image/png" => Nil
-        case Full(x) if x.mimeType == "image/jpeg" => Nil*/
-        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
-      }
+    def isValidMime(s: Array[Byte]): List[FieldError] = wvInt._1 match {
+      case Full(x) if mimes.exists(m => m == x.mimeType) => Nil
+      /*case Full(x) if x.mimeType == "image/gif" => Nil
+      case Full(x) if x.mimeType == "image/png" => Nil
+      case Full(x) if x.mimeType == "image/jpeg" => Nil*/
+      case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
     }
     def isValidTitle(s: String): List[FieldError] = {
       s match {
@@ -167,7 +164,7 @@ class MultiMediaWizard extends Wizard with Loggable {
         log.debug("editMmTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
         val place = "MultiMediaWizard.editMmTitle"
-        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
+        val msg = "No MultiMedia for id=" + S.getSessionAttribute("idMm").toString
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () =>
           ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
@@ -184,11 +181,9 @@ class MultiMediaWizard extends Wizard with Loggable {
       conf
     }
 
-    def isValidMime(s: Array[Byte]): List[FieldError] = {
-      wvInt._1 match {
-        case Full(x) if (mimes.exists(/*m => m*/_ == x.mimeType)) => Nil
-        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
-      }
+    def isValidMime(s: Array[Byte]): List[FieldError] = wvInt._1 match {
+      case Full(x) if mimes.exists(/*m => m*/ _ == x.mimeType) => Nil
+      case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
     }
 
     def isValidTitle(s: String): List[FieldError] = {
@@ -218,7 +213,7 @@ class MultiMediaWizard extends Wizard with Loggable {
         log.debug("editMm  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
         val place = "MultiMediaWizard.editMm"
-        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
+        val msg = "No MultiMedia for id=" + S.getSessionAttribute("idMm").toString
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () =>
           ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
@@ -237,13 +232,10 @@ class MultiMediaWizard extends Wizard with Loggable {
       conf
     }
 
-    def isValidMime(s: Array[Byte]): List[FieldError] = {
-      // !!! there is some strange validation implementation
-      wvInt._1 match {
-        //case Full(x) if (mimes.exists(m => m == x.mimeType)) => Nil
-        case Full(x) if (mimes.exists(_ == x.mimeType)) => Nil
-        case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
-      }
+    def isValidMime(s: Array[Byte]): List[FieldError] = wvInt._1 match {
+      //case Full(x) if (mimes.exists(m => m == x.mimeType)) => Nil
+      case Full(x) if (mimes.exists(_ == x.mimeType)) => Nil
+      case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
     }
 
   }
@@ -262,7 +254,7 @@ class MultiMediaWizard extends Wizard with Loggable {
         log.debug("editTitle  Some(mmr) " + new MultiLangText("title", mm.title).getLangMsg() /*mm.toString*/)
       case _ =>
         val place = "MultiMediaWizard.editTitle"
-        val msg = ("No MultiMedia for id="+ S.getSessionAttribute("idMm").toString)
+        val msg = "No MultiMedia for id=" + S.getSessionAttribute("idMm").toString
         log.debug(place+": "+msg)
         S.redirectTo("/errorPage", () =>
           ErrorXmlMsg.set(Some(Map("location" -> <p>{place}</p>, "message" -> <p>{msg}</p>)))
