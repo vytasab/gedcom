@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration debug="true">
+    <!-- log4j
+    <appender name="CAgedcom" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="../logs/gedcom_web.log"/>
+        <param name="Append" value="true"/>
+        <param name="MaxFileSize" value="500KB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <param name="Threshold" value="DEBUG"/>
+        &lt;!&ndash;layout class="org.apache.log4j.SimpleLayout"/&ndash;&gt;
+        <layout class="org.apache.log4j.PatternLayout">
+            &lt;!&ndash;param name="ConversionPattern" value="%d{ABSOLUTE} [%-5p] [%-10c] [%M():%L] - %m%n"/&ndash;&gt;
+            <param name="ConversionPattern" value="%t %-2p %d{HH:mm:ss,SSS} [%c{2}] [%M %L] - %m%n"/>
+            &lt;!&ndash;<param name="ConversionPattern" value="%t %-2p %d{HH:mm:ss,SSS} - %m%n"/>&ndash;&gt;
+        </layout>
+    </appender>-->
+    <!--<appender name="fileAppender" class="ch.qos.logback.core.FileAppender">
+        <file>c:/temp/gedcomLogFile.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d [%thread] %-5level  %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>-->
+
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--Daily rolling file appender -->
+    <!--<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        &lt;!&ndash;<File>logFile.log</File>&ndash;&gt;
+        <File>../logs/gedcom.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash;<FileNamePattern>logFile.%d{yyyy-MM-dd}.log</FileNamePattern>&ndash;&gt;
+            <FileNamePattern>gedcom.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            &lt;!&ndash;<pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>&ndash;&gt;
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </layout>
+    </appender>-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/gedcom.log</file>
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash; daily rollover &ndash;&gt;
+            <FileNamePattern>gedcom.%d{yyyy-MM-dd}.log</FileNamePattern>
+            &lt;!&ndash; keep 30 days' worth of history &ndash;&gt;
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>gedcom-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <!--<layout class="ch.qos.logback.classic.PatternLayout"><pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern></layout>-->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--<logger name="chapters.configuration" level="INFO" />
+    <logger name="chapters.configuration.Foo" level="DEBUG" />-->
+    <logger level="debug" name="bootstrap.liftweb.Boot" />
+    <logger level="warn"  name="LoginOps" />
+    <logger level="warn"  name="net.liftweb.db" />
+    <logger level="warn"  name="net.liftweb.util.TimeHelpers" />
+    <logger level="warn"  name="org.hibernate" />
+    <logger level="warn"  name="o.h" />
+    <root level="info">
+        <!--<appender-ref ref="fileAppender" />-->
+       <appender-ref ref="STDOUT" />
+       <appender-ref ref="FILE" />
+    </root></configuration>

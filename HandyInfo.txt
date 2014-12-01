@@ -1515,7 +1515,7 @@ mvn archetype:generate -DarchetypeGroupId=net.liftweb  -DarchetypeArtifactId=lif
 
 
 Ec01-1/vsh ==============================================================================
-    Pradedama kraustytis į Nexus Linux Mint
+    Pradedama kraustytis į Nexus Linux Mint!
 
 
 ymdd-x/vsh ==============================================================================

@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--<link href="http://blueprintcss.org/blueprint/src/grid.css" type="text/css" rel="stylesheet" media="screen, projection" />-->
+    <!--<link href="http://blueprintcss.org/blueprint/src/typography.css" type="text/css" rel="stylesheet" media="print" />-->
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Error Page</title>
+</head>
+<body class="lift:content_id=real_content">
+<div class="lift:surround?with=template-default;at=content" id="real_content">
+    <head>
+        <title>Persons (gedcom) <lift:loc>error.in.app</lift:loc></title>
+    </head>
+    <!--<h4>Person grove building</h4>-->
+        <div class="lift:ErrorPageSnips">
+            <div id="location" class="prepend-3 span-12 append-3 last"
+                 style="left:0; line-height:25px; margin-top:-100px; position:absolute; text-align:center;
+                    top:50%; width:100%; font-weight:bold;" >
+                <p>An error location for user is put here. </p></div>
+            <!--<br/>-->
+            <div id="message"  class="prepend-3 span-12 append-3 last"
+                 style="left:0; line-height:25px; margin-top:-50px; position:absolute; text-align:center;
+                    top:50%; width:100%; font-weight:bold; background-color:red" >
+                <p>Some message for user is put here. Some message for user is put here.
+                Some message for <b>user</b> is put here.<br/> Some message for user is put here.
+                Some message for user is put here. </p></div>
+            <!--<div id="domain" onchange="selectWhenChanged(this)" onclick="selectWhenClicked(this)"></div>-->
+        </div>
+</div>
+</body>
+</html>
+
+<!--<lift:surround with="default" at="content">-->
+	<!--<head>-->
+	<!--<title><lift:loc>error.in.app</lift:loc></title>-->
+	<!--</head>-->
+    <!--&lt;!&ndash;aaa aaa -->
+      <!--"#errLocation" #> Text(S.getSessionAttribute("appErrorLocation") openOr "location is unknown") &-->
+      <!--"#errMessage" #> Text(S.getSessionAttribute("appError") openOr "Strange: no error message")-->
+    <!--aaa aaa&ndash;&gt;-->
+	<!--<lift:SnipCmsUserPages.errorMessagePage>-->
+	<!--<h3>Error:</h3>-->
+	<!--<div>Location:  <b><e:location/></b></div>-->
+	<!--<div>Description:  <b><e:error/></b></div>-->
+	<!--</lift:SnipCmsUserPages.errorMessagePage>-->
+<!--</lift:surround>-->
+
+
+

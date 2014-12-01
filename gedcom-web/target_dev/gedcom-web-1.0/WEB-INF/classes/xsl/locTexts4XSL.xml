@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<nodes d="en">
+    <n k="add.multimedia">
+        <en>Add a picture, sound, video</en>
+        <lt>Pridėti vaizdą, garsą, video</lt>
+    </n>
+    <n k="edit.multimedia">
+        <en>Edit a picture, sound, video</en>
+        <lt>Redaguoti vaizdą, garsą, video</lt>
+    </n>
+    <n k="delete.multimedia">
+        <en>Delete a picture, sound, video</en>
+        <lt>Trinti vaizdą, garsą, video</lt>
+    </n>
+    <n k="back.to.forest">
+        <en>Go back to family forest</en>
+        <lt>Grįžti giminės miškan</lt>
+    </n>
+    <n k="edit.person">
+        <en>Edit current person</en>
+        <lt>Redaguoti asmens pagrindinius duomenis</lt>
+    </n>
+    <n k="delete.person">
+        <en>Delete current person</en>
+        <lt>Trinti asmens pagrindinius duomenis</lt>
+    </n>
+    <n k="pre.delete.person">
+        <en>Delete all events and attribs of the person from the first </en>
+        <lt>Visų pirma ištrinkite asmens įvykius ir savybes</lt>
+    </n>
+    <n k="edit.person.event">
+        <en>Edit current person event</en>
+        <lt>Redaguoti asmens įvykį</lt>
+    </n>
+    <n k="delete.person.event">
+        <en>Delete current person event</en>
+        <lt>Trinti asmens įvykį</lt>
+    </n>
+    <n k="edit.person.attrib">
+        <en>Edit current person attrib</en>
+        <lt>Redaguoti asmens savybę</lt>
+    </n>
+    <n k="delete.person.attrib">
+        <en>Delete current person attrib</en>
+        <lt>Trinti asmens savybę</lt>
+    </n>
+    <n k="delete.person.family">
+        <en>Delete current person family</en>
+        <lt>Trinti asmens šeimą, kur ji/jis yra motina/tėvas</lt>
+    </n>
+    <n k="edit.family.event">
+        <en>Edit current person family event</en>
+        <lt>Redaguoti asmens šeimos įvykį</lt>
+    </n>
+    <n k="delete.family.event">
+        <en>Delete current person family event</en>
+        <lt>Trinti asmens šeimos įvykį</lt>
+    </n>
+    <n k="remove.child">
+        <en>Remove the child from the family</en>
+        <lt>Trinti vaiką iš šeimos</lt>
+    </n>
+    <n k="male"> <en>Male</en> <lt>Vyras</lt> </n>
+    <n k="female"> <en>Female</en> <lt>Moteris</lt> </n>
+    <n k="event.type">
+        <en>Event descriptione</en>
+        <lt>Trunpas įvykio aprašymas</lt>
+    </n>
+    <n k="event.date">
+        <en>Event date</en>
+        <lt>Įvykio data</lt>
+    </n>
+    <n k="event.place">
+        <en>Event place</en>
+        <lt>Įvykio vieta</lt>
+    </n>
+    <n k="event.atAge">
+        <en>Age at event</en>
+        <lt>Asmens amžius įvykio metu</lt>
+    </n>
+    <n k="event.cause">
+        <en>Event cause</en>
+        <lt>Įvykio priežastis</lt>
+    </n>
+    <n k="event.source">
+        <en>Event source</en>
+        <lt>Žinių šaltiniai apie įvykį</lt>
+    </n>
+    <n k="event.note">
+        <en>Event note</en>
+        <lt>Pildytojo pastabos</lt>
+    </n>
+    <n k="attrib.value">
+        <en>Attribute value</en>
+        <lt>Attributo reikšmė</lt>
+    </n>
+    <!--<n k="">
+        <en></en>
+        <lt></lt>
+    </n>-->
+    <!--<n k=""><en></en> <lt></lt></n>-->
+</nodes>

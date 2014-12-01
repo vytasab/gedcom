@@ -1,0 +1,31 @@
+D_e_v_e_l_o_p_m_e_n_t   mode:  8080
+Apache Tomcat 7,8 Properties -> Java -> Java Options:
+    -Dcatalina.base=c:\Tomcat
+    -Dcatalina.home=c:\Tomcat
+    -Djava.endorsed.dirs=c:\Tomcat\endorsed
+    -Djava.io.tmpdir=c:\Tomcat\temp
+    -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+    -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+    -Xverify:none
+
+-Drun.mode=development
+-Drebel.log4j-plugin=true
+-Drebel.log=true
+-javaagent:C:\Documents and Settings\vsh\.IdeaIC13\config\plugins\jr-ide-idea\lib\jrebel\jrebel.jar
+
+
+P_r_o_d_u_c_t_i_o_n   mode:  8443
+Apache Tomcat 7,8 Properties -> Java -> Java Options:
+    -Dcatalina.base=c:\Tomcat
+    -Dcatalina.home=c:\Tomcat
+    -Djava.endorsed.dirs=c:\Tomcat\endorsed
+    -Djava.io.tmpdir=c:\Tomcat\temp
+    -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+    -Djava.util.logging.config.file=c:\Tomcat\conf\logging.properties
+    -Xverify:none
+
+-Drun.mode=production
+-Drebel.log4j-plugin=false
+-Drebel.log=false
+
+

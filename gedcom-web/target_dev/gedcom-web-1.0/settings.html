@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Home</title>
+</head>
+<body class="lift:content_id=real_content">
+
+<div class="lift:surround?with=default;at=content" id="real_content">
+    <head>
+        <title>Locale setting</title>
+        <script type="text/javascript">
+            function selectWhenChanged(someElem) {
+            //alert("selectWhenChanged="+someElem.value);
+            document.getElementById("submit").click();
+            }
+        </script>
+    </head>
+
+    <!--<form action="POST">-->
+    <!--<form class="lift:LocaleSnips.list" action="POST">-->
+    <form action="POST">
+        <!--<form id="LocaleSnips.list" action="POST">-->
+        <!--<form id="form LocaleSnips.list" action="POST">-->
+        <div class="lift:SettingSnips.list" style="margin:5mm 10mm 10mm">
+            <table>
+                <tr>
+                    <th width="20%"><span id="lang_lbl"/></th>
+                    <td><span id="lang"/></td>
+                </tr>
+                <tr>
+                    <th><span id="ancest_lbl" style="width:100px"/></th>
+                    <td><span id="ancest"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span id="descend_lbl" style="width:100px"/></th>
+                    <td><span id="descend"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span id="sibl_lbl" style="width:100px"/></th>
+                    <td><span id="sibl"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th span="2">
+                        <span id="submit" style="display:yes">submit</span>
+                    </th>
+                    <!--<td>-->
+                    <!---->
+                    <!--</td>-->
+                </tr>
+            </table>
+            <!--&lt;!&ndash;<div id="domain" onselect="selectWhenChanged(this)"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div id="domain" onblur="selectWhenChanged(this)"></div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div id="domain" onclick="selectWhenChanged(this)"></div>&ndash;&gt;-->
+            <!--<div>-->
+            <!--<span style="display:yes;vertical-align:middle;"><span id="lang_lbl"/></span>&nbsp;&nbsp;-->
+            <!--&lt;!&ndash;<span style="display:yes;font-family:Arial;vertical-align:middle;width:200px"><span id="lang_lbl"/></span>
+            &nbsp;&nbsp;&ndash;&gt;-->
+            <!--<span style="vertical-align:middle;width:200px"><span id="lang"/></span>-->
+            <!--&lt;!&ndash;<span id="lang"/>&ndash;&gt;-->
+            <!--&lt;!&ndash;<span id="lang" onchange="selectWhenChanged(this)"></span>&ndash;&gt;-->
+            <!--</div>-->
+            <!--<div>-->
+            <!--<span id="ancest_lbl" style="width:100px"/>-->
+            <!--<span id="ancest"/>-->
+            <!--&lt;!&ndash;<span id="ancest" onchange="selectWhenChanged(this)"></span>&ndash;&gt;-->
+            <!--</div>-->
+            <!--<div>-->
+            <!--<span id="descend_lbl" style="width:100px"/>-->
+            <!--<span id="descend"/>-->
+            <!--&lt;!&ndash;<span id="descend" onchange="selectWhenChanged(this)"></span>&ndash;&gt;-->
+            <!--</div>-->
+            <!--<div>-->
+            <!--<span id="sibl_lbl" style="width:100px"/>-->
+            <!--<span id="sibl"/>-->
+            <!--&lt;!&ndash;<span id="sibl" onchange="selectWhenChanged(this)"></span>&ndash;&gt;-->
+            <!--</div>-->
+            <!--<div id="submit" style="display:yes">submit</div>-->
+            <!--&lt;!&ndash;<div id="submit" style="display:none">submit</div>&ndash;&gt;-->
+        </div>
+    </form>
+</div>
+</body>
+</html>

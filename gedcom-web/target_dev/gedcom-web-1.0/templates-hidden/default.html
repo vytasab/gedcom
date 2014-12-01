@@ -1,0 +1,110 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:lift="http://liftweb.net/">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+
+    <!--<lift:CSS.blueprint/>-->
+    <!--<lift:CSS.fancyType/>-->
+    <style class="lift:CSS.blueprint" />
+    <style class="lift:CSS.fancyType" />
+    <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
+    <script id="json" src="/classpath/json.js" type="text/javascript"/>
+    <style>
+        /* <![CDATA[ */
+        .edit_error_class { display: block; color: red; }
+        .lift_error { color: red; }
+        .lift_warning { color: yellow; }
+        .lift_notice {}
+        .sidebar ul { margin:0; padding:0; border-bottom:1px solid #ccc; }
+        .sidebar ul li { margin:0; padding:0; list-style:none; border:1px solid #ccc; border-bottom:none; }
+        .sidebar ul li a { display:block; padding:3px; text-indent:30px; text-decoration:none; }
+        .sidebar ul li a:hover { background-color: #eee; }
+        /* ]]> */
+    </style>
+    <script type="text/javascript">
+        function selectWhenChanged(someElem) {
+            document.getElementById("submit").click();
+        }
+        function showWhenFlagClick() {
+            var elemLang = document.getElementById("lang");
+            var elemLokale = document.getElementById("lokale");
+            if (elemLang.style.display == "none") {
+              elemLokale.style.display="none";
+              elemLang.style.display="";
+            } else {
+              elemLang.style.display="none";
+            }
+        }
+    </script>
+</head>
+
+<body onload="/*document.getElementById('lang').style.display='none';document.getElementById('submit').style.display='none';*/">
+<!--<lift:Boot.onInit/>-->
+<!--<lift:WymEditor.onInit/>-->
+<!--<lift:JQueryUI.onInit/>-->
+<div class="container">
+    <!--<div class="column span-20" style="text-align: left">-->
+    <!--<h2 class="alt"><lift:loc>TopTitle</lift:loc></h2>-->
+    <!--</div><hr/>-->
+    <div class="column span-6 colborder sidebar">
+        <div>
+            <lift:snippet type="msgs"></lift:snippet>
+            <hr class="space"/>
+        </div>
+    </div>
+    <div>
+        <span class="column span-24">
+		  	<!--<lift:CmsMenu.render></lift:CmsMenu.render>-->
+		  	<lift:CmsMenu.render/>
+            <!--<span class="lift:SettingSnips.flag">
+                <span id="lokale" style=""></span>
+                &lt;!&ndash;<span id="lokale" style="width:10%; height:10%; valign:top"/> neveikia &ndash;&gt;
+            </span>-->
+            <form action="POST">
+                <span class="lift:SettingSnips.flag" style="vertical-align:top">
+                    <span id="lokale" style="display:yes" onclick="/*alert(111222333);*/showWhenFlagClick();/*alert(444555666);*/" />
+                    <span id="lang" style="display:none"></span>
+                    <span id="submit" style="display:none">submit</span>
+                </span>
+            </form>
+        </span>
+        <span class="column span-20 last">
+          <lift:bind name="content"></lift:bind>
+        </span>
+    </div>
+</div>
+</body>
+
+<!--<body>-->
+<!--<div class="container">-->
+<!--<div class="column span-12 last" style="text-align: right">-->
+<!--<h1 class="alt">Library Catalog</h1>-->
+<!--</div>-->
+
+<!--<hr/>-->
+
+<!--<div class="column span-6 colborder sidebar">-->
+<!--<hr class="space" />-->
+<!--<lift:Menu.builder />	-->
+<!--<div>-->
+<!--<lift:Msgs showAll="true"/>-->
+<!--<hr class="space" />-->
+<!--</div>-->
+<!--</div>-->
+
+<!--<div class="column span-17 last">-->
+<!--<lift:bind name="content" />-->
+<!--</div>-->
+
+<!--<hr />-->
+<!--<div class="column span-23 last" style="text-align: center">-->
+<!--<h4 class="alt">-->
+<!--<a href="http://www.liftweb.net"><i>lift</i></a>-->
+<!--is Copyright 2007-2010 WorldWide Conferencing, LLC.  Distributed under an Apache 2.0 License.</h4>-->
+<!--</div>-->
+
+<!--</div>-->
+<!--</body>-->
+
+</html>

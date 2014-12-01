@@ -1,0 +1,121 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:lift="http://liftweb.net/">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+
+    <!--<lift:CSS.blueprint/>-->
+    <!--<lift:CSS.fancyType/>-->
+    <style class="lift:CSS.blueprint" />
+    <style class="lift:CSS.fancyType" />
+    <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
+    <script id="json" src="/classpath/json.js" type="text/javascript"/>
+    <style>
+        /* <![CDATA[ */
+            .edit_error_class { display: block; color: red; }
+            .lift_error { color: red; }
+            .lift_warning { color: yellow; }
+            .lift_notice { }
+            .sidebar ul { margin:0; padding:0; border-bottom:1px solid #ccc; }
+            .sidebar ul li { margin:0; padding:0; list-style:none; border:1px solid #ccc; border-bottom:none; }
+            .sidebar ul li a { display:block; padding:3px; text-indent:30px; text-decoration:none; }
+            .sidebar ul li a:hover { background-color: #eee; }
+        /* ]]> */
+    </style>
+    <script type="text/javascript">
+        function selectWhenChanged(someElem) {
+            document.getElementById("submit").click();
+        }
+        function showWhenFlagClick() {
+            var elemLang = document.getElementById("lang");
+            var elemLokale = document.getElementById("lokale");
+            if (elemLang.style.display == "none") {
+              elemLokale.style.display="none";
+              elemLang.style.display="";
+            } else {
+              elemLang.style.display="none";
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function selectWhenChangedAncesDesce(someElem) {
+            //alert("selectWhenChangedAncesDesce="+someElem.value);
+            document.getElementById("submit2").click();
+        }
+        function showWhenAncesDesceClick() {
+            //alert('showWhenAncesDesceClick !!! !!! !!!');
+            var elemAncestLbl = document.getElementById("ancest_lbl");
+            var elemAncest = document.getElementById("ancest");
+            var elemDescendLbl = document.getElementById("descend_lbl");
+            var elemDescend = document.getElementById("descend");
+            elemAncestLbl.style.display='';
+            elemAncest.style.display='';
+            elemDescendLbl.style.display='';
+            elemDescend.style.display='';
+        }
+        function onMouseOver() {  /*alert('onMouseOver !!! !!! !!!');*/ }
+    </script>
+</head>
+
+<body>
+<!--<lift:Boot.onInit/>-->
+<!--<lift:WymEditor.onInit/>-->
+<!--<lift:JQueryUI.onInit/>-->
+<div class="container">
+    <!--<div class="column span-20" style="text-align: left">-->
+    <!--<h2 class="alt"><lift:loc>TopTitle</lift:loc></h2>-->
+    <!--</div><hr/>-->
+    <div class="column span-6 colborder sidebar">
+        <div>
+            <lift:snippet type="msgs"/>
+            <hr class="space"/>
+        </div>
+    </div>
+    <div>
+        <span class="column span-24">
+		  	<lift:CmsMenu.render/>
+            <span>
+            <form action="POST">
+                <span class="lift:SettingSnips.flag" style="vertical-align:top">
+                    <span id="lokale" style="display:yes" onclick="/*alert(2222);*/showWhenFlagClick();" />
+                    <span id="lang" style="display:none"></span>
+                    <span id="submit" style="display:none">submit</span>
+                </span>
+            </form>
+            <form action="POST">
+                <span class="lift:SettingSnips.ancesDesce" style="display:yes; vertical-align:top">
+<!--                   <span id="forestSettingsShow" style="display:yes" title="click here to change forest parameters"-->
+                    <span id="forestSettingsShow" style="display:yes"
+                          onmouseover="document.getElementById('forestSettingsShow').style.color='blue'"
+                          onmouseout="document.getElementById('forestSettingsShow').style.color='black'"
+                          onclick="document.getElementById('forestSettingsShow').style.display='none';
+                          document.getElementById('ancest_lbl').style.display='';
+                          document.getElementById('ancest').style.display='';
+                          document.getElementById('descend_lbl').style.display='';
+                          document.getElementById('descend').style.display='';"></span>
+                    <span id="ancest_lbl" style="display:none"></span>
+                    <span id="ancest" style="display:none" onclick="showWhenAncesDesceClick();"
+                          onmouseover="onMouseOver(someElem)();"></span>
+                    <span id="descend_lbl" style="display:none"></span>
+                    <span id="descend" style="display:none" onclick="showWhenAncesDesceClick();"></span>
+                    <span id="submit2" style="display:none">submit</span>
+                </span>
+            </form>
+            </span>
+        </span>
+        <br/>
+        <!--<div style="display:yes;text-decoration:italic">-->
+        <!--<div style="display:yes;text-decoration:none;max-width:600px">
+            <span class="lift:SettingSnips.forestShowOptions">
+                <span id="forestShowOptions"/>
+            </span>
+        </div>-->
+        <span class="column span-20 last">
+          <lift:bind name="content"/>
+            <script id="raphael" src="/scripts/raphael/raphael.js" type="text/javascript"/>
+            <script id="gedcomLoader" src="/scripts/raphael/gedcom.js" type="text/javascript"/>
+        </span>
+    </div>
+</div>
+</body>
+</html>

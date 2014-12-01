@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Home</title>
+</head>
+<body class="lift:content_id=real_content">
+<!--<div class="lift:surround?with=template-default;at=content" id="real_content">-->
+<div class="lift:surround?with=template-bind-person;at=contentAdd" id="real_content">
+    <head>
+        <title>add.person.to.family</title>
+    </head>
+    <h4>add.person.to.family</h4>
+
+    <form id="form" class="lift:PersonSnips.listOrGnSn" action="POST">
+        <div id="selector">
+            <div style="color:green">|||
+                <lift:msg id="nweAutoComplete"/>
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
+
