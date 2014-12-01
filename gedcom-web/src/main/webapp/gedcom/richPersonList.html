@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Home</title>
+</head>
+<body class="lift:content_id=real_content">
+<div class="lift:surround?with=template-default;at=content" id="real_content">
+    <head>
+        <title><lift:loc>sf.name.pe.list</lift:loc></title>
+    </head>
+    <h4 style="font-size:large; font-weight:bold; font-style:normal"><lift:loc>sf.name.pe.list</lift:loc></h4>
+
+    <table border="0">
+        <!--<tr>-->
+            <!--<td>-->
+                <!--&lt;!&ndash;<p>&ndash;&gt;-->
+                    <!--<lift:loc>type.chars</lift:loc>-->
+                <!--&lt;!&ndash;<br/><lift:loc>select.person.in.list</lift:loc>.&ndash;&gt;-->
+                    <!--<br/>-->
+                    <!--<lift:loc>click.enter.to.cont</lift:loc>-->
+                <!--&lt;!&ndash;</p>&ndash;&gt;-->
+            <!--</td>-->
+        <!--</tr>-->
+        <tr>
+            <td>
+                <form id="form" class="lift:PersonSnips.richPersonList" action="POST">
+                    <div>
+                    <a href="#" id="linkTop"><img src="../images/go270.jpg" width="32"/> </a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span style="font-size:large; font-weight:bold; font-style:normal"><div id="searchArg" /></span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span style="font-size:large; font-weight:bold; font-style:normal"><div id="noParents" /></span>
+                    <!--<a href="#" id="linkPdf"> &ndash;&gt; PDF</a>-->
+                    <br/>
+                    </div>
+                    <!--<div id="peLines"/>&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--<ol style="font-weight:bold; font-style:italic" type="1" ><div id="peLines"/></ol>-->
+                    <!--<ol type="1" ><div id="peLines"/></ol>  &lt;!&ndash;style="font-weight:normal; font-style:normal"&ndash;&gt;-->
+                    <p type="1" ><div id="peLines"/></p>  <!--style="font-weight:normal; font-style:normal"-->
+                    <a href="#" id="linkBot"><img src="../images/go270.jpg" width="32"/> </a>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <!--
+    "#searchArg" #> S.getSessionAttribute("searchArg").openOr("")  &
+    "#peLines *" #> personsVar.get.values.toList
+    -->
+
+    <!--<form id="form PersonSnips.sublist" action="POST">-->
+        <!--<div class="lift:PersonSnips.sublist">-->
+            <!--<div id="domain" onchange="selectWhenChanged(this)"></div>-->
+            <!--<div id="submit" style="display:none">submit</div>-->
+            <!--&lt;!&ndash;<div id="domain" onchange="selectWhenChanged(this)" onclick="selectWhenClicked(this)"></div>&ndash;&gt;-->
+        <!--</div>-->
+    <!--</form>-->
+</div>
+</body>
+</html>

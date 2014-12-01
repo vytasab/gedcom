@@ -6,8 +6,9 @@
         <option name="autosync" value="false" />
         <option name="deleteUnindexed" value="true" />
         <option name="manualXML" value="false" />
-        <option name="masterModuleName" value="gedcom-spa" />
+        <option name="masterModuleName" value="gedcom-web" />
         <option name="remotingEnabled" value="true" />
+        <option name="scanAllFiles" value="false" />
         <option name="secure" value="true" />
         <option name="url" />
         <option name="xmlDir" />

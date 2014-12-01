@@ -33,6 +33,11 @@ object MenuInfo  extends Loggable {
     Menu(Loc("gedcom", List("topMenu"), S ? "gedcom"/*,If(()=>AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/"))*/),
       Menu(Loc("personssublist", List("gedcom", "personsSublist"), S.?("person.sublist"),
         If(() => AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/")))),
+//      Menu(Loc("richPeListByXn", List("gedcom", "richPeListByXn"), S.?("person.richPeListByXn"),
+      Menu(Loc("richPeListByXn", List("gedcom", "richPeListByXn"), S.?("sf.name.pe.list"),
+        If(() => AccessControl.isAuthenticated_?() || System.getProperty("run.mode")=="development"/* || AccessControl.isDeveloper_?()*/, ()=>RedirectResponse("/")))),
+      Menu(Loc("richPersonList", List("gedcom", "richPersonList"), S.?("person.richPersonList"), Hidden
+        /*If(() => !AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/"))*/)),
       Menu(Loc("treeBranch", List("loginFSB"), S ? "fam.tree.branch",
         If(() => !AccessControl.isAuthenticated_?(), ()=>RedirectResponse("/")))),
       Menu(Loc("forest", List("gedcom", "forest"), S.?("forest"), Hidden)),

@@ -612,7 +612,7 @@ mvn clean install -Dmaven.test.skip=true
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1</version>  <!-- 2.3  2.1 2.1.1 -->
+                    <version>2.1.1</version>  <!-- 2.3  2.1 2.1.1 -->
                 </plugin>
                 <plugin>
                     <!-- http://maven.apache.org/plugins/maven-release-plugin/ -->

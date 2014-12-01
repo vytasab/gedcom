@@ -239,6 +239,10 @@
                     </div>
                 </xsl:if>
                 <div class="span-7 colborder">
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="concat($app,'rest/personView/',./@id)"/>
+                        </xsl:attribute>
                     <!--<a>-->
                         <!--<xsl:attribute name="href">-->
                             <!--<xsl:value-of select="concat($app,'rest/personView/',./@id)"/>-->
@@ -249,6 +253,7 @@
                                 <xsl:apply-templates select="gender"/>
                             </span>
                         </u></b>
+                    </a>
                     <!--</a>-->&#160;&#160;&#160;
                     <a>
                         <xsl:attribute name="href">
@@ -511,7 +516,7 @@
                             </span>
                             <br/>
                         </xsl:if>
-                        <xsl:apply-templates select="pe/ed/mm" mode="full"/>
+                        <xsl:apply-templates select="pe/ed/mm" mode="full"/>    <!--<p>PEPEPEPEPEPEPEPEPE</p>-->
                     </div>
                 </div>
     </xsl:if>
@@ -725,7 +730,7 @@
                         </span>
                         <br/>
                     </xsl:if>
-                    <xsl:apply-templates select="pa/ed/mm" mode="full"/>
+                    <xsl:apply-templates select="pa/ed/mm" mode="full"/>   <!--<p>PAPAPAPAPAPAPAPAPAPAPA</p>-->
                 </div>
             </div>
         </xsl:if>
@@ -1150,6 +1155,7 @@
                         </span>
                         <br/>
                     </xsl:if>
+                    <xsl:apply-templates select="fe/ed/mm" mode="full"/> <!--<p>FAFAFAFAFAFAFAFAFAFAFAFA</p>-->
                 </div>
             </div>
         </xsl:if>

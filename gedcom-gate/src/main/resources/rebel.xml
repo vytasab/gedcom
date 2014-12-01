@@ -5,10 +5,5 @@
 		<dir name="C:/Scala/gedcom/gedcom-gate/target/classes">
 		</dir>
 	</classpath>
-    <web>
-        <link target="/">
-            <dir name="c:/Scala/gedcom/gedcom-gate/src/main/webapp">
-            </dir>
-        </link>
-    </web>
+
 </application>

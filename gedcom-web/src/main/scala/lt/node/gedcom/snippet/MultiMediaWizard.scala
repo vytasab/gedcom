@@ -50,6 +50,13 @@ import _root_.lt.node.gedcom.util._ //{GedcomDateOptions,PeTags,PaTags,ToolTips}
 class MultiMediaWizard extends Wizard with Loggable {
 
   val log: Logger = LoggerFactory.getLogger("MultiMediaWizard")
+// E216-7/vsh  23:49:16.331 [http-nio-8443-exec-7] ...
+//  WARN  o.h.util.JDBCExceptionReporter - SQL Error: 0, SQLState: S1000
+//  ERROR o.h.util.JDBCExceptionReporter - Packet for query is too large (1790988 > 1048576).
+//        You can change this value on the server by setting the max_allowed_packet' variable.
+//  ERROR o.h.e.d.AbstractFlushingEventListener - Could not synchronize database state with session
+// org.hibernate.exception.GenericJDBCException: Could not execute JDBC batch update
+  val maxFileSize = 1048576
   require(AccessControl.isAuthenticated_?())
   object wvInt extends WizardVar[(Box[FileParamHolder], String, MultiLangText)] (Empty, "", new MultiLangText("title", ""))
   object wvDb extends WizardVar[(Box[FileParamHolder], String, String)] (Empty, "", "")
@@ -87,7 +94,7 @@ class MultiMediaWizard extends Wizard with Loggable {
     val file = makeField[Array[Byte], Nothing](
       S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
-      NothingOtherValueInitializer, isValidMime _ )
+      NothingOtherValueInitializer, isValidSize _, isValidMime _ )
 
     //val titleNew = textarea/*field*/(S ? "pe.note", wvInt._3.getLangMsg(), 3, 30, isValidTitle _)
     val titleNew = textarea/*field*/(S ? "pe.note", wvInt._3.getLangMsg(),
@@ -100,6 +107,11 @@ class MultiMediaWizard extends Wizard with Loggable {
       conf
     }
 
+    def isValidSize(s: Array[Byte]): List[FieldError] = wvInt._1 match {
+      case Full(x) if x.length < maxFileSize => Nil
+      case Full(x) => S.?("wizmm.file.toBig") + ": " + x.length
+      //case _ => "???"
+    }
     def isValidMime(s: Array[Byte]): List[FieldError] = wvInt._1 match {
       case Full(x) if mimes.exists(m => m == x.mimeType) => Nil
       /*case Full(x) if x.mimeType == "image/gif" => Nil
@@ -156,7 +168,7 @@ class MultiMediaWizard extends Wizard with Loggable {
     val file = makeField[Array[Byte], Nothing](
       S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
-        NothingOtherValueInitializer, isValidMime _ )
+        NothingOtherValueInitializer, isValidSize _, isValidMime _ )
     var mm: MultiMedia = null
     wvMmOld.get match {
       case Some(mmr) =>
@@ -181,11 +193,15 @@ class MultiMediaWizard extends Wizard with Loggable {
       conf
     }
 
+    def isValidSize(s: Array[Byte]): List[FieldError] = wvInt._1 match {
+      case Full(x) if x.length < maxFileSize => Nil
+      case _ => S.?("wizmm.file.toBig") + ": " + wvInt._1.toString //.open_!.mimeType
+      //case _ => "???"
+    }
     def isValidMime(s: Array[Byte]): List[FieldError] = wvInt._1 match {
       case Full(x) if mimes.exists(/*m => m*/ _ == x.mimeType) => Nil
       case _ => S.?("wizmm.false.mime") + ": " + wvInt._1.toString //.open_!.mimeType
     }
-
     def isValidTitle(s: String): List[FieldError] = {
       s match {
         case s if s.length > 0  => Nil
@@ -205,7 +221,7 @@ class MultiMediaWizard extends Wizard with Loggable {
     val file = makeField[Array[Byte], Nothing](
       S ? "wizmm.file", new Array[Byte](0),
       field => SHtml.fileUpload( fph => { wvInt.set((Full(fph),fph.mimeType, wvInt.get._3)) } ),
-        NothingOtherValueInitializer, isValidMime _ )
+        NothingOtherValueInitializer, isValidSize _ , isValidMime _ )
     var mm: MultiMedia = null
     wvMmOld.get match {
     case Some(mmr) =>
@@ -225,13 +241,17 @@ class MultiMediaWizard extends Wizard with Loggable {
         })*/
     }
 
+    def isValidSize(s: Array[Byte]): List[FieldError] = wvInt._1 match {
+      case Full(x) if x.length < maxFileSize => Nil
+      case Full(x) => S.?("wizmm.file.toBig") + ": " + x.length
+      //case _ => "???"
+    }
     override def nextScreen = {
       log.debug("editMm screen nextScreen  wvInt._2 ==>" + wvInt._2 + "<====")
       wvDb.set(wvInt.get._1, wvInt.get._2, ""/*wvInt.get._3.*//*.addupdLangMsg(titleNew.get)*/)
       //Empty //--> finish
       conf
     }
-
     def isValidMime(s: Array[Byte]): List[FieldError] = wvInt._1 match {
       //case Full(x) if (mimes.exists(m => m == x.mimeType)) => Nil
       case Full(x) if (mimes.exists(_ == x.mimeType)) => Nil

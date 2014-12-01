@@ -55,25 +55,26 @@ js_canvas_center=Your mouse click position in canvas will be moved here
 
 
   def dispatch: LiftRules.DispatchPF = {
-    case Req(List("rest", "person", id), _, GetRequest) => {
+    case Req(List("rest", "person", id), _, GetRequest) =>
       S.setSessionAttribute("personId", id)
       S.redirectTo("/gedcom/forest")
-    }
-    case Req(List("rest", "personView", epId), _, GetRequest) => {
+
+    case Req(List("rest", "richPeListByXn"), _, GetRequest) =>
+      S.redirectTo("/gedcom/richPersonList")
+
+    case Req(List("rest", "personView", epId), _, GetRequest) =>
       log.debug("('rest', 'personView', epId)")
       S.setSessionAttribute("personId", epId)
       S.unsetSessionAttribute("role")
       S.redirectTo("/gedcom/personView")
-    }
 
-    case Req(List("rest", "editPe", peId), _, GetRequest) => {
+    case Req(List("rest", "editPe", peId), _, GetRequest) =>
       log.debug("('rest', 'editPe', peId)")
       S.setSessionAttribute("personEventId", peId)
       S.unsetSessionAttribute("personAttribId")
       S.unsetSessionAttribute("role")
       S.redirectTo("/gedcom/editPe")
-    }
-    case Req(List("rest", "deletePe", peId), _, GetRequest) => {
+    case Req(List("rest", "deletePe", peId), _, GetRequest) =>
       log.debug("('rest', 'deletePe', peId)")
       S.setSessionAttribute("personEventId", peId)
       S.unsetSessionAttribute("personAttribId")
@@ -81,81 +82,69 @@ js_canvas_center=Your mouse click position in canvas will be moved here
       //S.redirectTo("/_deletePe")
       //S.redirectTo("/gedcom/_deletePe")
       S.redirectTo("/gedcom/deletePe")
-    }
-    case Req(List("rest", "editPa", paId), _, GetRequest) => {
+    case Req(List("rest", "editPa", paId), _, GetRequest) =>
       log.debug("('rest', 'editPa', paId)")
       S.setSessionAttribute("personAttribId", paId)
       S.unsetSessionAttribute("personEventId")
       S.unsetSessionAttribute("role")
       S.redirectTo("/gedcom/editPa")
-    }
-    case Req(List("rest", "deletePa", paId), _, GetRequest) => {
+    case Req(List("rest", "deletePa", paId), _, GetRequest) =>
       log.debug("('rest', 'deletePa', paId)")
       S.setSessionAttribute("personAttribId", paId)
       S.unsetSessionAttribute("personEventId")
       S.unsetSessionAttribute("role")
       S.redirectTo("/gedcom/deletePa")
-    }
-    case Req(List("rest", "editFe", feId), _, GetRequest) => {
+    case Req(List("rest", "editFe", feId), _, GetRequest) =>
       log.debug("('rest', 'editFe', "+feId.toString+")")
       S.setSessionAttribute("familyEventId", feId)
       S.unsetSessionAttribute("role")  // ?
       S.redirectTo("/gedcom/editFe")
-    }
-    case Req(List("rest", "deleteFe", feId), _, GetRequest) => {
+    case Req(List("rest", "deleteFe", feId), _, GetRequest) =>
       log.debug("('rest', 'deleteFe', feId)")
       S.setSessionAttribute("familyEventId", feId)
       S.unsetSessionAttribute("role")  // ?
       S.redirectTo("/gedcom/deleteFe")
-    }
 
-    case Req(List("export", "exportAll", id), _, GetRequest) => {
+    case Req(List("export", "exportAll", id), _, GetRequest) =>
       S.setSessionAttribute("personId", id)
       S.unsetSessionAttribute("role")
       S.redirectTo("/gedcom/personView")
       //S.redirectTo("/gedcom/forest")
-    }
-    case Req(List("export", "exportPart", id), _, GetRequest) => {
+    case Req(List("export", "exportPart", id), _, GetRequest) =>
       S.setSessionAttribute("personId", id)
       S.unsetSessionAttribute("role")
       S.redirectTo("/addendum/doExportPart")
-    }
 
 
 
-    case Req(List("rest", "personUpdate", epId), _, GetRequest) => {
+    case Req(List("rest", "personUpdate", epId), _, GetRequest) =>
       log.debug("('rest', 'personUpdate', epId)")
       S.setSessionAttribute("personId", epId)
       S.unsetSessionAttribute("role")
       S.redirectTo("/gedcom/personUpdate")
-    }
-    case Req(List("gedcom", "personUpdate", epId), _, GetRequest) => {
+    case Req(List("gedcom", "personUpdate", epId), _, GetRequest) =>
       log.debug("('gedcom', 'personUpdate', epId)")
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("role", "upd")
       S.redirectTo("/gedcom/addeditPerson") // only Person entity
-    }
-    case Req(List("gedcom", "personDelete", epId), _, GetRequest) => {
+    case Req(List("gedcom", "personDelete", epId), _, GetRequest) =>
       log.debug("('gedcom', 'personDelete', epId)")
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("role", "del")
       S.redirectTo("/gedcom/personDelete") // only Person entity
-    }
-    case Req(List("gedcom", "familyChildDelete", parentId, childId), _, GetRequest) => {
+    case Req(List("gedcom", "familyChildDelete", parentId, childId), _, GetRequest) =>
       log.debug("('gedcom', 'familyChildDelete', parentId, childId)")
       S.setSessionAttribute("personId", parentId)
       S.setSessionAttribute("childId", childId)
       S.setSessionAttribute("role", "fcDel")
       S.redirectTo("/gedcom/familyChildDelete")
-    }
-    case Req(List("gedcom", "familyDelete", spouseId, familyId), _, GetRequest) => {
+    case Req(List("gedcom", "familyDelete", spouseId, familyId), _, GetRequest) =>
       log.debug("('gedcom', 'familyDelete', spouseId, familyId)")
       S.setSessionAttribute("personId", spouseId)
       S.setSessionAttribute("familyId", familyId)
       S.setSessionAttribute("role", "famDel")
       S.redirectTo("/gedcom/familyDelete")
-    }
-    case Req(List("rest", "person", epId, "event", tag_or_id), _, GetRequest) => {
+    case Req(List("rest", "person", epId, "event", tag_or_id), _, GetRequest) =>
       // N.B. !!! -- tag CANNOT be numeral
       log.debug("('rest', 'person', epId, 'event', tag_or_id)")
       S.setSessionAttribute("personId", epId)
@@ -168,8 +157,7 @@ js_canvas_center=Your mouse click position in canvas will be moved here
           S.unsetSessionAttribute("eventId")
       }
       S.redirectTo("/gedcom/addeditPE")
-    }
-    case Req(List("rest", "person", epId, "attrib", tag_or_id), _, GetRequest) => {
+    case Req(List("rest", "person", epId, "attrib", tag_or_id), _, GetRequest) =>
       // N.B. !!! -- tag CANNOT be numeral
       log.debug("('rest', 'person', epId, 'attrib', tag_or_id)")
       S.setSessionAttribute("personId", epId)
@@ -182,7 +170,6 @@ js_canvas_center=Your mouse click position in canvas will be moved here
           S.unsetSessionAttribute("attribId")
       }
       S.redirectTo("/gedcom/addeditPA")
-    }
 /*
     def addPe(): Unit = {
       log.debug(<_>selectedPeTag={selectedPeTag}</_>.text);
@@ -193,57 +180,50 @@ js_canvas_center=Your mouse click position in canvas will be moved here
       S.redirectTo(<_>/rest/person/{personVar.is.open_!.id}/attrib/{selectedPaTag}</_>.text)
     }
 */
-    case Req(List("rest", epId, "addNewFamily", gender), "", GetRequest) => {
+    case Req(List("rest", epId, "addNewFamily", gender), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", "0")
       S.setSessionAttribute("gender", (if (gender == "M") "F" else "M"))
       S.setSessionAttribute("role", "sF")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addHusbandToPerson", id), "", GetRequest) => {
+    case Req(List("rest", epId, "addHusbandToPerson", id), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", id)
       S.setSessionAttribute("gender", "M")
       S.setSessionAttribute("role", "sH")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addWifeToPerson", id), "", GetRequest) => {
+    case Req(List("rest", epId, "addWifeToPerson", id), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", id)
       S.setSessionAttribute("gender", "F")
       S.setSessionAttribute("role", "sW")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addBrotherToFamily", id), "", GetRequest) => {
+    case Req(List("rest", epId, "addBrotherToFamily", id), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", id)
       S.setSessionAttribute("gender", "M")
       S.setSessionAttribute("role", "cB")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addSisterToFamily", id), "", GetRequest) => {
+    case Req(List("rest", epId, "addSisterToFamily", id), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", id)
       S.setSessionAttribute("gender", "F")
       S.setSessionAttribute("role", "cS")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addFatherToFamily", id), "", GetRequest) => {
+    case Req(List("rest", epId, "addFatherToFamily", id), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", id)
       S.setSessionAttribute("gender", "M")
       S.setSessionAttribute("role", "pF")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addMotherToFamily", id), "", GetRequest) => {
+    case Req(List("rest", epId, "addMotherToFamily", id), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", id)
       S.setSessionAttribute("gender", "F")
       S.setSessionAttribute("role", "pM")
       S.redirectTo("/gedcom/bindPerson")
-    }
     //    case Req(List("rest", efId, "addSpouseToFamily", gender), "", GetRequest) => {
-    case Req(List("rest", epId, "addSpouseToFamily", efId), "", GetRequest) => {
+    case Req(List("rest", epId, "addSpouseToFamily", efId), "", GetRequest) =>
       val p = Model.find(classOf[Person], epId.toLong).get
       //      S.setSessionAttribute("personId", (if (gender == "M") f.wifeId else f.husbandId))
       S.setSessionAttribute("personId", epId)
@@ -251,24 +231,20 @@ js_canvas_center=Your mouse click position in canvas will be moved here
       S.setSessionAttribute("gender", (if (p.gender == "M") "F" else "M")) // of future spouse
       S.setSessionAttribute("role", "fSpouse")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addSonToFamily", efId), "", GetRequest) => {
+    case Req(List("rest", epId, "addSonToFamily", efId), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", efId)
       S.setSessionAttribute("gender", "M")
       S.setSessionAttribute("role", "fSon")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", epId, "addDaughterToFamily", efId), "", GetRequest) => {
+    case Req(List("rest", epId, "addDaughterToFamily", efId), "", GetRequest) =>
       S.setSessionAttribute("personId", epId)
       S.setSessionAttribute("familyId", efId)
       S.setSessionAttribute("gender", "F")
       S.setSessionAttribute("role", "fDaughter")
       S.redirectTo("/gedcom/bindPerson")
-    }
-    case Req(List("rest", "person", id, "xml"), _, GetRequest) => () => {
+    case Req(List("rest", "person", id, "xml"), _, GetRequest) => () =>
       /*GedcomRest.*/ getPersonXML(id)
-    }
 
     /*case Req(List("rest", "addMultiMedia", "Pe", idPe), _, GetRequest) => {
       log.debug("('rest', 'addMultiMedia', 'Pe', idPe)")
@@ -285,7 +261,7 @@ js_canvas_center=Your mouse click position in canvas will be moved here
       S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
     }*/
-    case Req(List("rest", "addMultiMedia", role, idXx), _, GetRequest) => {
+    case Req(List("rest", "addMultiMedia", role, idXx), _, GetRequest) =>
       log.debug("('rest', 'addMultiMedia', " + role + ", " + idXx + ")")
       S.setSessionAttribute("role", role) // possible values: PE PA FE
       role match {
@@ -304,21 +280,16 @@ js_canvas_center=Your mouse click position in canvas will be moved here
       }
       S.setSessionAttribute("mmActionCUD", "C")
       S.redirectTo("/gedcom/addMultiMedia")
-    }
-    case Req(List("rest", "editMultiMedia", idMm), _, GetRequest) => {
+    case Req(List("rest", "editMultiMedia", idMm), _, GetRequest) =>
       log.debug("('rest', 'editMultiMedia', "+idMm)
       S.setSessionAttribute("idMm", idMm)  // tobe updated MultiMedia record id
       S.setSessionAttribute("mmActionCUD", "U")
       S.redirectTo("/gedcom/editMultiMedia")
-    }
-    case Req(List("rest", "deleteMultiMedia", idMm), _, GetRequest) => {
+    case Req(List("rest", "deleteMultiMedia", idMm), _, GetRequest) =>
       log.debug("('rest', 'deleteMultiMedia', "+idMm)
       S.setSessionAttribute("mmId", idMm)  // tobe deleted MultiMedia record id
       S.setSessionAttribute("mmActionCUD", "D")
       S.redirectTo("/gedcom/deleteMultiMedia")
-    }
-
-
     case Req(List("rest", _), "", _) => failure _
   }
 
@@ -336,29 +307,27 @@ js_canvas_center=Your mouse click position in canvas will be moved here
     // final wrap of responses
     println("[CreateTag] " + in)
     <gedcom>{in}</gedcom>
-  };
+  }
 
 
   def getPersonXML(id: String): Box[LiftResponse] = {
     val aPerson = Model.find(classOf[Person], id.toLong)
     val result: Box[NodeSeq] = aPerson match {
-      case Some(p) => {
+      case Some(p) =>
         Full(<person>
           <id>{p.id}</id>
           <nameGivn>{p.nameGivn}</nameGivn>
           <nameSurn>{p.nameSurn}</nameSurn>
           <gender>{p.gender}</gender>
         </person>)
-      }
-      case None => {
+      case None =>
         Full(<person>
           <id>{id}</id>
           <errmsg>{S.?("no.person.for.this.id")}</errmsg>
         </person>)
-      }
-    };
+    }
     result.toResponse
-  };
+  }
 
 
   def failure(): LiftResponse = {
