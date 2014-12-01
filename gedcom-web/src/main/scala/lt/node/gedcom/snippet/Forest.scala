@@ -2,7 +2,7 @@ package lt.node.gedcom.snippet
 
 
 import _root_.net.liftweb._
-import common.{Loggable, Logger}
+import net.liftweb.common.{Full, Loggable, Logger}
 import http._
 import net.liftweb.util._
 import Helpers._
@@ -20,9 +20,12 @@ class Forest extends Loggable {
     GedcomRest.emptyFids
     val sb: StringBuffer = new StringBuffer("")
     val sbIdGen: StringBuffer = new StringBuffer("")
-    val rootId = S.getSessionAttribute("personId").openOr("1").trim.toLong
 
-
+    //val rootId = S.getSessionAttribute("personId").openOr("1").trim.toLong
+    val rootId = S.getSessionAttribute("personId") match {
+      case Full(personId) => personId.trim.toLong
+      case _ => 0; S.redirectTo("/loginFSB")
+    }
     GedcomRest.getPersonJS(
       (S.get("ancestNum").getOrElse("1").toInt,
         S.get("descendNum").getOrElse("1").toInt,

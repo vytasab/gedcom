@@ -848,7 +848,7 @@ DB07-4/vsh =====================================================================
 -Drun.mode=development
 -Drebel.log4j-plugin=true
 -Drebel.log=true
--javaagent:C:\Documents and Settings\vsh\.IdeaIC11\config\plugins\jr-ide-idea\lib\jrebel\jrebel.jar
+-javaagent:C:\Documents and Settings\vsh\.IdeaIC13\config\plugins\jr-ide-idea\lib\jrebel\jrebel.jar
 
     Production mode:
     Apache Tomcat 7,8 Properties -> Java -> Java Options:
