@@ -45,7 +45,7 @@
 
         <dependency>
             <groupId>org.scala-tools.testing</groupId>
-            <artifactId>specs_2.8.1</artifactId>  <!-- specs_2.8.0 -->
+            <artifactId>specs_2.8.1</artifactId>  <!-- specs_2.8.1 specs_2.8.0 -->
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -120,6 +120,7 @@
             </resource>
         </resources>
     </build>
+
     <profiles>
         <!--  mvn clean install -Pspa_dev  -Dmaven.test.skip=true  -->
         <profile>
@@ -217,80 +218,10 @@
                 <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
             </properties>
         </profile>
-    <!--  mvn -Pspa_prodStax -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>spa_prodStax</id>
-            <activation>
-                <property>
-                    <name>spa_prodStax-on</name>
-                </property>
-            </activation>
-            <!--<activation><property><name>spa_stax-on</name></property></activation>-->
-            <properties>
-                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
-                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
-                <hibernate.connection.url>jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom</hibernate.connection.url>
-                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
-                <hibernate.connection.password>123123</hibernate.connection.password>
-                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
-                <hibernate.show_sql>false</hibernate.show_sql>
-                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-            </properties>
-            <!--<build>-->
-                <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
-                <!--<filters><filter>src/main/resources/filters/stax.properties</filter></filters>-->
-                <!--<resources>
-                    <resource>
-                        <directory>src/main/resources/META-INF</directory>
-                        <targetPath>META-INF</targetPath>
-                        <filtering>true</filtering>
-                        <includes>
-                            <include>persistence.xml</include>
-                        </includes>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources/META-INF</directory>
-                        <targetPath>META-INF</targetPath>
-                        <filtering>false</filtering>
-                        <includes>
-                            <include>orm.xml</include>
-                        </includes>
-                    </resource>
-                </resources>-->
-                <!--<plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                        </configuration>
-                    </plugin>
-                </plugins>-->
-            <!--</build>-->
-        </profile>
 
-
-        <!--  mvn -Pspa_prodBudge -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>spa_prodBudger</id>
-            <activation>
-                <property>
-                    <name>spa_prodBudger-on</name>
-                </property>
-            </activation>
-            <properties>
-                <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
-                <hibernate.connection.driver_class>com.mysql.jdbc.Driver</hibernate.connection.driver_class>
-                <hibernate.connection.url>jdbc:mysql://localhost:3306/datasource-gedcom</hibernate.connection.url>
-                <hibernate.connection.username>shaknisgedcom</hibernate.connection.username>
-                <hibernate.connection.password>123123</hibernate.connection.password>
-                <hibernate.max_fetch_depth>3</hibernate.max_fetch_depth>
-                <hibernate.show_sql>false</hibernate.show_sql>
-                <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-            </properties>
-        </profile>
     </profiles>
 
-<reporting>
+    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.scala-tools</groupId>

@@ -139,9 +139,20 @@ class Boot /*extends Logger*/ extends Loggable {
      }
 
     // Force the request to be UTF-8
-    LiftRules.early.append((req: HTTPRequest) => {
+    LiftRules.early.append(r = (req: HTTPRequest) => {
       req.setCharacterEncoding("UTF-8")
-    })
+      /*if (req.scheme != "https") {
+        println(MessageFormat.format("req.scheme != \"https\" {0}", req.scheme))
+        log.error(MessageFormat.format("req.scheme != \"https\" {0}", req.scheme))
+        RedirectResponse("/___use__https__protocol_only___!!!")  //F323-1/vsh - neveikia taip
+        //req.destroyServletSession()
+        //LiftRules.earlyResponse.prepend((r: Req) => {
+        //  r.
+        //  Full("/___use__https__protocol_only___!!!"))
+        //}
+      }*/
+    }
+    )
 
     DefaultConnectionIdentifier.jndiName = "jdbc/datasource-gedcom"
     if (!DB.jndiJdbcConnAvailable_?) {
@@ -182,6 +193,14 @@ class Boot /*extends Logger*/ extends Loggable {
 //    //// each page, just comment this line out.
 //    //LiftRules.setSiteMapFunc(() => sitemapMutators(sitemap))
     // B321-1=============================================
+
+//    // F224-2:  http://chimera.labs.oreilly.com/books/1234000000030/ch06.html#_solution_53
+//    // useless
+//    LiftRules.onBeginServicing.append {
+//      case r =>
+//        log.debug("LiftRules.onBeginServicing = |%s|".format(r))
+//        println("LiftRules.onBeginServicing: "+r)
+//    }
 
     //LiftRules.statelessDispatchTable.append(ImageInfo.serveImage)
     //LiftRules.statelessDispatchTable.append(MultiMediaService.serveImage)  // // D605-6/vsh  uncommented

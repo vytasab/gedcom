@@ -32,7 +32,7 @@
         <artifactId>gedcom</artifactId>
         <version>1.0</version> <!-- *: 1.0-SNAPSHOT  DA26-6: 1.0    -->
     </parent>
-    <artifactId>gedcom-web</artifactId>
+    <artifactId>gedcom-web</artifactId>  <!-- gedcom-web -->
     <!--<version>1.0-SNAPSHOT</version> &lt;!&ndash; *: 1.0-SNAPSHOT  DA26-6: 1.0    &ndash;&gt;-->
     <packaging>war</packaging>
     <name>gedcom Web</name>
@@ -158,7 +158,6 @@
         <dependency>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>jrebel-maven-plugin</artifactId>
-            <!--<version>1.1.3</version>-->
         </dependency>
 
         <!-- L_o_g_g_i_n_g -->
@@ -480,16 +479,6 @@
                     <!--<filter>src/main/resources/nexus.properties</filter>  &lt;!&ndash;  default  nexus  &ndash;&gt;-->
                 </filters>
                 <resources>
-                    <!--<resource>
-                        <directory>src/main/resources/dev-resources</directory>
-                        <targetPath>./props</targetPath>
-                        <filtering>true</filtering>   &lt;!&ndash; true false &ndash;&gt;
-                        <includes>
-                            &lt;!&ndash;<include>log4j.xml</include>&ndash;&gt;
-                            <include>logback.xml</include>
-                        </includes>
-                        &lt;!&ndash;<excludes><exclude>nexus.properties</exclude></excludes>&ndash;&gt;
-                    </resource>-->
                     <resource>
                         <directory>src/main/resources/dev-resources</directory>
                         <targetPath>.</targetPath>     <!-- .../WEB-INF/classes/ -->
@@ -506,7 +495,7 @@
                         <configuration>
                             <!--
                             WEB-INF/logback.xml,
-                            WEB-INF/classes/props/production.nexus.props,
+                            WEB-INF/classes/props/production.Freda.props,
                             -->
                             <packagingExcludes>
                                 scripts/raphael/gedcom.js_BA21-5_init_version,
@@ -519,9 +508,8 @@
                                 WEB-INF/production.nexus.logback.xml,
                                 WEB-INF/classes/dev-resources/,
                                 WEB-INF/classes/prod-resources/,
-                                WEB-INF/classes/props/production.nexus.props,
+                                WEB-INF/classes/props/production.Freda.props,
                                 WEB-INF/classes/props/production.aosvu.props,
-                                WEB-INF/classes/props/production.badger.props,
                                 WEB-INF/lib/h2-1.2.138.jar,
                                 WEB-INF/lib/scalajpa_2.9.2-1.4.jar,
                                 WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
@@ -550,7 +538,6 @@
                     <plugin>
                         <groupId>org.zeroturnaround</groupId>
                         <artifactId>jrebel-maven-plugin</artifactId>
-                        <version>1.1.1</version>
                         <executions>
                             <execution>
                                 <id>generate-rebel-xml</id>
@@ -625,9 +612,8 @@
                                 WEB-INF/classes/prod-resources/,
                                 WEB-INF/classes/rebel.xml,
                                 WEB-INF/classes/props/nexus.props,
-                                WEB-INF/classes/props/production.nexus.props,
+                                WEB-INF/classes/props/production.Freda.props,
                                 WEB-INF/classes/props/production.aosvu.props,
-                                WEB-INF/classes/props/production.badger.props,
                                 WEB-INF/lib/h2-1.2.138.jar,
                                 WEB-INF/lib/scalajpa_2.9.2-1.4.jar,
                                 WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
@@ -669,469 +655,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <!--  ====================================================================================================== -->
-        <!--  mvn -PprodNexus -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>prodNexus</id>
-            <activation><property><name>prodNexus-on</name></property></activation>
-            <properties>
-                <db_driver>com.mysql.jdbc.Driver</db_driver>
-                <db_url>jdbc:mysql://localhost:3306/datasource-gedcom</db_url>
-                <db_user>shaknisgedcom</db_user>
-                <db_password>271314log</db_password>
-                <__app>/gedcom/</__app>
-                <loc_texts_4XSL>./webapps/gedcom/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>
-            </properties>
-            <build>
-                <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
-                <filters>
-                    <filter>src/main/resources/prod-resources/production.properties</filter>
-                </filters>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources/prod-resources</directory>
-                        <targetPath>.</targetPath>     <!-- .../WEB-INF/classes/ -->
-                        <filtering>false</filtering>   <!-- true false -->
-                        <includes>
-                            <include>logback.xml</include>
-                        </includes>
-                    </resource>
-                </resources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <configuration>
-                            <!--<packagingExcludes>
-                                WEB-INF/classes/dev-resources/,
-                                WEB-INF/classes/prod-resources/,
-                                WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-common_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-json_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-util_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-webkit_2.9.1-2.4.jar
-                            </packagingExcludes>-->
-                            <packagingExcludes>
-                                scripts/raphael/gedcom.js_BA21-5_init_version,
-                                scripts/raphael/gedcomLoader.js,
-                                scripts/raphael/gedcomLoaderDeprec.js,
-                                scripts/raphael/gedcomRestLoader.js,
-                                scripts/raphael/raphLab.js,
-                                WEB-INF/cloudbees-web.xml,
-                                WEB-INF/stax-web.xml,
-                                WEB-INF/classes/dev-resources/,
-                                WEB-INF/classes/prod-resources/,
-                                WEB-INF/classes/rebel.xml,
-                                WEB-INF/classes/props/nexus.props,
-                                WEB-INF/classes/props/production.nexus.props,
-                                WEB-INF/classes/props/production.aosvu.props,
-                                WEB-INF/classes/props/production.badger.props,
-                                WEB-INF/lib/h2-1.2.138.jar,
-                                WEB-INF/lib/scalajpa_2.9.2-1.4.jar,
-                                WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-common_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-json_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-util_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-webkit_2.9.1-2.4.jar
-                            </packagingExcludes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <!-- http://code.google.com/p/specs/wiki/RunningSpecs#Run_your_specifications_with_JUnit4_and_Maven -->
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <argLine>-Xmx512m</argLine>
-                            <includes>
-                                <include>**/*Unit.java</include>
-                                <include>**/*Spec.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>native2ascii-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>native2ascii</goal>
-                                </goals>
-                                <configuration>
-                                    <encoding>UTF8</encoding>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!--  ====================================================================================================== -->
-        <!--  mvn -PprodAosvu -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>prodAosvu</id>
-            <activation>
-                <property>
-                    <name>prodAosvu-on</name>
-                </property>
-            </activation>
-            <properties>
-                <db_driver>com.mysql.jdbc.Driver</db_driver>
-                <db_url>jdbc:mysql://localhost:3306/datasource-gedcom</db_url>
-                <db_user>shaknisgedcom</db_user>
-                <db_password>271314log</db_password>
-                <__app>/gedcom/</__app>
-                <loc_texts_4XSL>./webapps/gedcom/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>
-            </properties>
-            <build>
-                <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
-                <filters>
-                    <filter>src/main/resources/prod-resources/production.properties</filter>
-                </filters>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources/prod-resources</directory>
-                        <targetPath>.</targetPath>
-                        <filtering>false</filtering>
-                        <includes>
-                            <include>logback.xml</include>
-                        </includes>
-                        <!--<excludes><exclude>production.properties</exclude></excludes>-->
-                    </resource>
-                </resources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <configuration>
-                            <packagingExcludes>
-                                scripts/raphael/gedcom.js_BA21-5_init_version,
-                                scripts/raphael/gedcomLoader.js,
-                                scripts/raphael/gedcomLoaderDeprec.js,
-                                scripts/raphael/gedcomRestLoader.js,
-                                scripts/raphael/raphLab.js,
-                                WEB-INF/cloudbees-web.xml,
-                                WEB-INF/stax-web.xml,
-                                WEB-INF/classes/dev-resources/,
-                                WEB-INF/classes/prod-resources/,
-                                WEB-INF/classes/rebel.xml,
-                                WEB-INF/classes/props/nexus.props,
-                                WEB-INF/classes/props/production.nexus.props,
-                                WEB-INF/classes/props/production.aosvu.props,
-                                WEB-INF/classes/props/production.badger.props,
-                                WEB-INF/lib/h2-1.2.138.jar,
-                                WEB-INF/lib/scalajpa_2.9.2-1.4.jar,
-                                WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-common_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-json_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-util_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-webkit_2.9.1-2.4.jar
-                            </packagingExcludes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <!-- http://code.google.com/p/specs/wiki/RunningSpecs#Run_your_specifications_with_JUnit4_and_Maven -->
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <argLine>-Xmx512m</argLine>
-                            <includes>
-                                <include>**/*Unit.java</include>
-                                <include>**/*Spec.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>native2ascii-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>native2ascii</goal>
-                                </goals>
-                                <configuration>
-                                    <encoding>UTF8</encoding>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!--  ====================================================================================================== -->
-        <!--  mvn -PprodStax -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>prodStax</id>
-            <activation>
-                <property>
-                    <name>prodStax-on</name>
-                </property>
-            </activation>
-            <properties>
-                <db_driver>com.mysql.jdbc.Driver</db_driver>
-                <db_url>jdbc:mysql://ec2-75-101-156-134.compute-1.amazonaws.com:3306/datasource-gedcom</db_url>
-                <db_user>shaknisgedcom</db_user>
-                <db_password>123123</db_password>
-                <host__>gedcom-web.vytastax.staxapps.net</host__>
-                <_port_></_port_>
-                <__app>/</__app>
-                <loc_texts_4XSL>./webapps/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>
-            </properties>
-            <build>
-                <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
-                <filters>
-                    <filter>src/main/resources/prod-resources/production.properties</filter>
-                </filters>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources/prod-resources</directory>
-                        <targetPath>./props</targetPath>
-                        <filtering>true</filtering>
-                        <includes>
-                            <include>production.default.log4j.xml</include>
-                        </includes>
-                        <!--<excludes><exclude>production.properties</exclude></excludes>-->
-                    </resource>
-                </resources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <configuration>
-                            <packagingExcludes>
-                                WEB-INF/classes/dev-resources/,
-                                WEB-INF/classes/prod-resources/,
-                                WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-common_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-json_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-util_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-webkit_2.9.1-2.4.jar
-                            </packagingExcludes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.cloudbees</groupId>
-                        <artifactId>bees-maven-plugin</artifactId>
-                        <configuration>
-                            <port>8085</port>
-                        </configuration>
-                    </plugin>
-                    <!--<plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <encoding>UTF-8</encoding>
-                                    <overwrite>true</overwrite>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                    <filters>
-                                        <filter>src/main/resources/filters/default.properties</filter>
-                                    </filters>
-                                    <resources>
-                                        <resource>
-                                            <directory>src/main/resources</directory>
-                                            <filtering>true</filtering>
-                                            <includes>
-                                                <include>props/lift.props</include>
-                                            </includes>
-                                        </resource>
-                                        <resource>
-                                            <directory>src/main/resources</directory>
-                                            <filtering>true</filtering>
-                                            <includes>
-                                                <include>toserve/**/*.*</include>
-                                                <include>xsl/*.xsl</include>
-                                                <include>xsl/locTexts4XSL.xml</include>
-                                                <include>*.properties</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            &lt;!&ndash;<execution>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>resources</goal>
-                                </goals>
-                                <configuration>
-                                    <encoding>UTF-8</encoding>
-                                    <overwrite>true</overwrite>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                </configuration>
-                            </execution>&ndash;&gt;
-                        </executions>
-                    </plugin>-->
-
-                    <!-- ====================================== -->
-
-                    <plugin>
-                        <!-- http://code.google.com/p/specs/wiki/RunningSpecs#Run_your_specifications_with_JUnit4_and_Maven -->
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <argLine>-Xmx512m</argLine>
-                            <includes>
-                                <include>**/*Unit.java</include>
-                                <include>**/*Spec.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                    <!--<plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-eclipse-plugin</artifactId>
-                        <version>2.7</version>
-                        <configuration>
-                            <downloadSources>true</downloadSources>
-                            <additionalProjectnatures>
-                                <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
-                            </additionalProjectnatures>
-                            <additionalBuildcommands>
-                                <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
-                            </additionalBuildcommands>
-                            <classpathContainers>
-                                <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
-                                <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-                            </classpathContainers>
-                        </configuration>
-                    </plugin>-->
-                    <!--<plugin>
-                        <groupId>org.zeroturnaround</groupId>
-                        <artifactId>jrebel-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>generate-rebel-xml</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>-->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>native2ascii-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>native2ascii</goal>
-                                </goals>
-                                <!-- specific configurations -->
-                                <configuration>
-                                    <encoding>UTF8</encoding>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-
-        <!--  ====================================================================================================== -->
-        <!--  mvn -PprodBadger -Dmaven.test.skip=true clean install  -->
-        <profile>
-            <id>prodBadger</id>
-            <activation>
-                <property>
-                    <name>prodBadger-on</name>
-                </property>
-            </activation>
-            <properties>
-                <db_driver>com.mysql.jdbc.Driver</db_driver>
-                <db_url>jdbc:mysql://localhost:3306/datasource-gedcom</db_url>
-                <db_user>shaknisgedcom</db_user>
-                <db_password>123123</db_password>
-                <host__>localhost</host__>
-                <_port_>:8080</_port_>
-                <__app>/gedcom-web/</__app>
-                <loc_texts_4XSL>./webapps/gedcom-web/WEB-INF/classes/xsl/locTexts4XSL.xml</loc_texts_4XSL>
-            </properties>
-            <build>
-                <!--http://www.waltercedric.com/java-j2ee-mainmenu-53/361-maven-build-system/1639-maven-project-filtering.html-->
-                <filters>
-                    <filter>src/main/resources/prod-resources/production.properties</filter>
-                </filters>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources/prod-resources</directory>
-                        <targetPath>./props</targetPath>
-                        <filtering>true</filtering>
-                        <includes>
-                            <include>production.props</include>
-                            <include>production.default.log4j.xml</include>
-                        </includes>
-                        <!--<excludes><exclude>production.properties</exclude></excludes>-->
-                    </resource>
-                </resources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <configuration>
-                            <packagingExcludes>
-                                WEB-INF/classes/dev-resources/,
-                                WEB-INF/classes/prod-resources/,
-                                WEB-INF/lib/lift-actor_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-common_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-json_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-util_2.9.1-2.4.jar,
-                                WEB-INF/lib/lift-webkit_2.9.1-2.4.jar
-                            </packagingExcludes>
-                        </configuration>
-                    </plugin>
-                    <!--<plugin>
-                        <groupId>com.cloudbees</groupId>
-                        <artifactId>bees-maven-plugin</artifactId>
-                        <configuration>
-                            <port>8085</port>
-                        </configuration>
-                    </plugin>-->
-                    <plugin>
-                        <!-- http://code.google.com/p/specs/wiki/RunningSpecs#Run_your_specifications_with_JUnit4_and_Maven -->
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <argLine>-Xmx512m</argLine>
-                            <includes>
-                                <include>**/*Unit.java</include>
-                                <include>**/*Spec.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>native2ascii-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>native2ascii</goal>
-                                </goals>
-                                <!-- specific configurations -->
-                                <configuration>
-                                    <encoding>UTF8</encoding>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
 
     </profiles>
 

@@ -1,0 +1,79 @@
+props.name._____=resources/props/Freda.props
+
+db.driver=${db_driver}
+db.url=${db_url}
+db.user=${db_user}
+db.password=${db_password}
+
+#host__=${host__}
+#_port_=${_port_}
+__app=${__app}
+
+loc.texts.4XSL=${loc_texts_4XSL}
+
+mail.debug=${mail.debug}
+mail.smtp.host=${mail.smtp.host}
+mail.smtp.port=${mail.smtp.port}
+mail.smtp.ssl.trust=${mail.smtp.ssl.trust}
+mail.transport.protocol=${mail.transport.protocol}
+mail.smtp.starttls.enable=${mail.smtp.starttls.enable}
+mail.smtp.auth=${mail.smtp.auth}
+admin.mail=${admin.mail}
+mail.smtp.user=${mail.smtp.user}
+mail.smtp.pass=${mail.smtp.pass}
+
+regex.password=${regex.password}
+
+run.mode=${run.mode}
+
+
+#  mail.smtp.host=${mail.smtp.host}
+#  mail.smtp.port=${mail.smtp.port}
+#  mail.smtp.starttls.enable=${mail.smtp.starttls.enable}
+#  mail.smtp.auth=${mail.smtp.auth}
+#  admin.mail=${admin.mail}
+#  # admin_mailhost=mail.node.lt - deprecated
+#  # admin_mail=vsh@node.lt
+#  #
+#  #mail.smtp.host=smtp.gmail.com
+#  #mail.smtp.port=465
+#  #mail.smtp.starttls.enable=true
+#  #mail.smtp.auth=true
+#  #admin.mail=vytasab@gmail.com
+
+
+
+#  regex.password=^[A-Za-z0-9_]{6,12}
+#  #regex.password=^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,12}
+
+#  #admin.mailhost=mail.node.lt
+#  #admin.mail=vsh@node.lt
+
+#  # CB12-7 loc.texts.4XSL=c:/Tomcat/webapps/gedcom-web/WEB-INF/classes/xsl/locTexts4XSL.xml
+
+# --------------------------------------------------------
+#  db.driver=com.mysql.jdbc.Driver
+#  db.url=jdbc:mysql://localhost:3306/datasource-gedcom
+#  db.user=shaknisgedcom
+#  db.password=123123
+
+#  #  host.port.app=localhost:8080/gedcom-web/
+#  host__=localhost
+#  _port_=:8080
+#  __app=/gedcom-web/
+
+#  #  mail sending outgoing server config
+#  mail.debug=true
+#  mail.smtp.host=smtp.gmail.com
+#  mail.smtp.port=587
+#  mail.smtp.ssl.trust=smtp.gmail.com
+#  mail.transport.protocol=smtp
+#  mail.smtp.starttls.enable=true
+#  mail.smtp.auth=true
+#  admin.mail=vytasab@gmail.com
+#  mail.smtp.user=ainis.prosenis@gmail.com
+#  mail.smtp.pass=zhizhma-rauda
+
+#  regex.password=^[A-Za-z0-9_]{6,12}
+#  #regex.password=^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,12}
+

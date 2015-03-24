@@ -1,0 +1,150 @@
+Ec01-1/vsh ==============================================================================
+    Pradedama kraustytis į Nexus Linux Mint!
+
+F213-5/vsh ==============================================================================
+    Freda's MySQL DB
+    root / sh...is
+    sh...isgedcom / {e3}{pi3    }log
+
+F218-3/vsh ==============================================================================
+    JRebel configuration:
+
+   - open
+        https://my.jrebel.com/account/how-to-activate  via Twitter account: vytasab / fredafreda
+
+   - read
+        /home/vsh/.IdeaIC14/config/plugins/jr-ide-idea/lib/jrebel6/readme.txt:
+                ---------------------------------------------------------------
+                The ZIP distrubution is to be used without the IDE
+                Activating a JRebel license
+                ===========================
+                To activate a JRebel license from the command line, run:
+                bin/activate.{cmd|sh} <ACTIVATION_KEY_OR_PATH_TO_LICENSE_FILE>
+
+                To activate a JRebel license using a GUI activation wizard, run:
+                bin/activate-gui.{cmd|sh}
+
+                Enabling JRebel for your server
+                ===============================
+                To enable JRebel for your server container, run:
+                bin/setup.{cmd|sh}
+
+                and follow the instructions displayed in the Usage.
+                For the simplest case (enabling JRebel for Tomcat for example), run:
+
+                bin/setup.{cmd|sh} -r "path/to/tomcat/installation/directory"
+                ./bin/setup/sh -r /opt/apache-tomcat-8.0.15
+                ---------------------------------------------------------------
+
+   - run
+        /home/vsh/.IdeaIC14/config/plugins/jr-ide-idea/lib/jrebel6/bin/activate-gui.sh
+
+   - read
+        http://zeroturnaround.com/software/jrebel/learn/remoting/setting-up-jrebel-remoting-with-intellij-idea-and-tomcat/
+
+Win XP rebel.xml:
+---------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+    <classpath>
+        <dir name="c:/Scala/gedcom/gedcom-web/target/classes">
+        </dir>
+    </classpath>
+    <web>
+        <link target="/">
+            <dir name="c:/Scala/gedcom/gedcom-web/src/main/webapp">
+            </dir>
+        </link>
+    </web>
+</application>
+---------------------------------------
+
+Config Log:
+
+Freda bin # ./setup.sh  --?
+The Utility to tune server containers to work with JRebel.
+Copyright (C) 2013 ZeroTurnaround AS (http://www.zeroturnaround.com)
+All questions and bugs please send to support@zeroturnaround.com
+
+usage: Options:
+ -all,--alldomains      Process all domains of a server
+ -D <property=value>    Set value to the given JVM property
+ -d,--domains <arg>     List of domains to be processed to be used with
+                        JRebel, use ',' as the name separator
+ -dr,--dryrun           Write list of possible changed files for the
+                        container without any real writing operation
+ -h,--?                 This list of options
+ -jh,--javahome <arg>   The java home to be used to start external java
+                        based processes
+ -jr <arg>              Path to the jrebel.jar (by default the path is
+                        ../jrebel.jar)
+ -nb,--nobackup         Disable backup of changed files
+ -r,--root <arg>        The Server or Domain root folder
+ -rb,--rollback         Rollback changes in server configuration
+ -rt,--remoting         Prepare container for remote work
+ -v,--verbose           Verbose
+ -y,--yes               Positive acknowledgement for all questions
+Freda bin # ./activate-gui.sh
+Created new window in existing browser session.
+
+Freda bin # ./setup.sh -r /opt/apache-tomcat-8.0.15
+Preparing to do modification
+The Path to jrebel.jar: /home/vsh/.IdeaIC14/config/plugins/jr-ide-idea/lib/jrebel6/jrebel.jar
+os.name is Linux
+UsingNativeAgent (1st): true, useNativeAgent()=true, JavaVM2=true
+UsingNativeAgent (2st): osArch=i386
+check DLL for OS with hasNativeAgentFor(i386): vm64bit=false, hasLibFolder[/home/vsh/.IdeaIC14/config/plugins/jr-ide-idea/lib/jrebel6/lib]=true, hasDLLForOS=true
+UsingNativeAgent (3st): hasNativeAgentForOS=true
+UsingNativeAgent (Final): true
+Detected container : Tomcat 8.0.15
+Is the server container correct? (Y/N): Y
+
+ List of new files or modified files
+----------------------------------------
+1:      /opt/apache-tomcat-8.0.15/bin/startup-jrebel.sh
+----------------------------------------
+Do you agree the changes? (Y/N): Y
+Can't make backup for file:     /opt/apache-tomcat-8.0.15/bin/startup-jrebel.sh
+Saved new file: /opt/apache-tomcat-8.0.15/bin/startup-jrebel.sh
+Executing the command:  chmod +x/opt/apache-tomcat-8.0.15/bin/startup-jrebel.sh
+
+Freda bin #
+Freda bin # ./shutdown.sh
+Using CATALINA_BASE:   /opt/apache-tomcat-8.0.15
+Using CATALINA_HOME:   /opt/apache-tomcat-8.0.15
+Using CATALINA_TMPDIR: /opt/apache-tomcat-8.0.15/temp
+Using JRE_HOME:        /usr
+Using CLASSPATH:       /opt/apache-tomcat-8.0.15/bin/bootstrap.jar:/opt/apache-tomcat-8.0.15/bin/tomcat-juli.jar
+
+Freda bin # ./startup-jrebel.sh
+Using CATALINA_BASE:   /opt/apache-tomcat-8.0.15
+Using CATALINA_HOME:   /opt/apache-tomcat-8.0.15
+Using CATALINA_TMPDIR: /opt/apache-tomcat-8.0.15/temp
+Using JRE_HOME:        /usr
+Using CLASSPATH:       /opt/apache-tomcat-8.0.15/bin/bootstrap.jar:/opt/apache-tomcat-8.0.15/bin/tomcat-juli.jar
+Usage: catalina.sh ( commands ... )
+commands:
+  debug             Start Catalina in a debugger
+  debug -security   Debug Catalina with a security manager
+  jpda start        Start Catalina under JPDA debugger
+  run               Start Catalina in the current window
+  run -security     Start in the current window with security manager
+  start             Start Catalina in a separate window
+  start -security   Start in a separate window with security manager
+  stop              Stop Catalina, waiting up to 5 seconds for the process to end
+  stop n            Stop Catalina, waiting up to n seconds for the process to end
+  stop -force       Stop Catalina, wait up to 5 seconds and then use kill -KILL if still running
+  stop n -force     Stop Catalina, wait up to n seconds and then use kill -KILL if still running
+  configtest        Run a basic syntax check on server.xml - check exit code for result
+  version           What version of tomcat are you running?
+Note: Waiting for the process to end and use of the -force option require that $CATALINA_PID is defined
+
+
+
+
+
+ymdd-x/vsh ==============================================================================
+ymdd-x/vsh ==============================================================================
+ymdd-x/vsh ==============================================================================
+ymdd-x/vsh ==============================================================================
+

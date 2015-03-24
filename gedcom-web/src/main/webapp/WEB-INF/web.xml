@@ -25,4 +25,19 @@
         <res-auth>Container</res-auth>
     </resource-ref>
 
+    <!--  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd. NONE CONFIDENTIAL -->
+    <!--<security-constraint>
+        <web-resource-collection>
+            <web-resource-name>gedcom-protokolo-ribojimas</web-resource-name>
+            <url-pattern>/gedcom/</url-pattern>
+            <url-pattern>/gedcom/login/</url-pattern>
+            <url-pattern>/gedcom-web/</url-pattern>
+            <url-pattern>/gedcom-web/login/</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+-->
+
 </web-app>

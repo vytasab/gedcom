@@ -1,4 +1,4 @@
-props.name._____=resources/prod-resources/production.default.props
+props.name._____=resources/props/production.default.props
 
 db.driver=${db_driver}
 db.url=${db_url}
@@ -25,3 +25,5 @@ mail.smtp.pass=${mail.smtp.pass}
 regex.password=${regex.password}
 
 run.mode=${run.mode}
+
+

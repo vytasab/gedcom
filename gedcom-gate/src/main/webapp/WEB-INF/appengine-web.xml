@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
+    <!--<appengine-web-app>-->
+
+    <application>gedcom-gate</application>
+    <version>1</version>
+    <threadsafe>true</threadsafe>
+
+    <static-files>
+        <exclude path="/**" />
+        <!--<include path="/**.png" />-->
+        <!--<exclude path="/data/**.png" />-->
+    </static-files>
+
+    <!--<resource-files>
+        <include path="/**.xml" />
+        <exclude path="/feeds/**.xml" />
+    </resource-files>-->
+
+    <system-properties>
+        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
+    </system-properties>
+
+    <!-- http://stackoverflow.com/questions/18722336/google-app-engine-default-encoding-fails-in-local-environment-java -->
+    <!--<env-variables>
+        <env-var name="DEFAULT_ENCODING" value="UTF-8" />
+    </env-variables>-->
+
+    <ssl-enabled>false</ssl-enabled>
+
+    <sessions-enabled>false</sessions-enabled>
+
+    <!--  http://www.lhelper.org/dev/google-appengine-docs-20090422/appengine/docs/java/config/appconfig.html  -->
+
+</appengine-web-app>
+

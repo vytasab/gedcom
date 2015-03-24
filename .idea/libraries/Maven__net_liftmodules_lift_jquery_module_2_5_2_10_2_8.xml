@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.liftmodules:lift-jquery-module_2.5_2.10:2.8">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/liftmodules/lift-jquery-module_2.5_2.10/2.8/lift-jquery-module_2.5_2.10-2.8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/liftmodules/lift-jquery-module_2.5_2.10/2.8/lift-jquery-module_2.5_2.10-2.8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/liftmodules/lift-jquery-module_2.5_2.10/2.8/lift-jquery-module_2.5_2.10-2.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

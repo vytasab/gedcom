@@ -42,3 +42,7 @@ test-output
 
 # gedcom-web project specific
 gedcom-spa/src/main/resources/filters/*
+
+# Tomcat
+tomcat-jr-on
+tomcat-jr-off

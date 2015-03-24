@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ScalacSettings">
-    <option name="COMPILER_LIBRARY_NAME" value="Maven: org.scala-lang:scala-compiler-bundle:2.10.0" />
-    <option name="COMPILER_LIBRARY_LEVEL" value="Project" />
+  <component name="ScalaCompilerConfiguration">
+    <option name="deprecationWarnings" value="true" />
+    <profile name="Maven 1" modules="gedcom-gate,gedcom-spa,gedcom-web">
+      <option name="deprecationWarnings" value="true" />
+    </profile>
   </component>
 </project>
-
